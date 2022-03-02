@@ -1,0 +1,66 @@
+:root {
+    --noneAcrylicBackgroundColor: #cce6cc;
+    --acrylicBackgroundColor: rgba(255,255,255,0.5);
+    -webkit-app-region: no-drag;
+    border-radius: 12px;
+    font-family: Roboto, sans-serif;
+    user-select: none;
+    --controlColor: dodgerblue;
+}
+
+body {
+    --color: #000;
+    background-color: var(--color);
+}
+
+.column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: none;
+    flex-shrink: 0;
+}
+
+.row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: none;
+    flex-shrink: 0;
+}
+
+.txt {
+    user-select: text;
+}
+
+.btn {
+    font-family: iconfont, Roboto, sans-serif;
+    font-size: small;
+    transition: all 0.12s;
+    cursor: pointer;
+}
+
+.btn.outlined {
+    height: 16px;
+    padding: 2px 10px;
+    border: solid 1px #ddd;
+    border-radius: 12px;
+}
+
+.btn.big {
+    font-weight: bold;
+    font-size: medium;
+    height: fit-content;
+    padding: 4px 12px;
+    border: solid 2px #ddd;
+    border-radius: 16px;
+}
+
+.btn:hover {
+    background-color: #eee;
+}
+
+.btn:active {
+    background-color: #ddd;
+}

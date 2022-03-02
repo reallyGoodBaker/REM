@@ -1,0 +1,151 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3113344 */
+  src: url('iconfont.woff2?t=1641027795726') format('woff2'),
+       url('iconfont.woff?t=1641027795726') format('woff'),
+       url('iconfont.ttf?t=1641027795726') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-mobile:before {
+  content: "\e610";
+}
+
+.icon-link-no:before {
+  content: "\e68f";
+}
+
+.icon-eject:before {
+  content: "\e60a";
+}
+
+.icon-player-list-add:before {
+  content: "\e612";
+}
+
+.icon-player-list-play:before {
+  content: "\e613";
+}
+
+.icon-player-pause:before {
+  content: "\e614";
+}
+
+.icon-player-play:before {
+  content: "\e615";
+}
+
+.icon-player-skip-back:before {
+  content: "\e616";
+}
+
+.icon-player-skip-forward:before {
+  content: "\e617";
+}
+
+.icon-repeat:before {
+  content: "\e618";
+}
+
+.icon-shuffle:before {
+  content: "\e619";
+}
+
+.icon-tuner:before {
+  content: "\e61b";
+}
+
+.icon-volume:before {
+  content: "\e61c";
+}
+
+.icon-volume-low:before {
+  content: "\e61d";
+}
+
+.icon-volume-high:before {
+  content: "\e61e";
+}
+
+.icon-volume-off:before {
+  content: "\e61f";
+}
+
+.icon-arrow-left:before {
+  content: "\e627";
+}
+
+.icon-download:before {
+  content: "\e666";
+}
+
+.icon-external-link:before {
+  content: "\e66b";
+}
+
+.icon-folder-opened:before {
+  content: "\e678";
+}
+
+.icon-heart:before {
+  content: "\e685";
+}
+
+.icon-list:before {
+  content: "\e68e";
+}
+
+.icon-maximize:before {
+  content: "\e694";
+}
+
+.icon-menu:before {
+  content: "\e695";
+}
+
+.icon-minimize:before {
+  content: "\e697";
+}
+
+.icon-minus:before {
+  content: "\e698";
+}
+
+.icon-moon:before {
+  content: "\e699";
+}
+
+.icon-more-horizontal:before {
+  content: "\e69a";
+}
+
+.icon-more-vertical:before {
+  content: "\e69b";
+}
+
+.icon-plus:before {
+  content: "\e6a5";
+}
+
+.icon-refresh-ccw:before {
+  content: "\e6a7";
+}
+
+.icon-search:before {
+  content: "\e6a8";
+}
+
+.icon-settings:before {
+  content: "\e6aa";
+}
+
+.icon-user:before {
+  content: "\e6bb";
+}
+

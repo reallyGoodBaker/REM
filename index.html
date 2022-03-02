@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="./pages//fonts/fonts.css">
+    <link rel="stylesheet" href="./pages/icon/iconfont.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./bundle/bundle.css">
+</head>
+<body>
+    <style>
+        body {
+            margin: 0px;
+            width: 100vw;
+            height: 100vh;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+    </style>
+    <audio id="player"></audio>
+    <script type="module">
+        import {AudioPlayer} from './utils/utils.js';
+        window.Player = new AudioPlayer();
+        AudioPlayer.setPlayer(document.getElementById('player'));
+        window.Canvas = document.createElement('canvas');
+        window.CanvasCtx = Canvas.getContext('2d');
+        __emitter.emit('playerReady', Player);
+    </script>
+    <script src="./bundle/bundle.js"></script>
+</body>
+</html>
