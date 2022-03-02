@@ -12,13 +12,13 @@ if (process.defaultApp) {
     app.setAsDefaultProtocolClient('REM')
 }
 
-if (!app.requestSingleInstanceLock()) {
-    app.quit()
-} else {
-    app.on('open-url', (event, url) => {
-        dialog.showErrorBox('欢迎回来', `导向自: ${url}`)
-    })
-}
+// if (!app.requestSingleInstanceLock()) {
+//     app.quit()
+// } else {
+//     app.on('open-url', (event, url) => {
+//         dialog.showErrorBox('欢迎回来', `导向自: ${url}`)
+//     })
+// }
 
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
@@ -54,7 +54,7 @@ function buildWindow(filePath='./index.html') {
     });
 
     browserWindow.loadFile(filePath);
-    browserWindow.webContents.openDevTools();
+    //browserWindow.webContents.openDevTools();
 
     browserWindow.on('closed', () => {
         browserWindow = null;
@@ -63,7 +63,7 @@ function buildWindow(filePath='./index.html') {
     activeAppBarBtns(browserWindow);
     startServices(browserWindow);
 
-    return browserWindow
+    return browserWindow;
 
 }
 

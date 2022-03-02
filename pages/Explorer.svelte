@@ -1,7 +1,5 @@
 <script>
-    import {fp} from '../service/ui-bridge.js'
 
-    fp.open('选择',undefined, ['multiSelections'])
 </script>
 
 
