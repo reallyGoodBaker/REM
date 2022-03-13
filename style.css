@@ -1,6 +1,6 @@
 :root {
     --noneAcrylicBackgroundColor: #cce6cc;
-    --acrylicBackgroundColor: rgba(255,255,255,0.5);
+    --acrylicBackgroundColor: rgba(255,255,255,0.6);
     -webkit-app-region: no-drag;
     border-radius: 12px;
     font-family: Roboto, sans-serif;

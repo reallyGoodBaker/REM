@@ -154,7 +154,7 @@
         transition: height 0.2s;
     }
 
-    .bar > .thumb:hover, .bar.active > .thumb {
+    .bar > .thumb:hover {
         border-radius: 0px;
     }
 

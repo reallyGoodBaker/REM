@@ -23,4 +23,9 @@ module.exports =  class Binder {
     createBinding() {
         contextBridge.exposeInMainWorld(this.name, this._m);
     }
+
+    use(obj) {
+        this._m = obj;
+    }
+    
 }

@@ -1,37 +1,19 @@
 const {app, ipcMain, Menu, BrowserWindow, screen, dialog} = require('electron');
 const path = require('path');
-const startServices = require('./service/start');
 
 Menu.setApplicationMenu(null);
 
-if (process.defaultApp) {
-    if (process.argv.length >= 2) {
-        app.setAsDefaultProtocolClient('REM', process.execPath, [path.resolve(process.argv[1])])
-    }
-} else {
-    app.setAsDefaultProtocolClient('REM')
-}
-
-// if (!app.requestSingleInstanceLock()) {
-//     app.quit()
-// } else {
-//     app.on('open-url', (event, url) => {
-//         dialog.showErrorBox('欢迎回来', `导向自: ${url}`)
-//     })
-// }
 
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
 })
 
 app.on('ready', () => {
-
     setTimeout(() => {
         buildWindow('./index.html');
     }
         , process.platform == "linux" ? 1000 : 0
     );
-    
 });
 
 
@@ -46,7 +28,6 @@ function buildWindow(filePath='./index.html') {
         frame: false,
         vibrancy: 'light',
 
-        
         webPreferences: {
             preload: path.join(__dirname, './preload.js'),
             
@@ -54,14 +35,13 @@ function buildWindow(filePath='./index.html') {
     });
 
     browserWindow.loadFile(filePath);
-    //browserWindow.webContents.openDevTools();
+    browserWindow.webContents.openDevTools();
 
     browserWindow.on('closed', () => {
         browserWindow = null;
     });
 
     activeAppBarBtns(browserWindow);
-    startServices(browserWindow);
 
     return browserWindow;
 

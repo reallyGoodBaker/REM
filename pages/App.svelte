@@ -7,7 +7,7 @@
     import {EventEmitter} from '../utils/utils.js';
 
     window.__emitter = new EventEmitter({captureRejections: true});
-
+    window.appHooks = window.__emitter;
 
     import Mine from './Mine.svelte';
     import Explorer from './Explorer.svelte';
@@ -135,19 +135,19 @@
     
     function getBounds() {
         return new Promise((res) => {
-            Electron.ipcRenderer.once('win:bounds', (ev, data) => {
+            hooks.once('win:bounds', (ev, data) => {
                 res(data);
             });
-            Electron.ipcRenderer.send('winquery:bounds');
+            hooks.send('winquery:bounds');
         })
     }
 
     function getScreenSize() {
         return new Promise((res) => {
-            Electron.ipcRenderer.once('win:screenSize', (ev, data) => {
+            hooks.once('win:screenSize', (ev, data) => {
                 res(data);
             });
-            Electron.ipcRenderer.send('winquery:screenSize');
+            hooks.send('winquery:screenSize');
         })
     }
 
@@ -156,12 +156,12 @@
     })
 
 
-    Electron.ipcRenderer.on('win:screenMove', (ev, data) => {
+    hooks.on('win:screenMove', (ev, data) => {
         changePos(data.x, data.y);
     });
 
 
-    Electron.ipcRenderer.send('winbind:move');
+    hooks.send('winbind:move');
 
     let wallpaperWidth = 1080, wpEle;
 

@@ -3,8 +3,8 @@ const Binder = require('./utils/jsBinder');
 const {createFuncBinding} = require('./utils/api/funcBinder');
 
 
-const Electron = new Binder('Electron');
-Electron.bind('ipcRenderer', {...ipcRenderer,
+new Binder('hooks')
+.use({...ipcRenderer,
     on: (...args) => ipcRenderer.on.apply(ipcRenderer, args),
     once: (...args) => ipcRenderer.once.apply(ipcRenderer, args),
     rm: (...args) => ipcRenderer.removeListener.apply(ipcRenderer, args)

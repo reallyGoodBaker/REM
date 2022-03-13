@@ -2,12 +2,11 @@
     let fullScreen = false;
 
     function min() {
-        console.log(Electron);
-        Electron.ipcRenderer.send('win:min');
+        hooks.send('win:min');
     }
 
     function close() {
-        Electron.ipcRenderer.send('win:close');
+        hooks.send('win:close');
     }
 
     function toggleMax() {
@@ -19,12 +18,12 @@
     }
 
     function max() {
-        Electron.ipcRenderer.send('win:max');
+        hooks.send('win:max');
         fullScreen = true;
     }
 
     function unmax() {
-        Electron.ipcRenderer.send('win:unmax');
+        hooks.send('win:unmax');
         fullScreen = false;
     }
 
