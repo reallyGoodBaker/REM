@@ -1,7 +1,7 @@
 {
   "name": "rem",
   "version": "0.0.2",
-  "description": "Berry",
+  "description": "Cherry",
   "main": "main.js",
   "scripts": {
     "build": "rollup -c",

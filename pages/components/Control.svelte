@@ -4,6 +4,7 @@
     import Progress from "./Progress.svelte";
     import {globalMetadata} from '../../utils/utils.js'
 
+
     let content = {};
 
     let playing = false;
@@ -130,6 +131,12 @@
         return Player.play();
     }
 
+    window.addEventListener('keypress', ev => {
+        if (ev.key === ' ') {
+            onClick();
+        }
+    })
+
     function playPrev() {
         MainPlaylist.playPrev();
     }
@@ -220,11 +227,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        border: solid 2px rgba(255, 255, 255, 0.4);
-        height: 32px;
-        width: 32px;
+        border: solid 2px transparent;
+        height: 36px;
+        width: 36px;
         text-align: center;
-        border-radius: 50%;
+        border-radius: 10px;
         padding: 0px;
         font-weight: normal;
         margin: 0px 8px;
@@ -237,11 +244,29 @@
 
     .btn:active {
         background-color: rgba(255, 255, 255, 0.5);
+        transform: scale(0.9);
     }
 
     .btn.active {
         border: solid 2px rgba(255, 255, 255, 0.4);
         background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-big {
+        opacity: 0.92;
+        background-color: var(--controlColor);
+        box-shadow: 0px 0px 2px var(--controlColor);
+        transition: all 0.1s;
+    }
+
+    .btn-big:hover {
+        background-color: var(--controlColor);
+        filter: brightness(1.1);
+    }
+
+    .btn-big:active {
+        background-color: var(--controlColor);
+        filter: brightness(0.8);
     }
 
     .edge {
@@ -257,7 +282,6 @@
     }
 
     .btn-nb {
-        border: solid 2px transparent;
         font-size: small;
         width: 28px;
         height: 28px;
@@ -313,7 +337,7 @@
                 on:click={playPrev}
             >{'\ue616'}</div>
 
-            <div class="btn big"
+            <div class="btn big btn-big"
                 on:click={onClick}
             >{!playing? '\ue615': '\ue614'}</div>
 
