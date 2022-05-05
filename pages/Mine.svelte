@@ -15,15 +15,8 @@
         let data = store.get('onDayDesktop');
 
         imgBgc.onload = () => {
-            let offset = 37;
             __setColor(container, imgBgc, 1);
-            let i = setInterval(() => {
-                if(offset < 22) {
-                    clearInterval(i);
-                    return;
-                }
-                container.style.setProperty('--start', (--offset) * 10+'px');
-            }, 16.6);
+            container.style.setProperty('--start', 220 + 'px');
             outerContainer.recalc();
         }
 
@@ -98,15 +91,28 @@
         collectionFolded = !collectionFolded;
         meter.measure(({height}) => {
             container.style.setProperty('--height', height + 160 + 'px');
-            setTimeout(() => {
-                outerContainer.recalc();
-            }, 300);
+            outerContainer.recalc();
         });
     }
 
     function clearCache(id) {
         store.rm(id);
     }
+
+    Pager.beforeSwitch(() => {
+        const {save} = Pager.getContext()
+        save.collectionFolded = collectionFolded
+    })
+
+    onMount(() => {
+        const {save} = Pager.getContext()
+        if (typeof save.collectionFolded === 'undefined') {
+            return
+        }
+        if (!save.collectionFolded) {
+            changeHeight()
+        }
+    })
 
 </script>
 
@@ -153,7 +159,6 @@
         box-shadow: 0px 4px 12px var(--color);
         height: 375px;
         overflow: hidden;
-        transition: all 0.2s;
     }
 
     .collection.unfold {
@@ -172,9 +177,9 @@
     .collection-bgc {
         position: absolute;
         z-index: -1;
-        top: calc(50% - 100px);
-        left: calc(50% - 24px);
-        transform: translate(-50%, -50%);
+        top: 0;
+        left: 0;
+        object-fit: contain;
     }
 
     .toggle {

@@ -5,19 +5,37 @@
     import Measurable from './Measurable.svelte';
 
     let showScrollBar = false;
+    let mousedown = false,
+        ry,
+        raw,
+        oy,
+        keepStretch = false,
+        thumbOY = 0,
+        shouldRestore = true,
+        autoDisableRestore = null
 
     function init(innerHeight) {
         ph = calcHeight(scrollView);
         h = innerHeight;
 
-        if(ph >= h) return showScrollBar = false;
+        if(ph >= h) {
+            thumbOY = 0
+            scrollTo(0)
+            return showScrollBar = false
+        }
         else showScrollBar = true;
 
         res = (h-ph)*ph/h;
         scale = ph/h;
 
         try {
-            scrollThumb.style.setProperty('--thumb-height', ph*scale+ 'px');
+            if(scrollThumb) scrollThumb.style.setProperty('--thumb-height', ph*scale+ 'px');
+
+            const {save} = Pager.getContext()
+            if (shouldRestore && save) {
+                scrollTo(thumbOY = save.pageOffsetY)
+            }
+
         } catch (error) {}
     }
 
@@ -31,23 +49,41 @@
         return res;
     }
 
-    let mousedown = false, ry, raw, oy, keepStretch = false, thumbOY = 0;
     function mouseDown(ev) {
         mousedown = true;
         ry = ev.screenY;
         raw = scrollThumb.offsetTop;
     }
 
+    export function disableAutoRestore() {
+        shouldRestore = false
+    }
+
+    /**
+     * @param {(stopWaiting: () => void) => void} until
+     */
+    export function keepWaiting(until) {
+        clearTimeout(autoDisableRestore)
+        until(disableAutoRestore)
+    }
+
     onMount(() => {
         outerWindow.addEventListener('mousemove', dragThumb);
         document.addEventListener('mouseup', endDrag);
         document.addEventListener('wheel', ev => {
+            if (!showScrollBar) return
+            if (isNaN(thumbOY)) {
+                thumbOY = 0
+            }
             if (!~ev.path.indexOf(outerWindow)) return;
             thumbOY += ~~ev.deltaY*scale;
             if (thumbOY  < 0) thumbOY = 0;
             if (thumbOY  > res) thumbOY = res;
             scrollTo(thumbOY);
         });
+        autoDisableRestore = setTimeout(() => {
+            disableAutoRestore()
+        }, 2000);
     });
 
 
@@ -80,7 +116,7 @@
             } else {
                 triggered = false;
             }
-            scrollThumb.style.setProperty('--progress', thumbOY + 'px');
+            if(scrollThumb) scrollThumb.style.setProperty('--progress', thumbOY + 'px');
             scrollView.scrollTo({
                 left: 0, 
                 top: thumbOY*h/ph,
@@ -93,18 +129,23 @@
     let meter;
 
     export function measure() {
-        meter.measure((data) => {
-            init(data.height);
-        });
+        return new Promise(res => {
+            meter.measure(({height}) => {
+                init(height);
+                res()
+            });
+        })
     }
 
     onMount(measure);
-    onDestroy(() =>  __emitter.emit('__pageUnfold'))
+    onDestroy(() => __emitter.emit('__pageUnfold'))
+    Pager.beforeSwitch(() => {
+        const {save} = Pager.getContext()
+        save.pageOffsetY = thumbOY
+    })
 
-    export function recalc() {
-        meter.measure(({height}) => {
-            init(height);
-        });
+    export async function recalc() {
+        measure()
         meter.forceUpdate();
     }
 
@@ -132,7 +173,7 @@
         height: 100%;
         width: 6px;
         background-color: transparent;
-        opacity: 0.5;
+        opacity: 0.4;
         transition: all 0.1s ease;
     }
 
@@ -144,22 +185,27 @@
     }
 
     .thumb {
-        --progress: 0px;
-        --thumb-height: 0px;
+        --progress: 0;
+        --thumb-height: 0;
         margin-top: var(--progress);
-        background-color: #888;
+        background-color: #555;
         width: 100%;
-        border-radius: 3px;
+        border-radius: 5px;
         height: var(--thumb-height);
-        transition: height 0.2s;
+        transition: height 0.3s, opacity 0.3s;
     }
 
-    .bar > .thumb:hover {
+    .bar.active > .thumb, .bar > .thumb:hover {
         border-radius: 0px;
     }
 
     .hide {
-        display: none;
+        pointer-events: none;
+    }
+
+    .hide > .thumb {
+        height: calc(100% + 0px);
+        opacity: 0;
     }
 
 </style>

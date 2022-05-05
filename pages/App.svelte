@@ -35,38 +35,48 @@
     let __pager;
     window.Pager = (() => {
 
-        let Props = [{}, {}];
-        let history = [0];
+        let Props = [{}, {}],
+            history = [0],
+            saves = new Map()
+                .set(MinePage, {})
+                .set(Explorer, {}),
+            beforeSwitchHandlers = []
+
 
         function add(name, component, props={}, force=false) {
             if(has(name)) {
                 if (force) {
-                    const i = tabs.indexOf(name);
-                    selections[i] = component;
-                    Props[i] = props;
-                    return false;
+                    const i = tabs.indexOf(name)
+                    selections[i] = component
+                    Props[i] = props
+                    return false
                 } else {
-                    return true;
+                    return true
                 }
             }
-            selections.push(component);
-            tabs.push(name);
-            tabs = tabs;
-            Props.push(props);
-            return true;
+            selections.push(component)
+            tabs.push(name)
+            tabs = tabs
+            Props.push(props)
+            saves.set(component, {})
+            return true
         }
 
         function selectByIndex(index, forceUpdate=false) {
-            if (index < 0 || index >= tabs.length) index = 0;
-            let props = Props[index];
-            if(typeof props === 'function') props = props();
+            if (index < 0 || index >= tabs.length) index = 0
 
-            if(selected === index && !forceUpdate) return;
+            let props = Props[index]
+            if(typeof props === 'function') props = props()
 
-            history[index] = tabs[selected];
-            __pager.display(selections[index], props);
+            if(selected === index && !forceUpdate) return
 
-            selected = index;
+            beforeSwitchHandlers.forEach(f => f.call(null))
+            beforeSwitchHandlers = []
+
+            history[index] = tabs[selected]
+            __pager.display(selections[index], props)
+
+            selected = index
         }
 
         function select(key, forceUpdate=false) {
@@ -82,13 +92,28 @@
         }
 
         function removeByIndex(index) {
-            if (index < 0 || index >= tabs.length) index = 0;
-            selections = selections.slice(0, index).concat(selections.slice(index + 1));
-            tabs = tabs.slice(0, index).concat(tabs.slice(index + 1));
-            let onTabDestroy = typeof Props[index] === 'function'? Props[index]().onTabDestroy: Props[index].onTabDestroy;
-            Props = Props.slice(0, index).concat(Props.slice(index + 1));
+            if (index < 0 || index >= tabs.length) index = 0
 
-            if(typeof onTabDestroy === 'function') onTabDestroy(index);
+            saves.delete(selections[selected])
+            beforeSwitchHandlers = []
+
+            selections = selections
+                .slice(0, index)
+                .concat(selections.slice(index + 1))
+
+            tabs = tabs
+                .slice(0, index)
+                .concat(tabs.slice(index + 1))
+
+            let onTabDestroy = typeof Props[index] === 'function'
+                ? Props[index]().onTabDestroy
+                : Props[index].onTabDestroy
+            
+            Props = Props
+                .slice(0, index)
+                .concat(Props.slice(index + 1))
+
+            if(typeof onTabDestroy === 'function') onTabDestroy(index)
 
             back();
         }
@@ -109,8 +134,23 @@
             select(name, true);
         }
 
+        function getContext() {
+            const contructor = selections[selected]
+            return {
+                name: tabs[selected],
+                class: contructor,
+                props: Props[selected],
+                save: saves.get(contructor)
+            }
+        }
+
+        function beforeSwitch(handler) {
+            beforeSwitchHandlers.push(handler)
+        }
+
         return {
-            add, select, remove, has, openNew
+            add, select, remove, has, openNew,
+            getContext, beforeSwitch
         }
 
     })();
@@ -170,8 +210,10 @@
             return;
         }
 
-        wpEle.style.setProperty('--top', -y + 'px');
-        wpEle.style.setProperty('--left', -x + 'px');
+        if (wpEle) {
+            wpEle.style.setProperty('--top', -y + 'px');
+            wpEle.style.setProperty('--left', -x + 'px');
+        }
     }
 
     (async () => {
