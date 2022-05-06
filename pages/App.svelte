@@ -273,7 +273,7 @@
 
 <style>
     .window {
-        height: calc(100vh - 120px);
+        height: calc(100vh - 89px);
         flex-direction: column-reverse;
         justify-content: flex-start;
     }
@@ -293,15 +293,14 @@
 </style>
 
 <div style="transition: background-color 0.2s; background-color: var({useAcrylic?'--acrylicBackgroundColor':'--noneAcrylicBackgroundColor'});">
-<img class="wallpaper" src={wallpaperImg} alt="" width={wallpaperWidth} bind:this={wpEle}>
-<Appbar/>
-<Search/>
-<Nav
-    bind:selected
-    bind:tabs
-></Nav>
-<div class="row window">
-    <Control/>
-    <Pager bind:this={__pager}/>
-</div>
+    <img class="wallpaper" src={wallpaperImg} alt="" width={wallpaperWidth} bind:this={wpEle}>
+    <Appbar/>
+    <Nav
+        bind:selected
+        bind:tabs
+    ></Nav>
+    <div class="row window">
+        <Control/>
+        <Pager bind:this={__pager}/>
+    </div>
 </div>

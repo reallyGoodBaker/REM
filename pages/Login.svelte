@@ -1,5 +1,6 @@
 <script>
     import {getContext} from 'svelte';
+    import RippleLayer from './components/RippleLayer.svelte';
 
     const performClick = getContext('close') || (() => {
         __emitter.emit('__openMinePage');
@@ -26,7 +27,7 @@
     let img;
 
 
-    let qrimg, message = '等待扫描';
+    let qrimg = '', message = '等待扫描';
     async function getQRLoginInfo() {
         const qrData = await NeteaseApi.loginViaQRCode();
         const key = qrData[0];
@@ -48,7 +49,7 @@
 
                 case 800: getQRLoginInfo(); break;
 
-                case 802: img.style.opacity = 0.5; loop(); break;
+                case 802: img.style.opacity = 0.32; loop(); break;
 
                 case 803: {
                     store.set('cookie', res.body.cookie);
@@ -95,7 +96,6 @@
     }
 
     .submit {
-        margin: 12px 0px;
         width: 200px;
         height: 32px;
         cursor: pointer;
@@ -103,8 +103,9 @@
         transition: all 0.12s;
     }
 
-    .submit:active {
-        color: red;
+    .submit:hover {
+        background-color: darkred;
+        color: #fff;
     }
 
     .span {
@@ -130,9 +131,16 @@
     {#if !loginType}
         <input type="text" class="{error&&'error'}" bind:value={phone} placeholder="电话">
         <input type="password" class="{error&&'error'}" bind:value={passwd} placeholder="密码">
-        <div on:click={doLogin} class="column submit">登陆</div>
-    {:else}
-        <img bind:this={img} src={qrimg} width={228} height={228} draggable="false" alt=" ">
+        <div style="padding: 24px 0px 12px 0px;">
+            <RippleLayer
+                rippleColor={'#000'}
+                cssStyle={'border-radius: 8px;'}
+            >
+                <div on:click={doLogin} class="column submit">登陆</div>
+            </RippleLayer>
+        </div>
+    {:else if qrimg}
+        <img bind:this={img} src={qrimg} width={228} height={228} draggable="false" alt=" " style="border-radius: 24px;">
         <h5>{message}</h5>
     {/if}
 </div>

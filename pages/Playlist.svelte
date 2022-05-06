@@ -169,9 +169,7 @@
 
     let scrollv;
     function recalcHeight() {
-        setTimeout(() => {
-            scrollv.measure();
-        }, 200);
+        scrollv.measure();
     }
 
 </script>

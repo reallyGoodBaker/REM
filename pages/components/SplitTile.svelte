@@ -72,7 +72,7 @@
 
 
 <div class="column tile{selected?' selected': ''}{focus?' focus': ''}" style="padding-left: {location[0]}%"
-    on:click={onClick} in:fade={{duration: 120}}
+    on:click={onClick}
     on:dblclick={dbClick}
 >
 {#each widths as width, i}

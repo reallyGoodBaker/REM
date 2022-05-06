@@ -220,12 +220,13 @@
         width: 160px;
         height: 160px;
         background: inherit;
-        bottom: -4px;
+        bottom: -10px;
         left: 0px;
-        filter: blur(4px) opacity(0.6);
-        border-radius: 4px;
+        filter: blur(12px) opacity(0.7);
+        border-radius: 12px;
         z-index: -1;
         opacity: 0;
+        transform: scale(1.1);
         transition: opacity 0.1s ease-out;
     }
 

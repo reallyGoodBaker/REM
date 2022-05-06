@@ -1,4 +1,6 @@
 <script>
+    import Search from './Search.svelte'
+
     let fullScreen = false;
 
     function min() {
@@ -33,7 +35,7 @@
 <style>
     .container {
         width: 100vw;
-        height: 32px;
+        height: 54px;
         -webkit-app-region: drag;
         justify-content: space-between;
     }
@@ -41,8 +43,10 @@
     .clk {
         -webkit-app-region: no-drag;
         font-family: iconfont;
-        width: 44px;
+        width: 32px;
         height: 32px;
+        margin-right: 4px;
+        border-radius: 8px;
         cursor: pointer;
         background-color: transparent;
         transition: background-color 0.12s,
@@ -58,14 +62,32 @@
         color: #fff;
     }
 
+    .btn-group > div:last-child {
+        margin-right: 11px;
+    }
+
+    .title {
+        width: 67px;
+        opacity: 0.7;
+        margin-left: 24px;
+    }
+
+    .title.debug::after {
+        content: 'Beta';
+        color: red;
+        font-size: small;
+        margin: 0px 4px;
+    }
+
 </style>
 
 
 <div class="column container">
-    <div></div>
-    <div class="column">
+    <div class="title debug">REM</div>
+    <Search/>
+    <div class="column btn-group">
         <div class="column clk" on:click={min}>–</div>
         <div class="column clk" on:click={toggleMax}>{fullScreen?'◱':'▢'}</div>
-        <div class="column clk red" on:click={close}>╳</div>
+        <div class="column clk red" on:click={close}>⨉</div>
     </div>
 </div>

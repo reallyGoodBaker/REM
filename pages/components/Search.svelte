@@ -67,7 +67,7 @@
 
     function animIn(ev) {
         ev.detail.animate({
-            transform: ['translate(20px, -20px) scale(0.9)', 'translate(0px, 0px) scale(1)'],
+            transform: ['translate(-20px, -32px) scale(0.9)', 'translate(0px, 0px) scale(1)'],
             opacity: [0, 1]
         }, 100)
     }
@@ -76,6 +76,7 @@
 
 <style>
     .avatar {
+        position: relative;
         width: 28px;
         height: 28px;
         font-size: 28px;
@@ -87,7 +88,7 @@
 
     .input {
         width: 200px;
-        height: 36px;
+        height: 30px;
         outline: none;
         border: none;
         margin: 0px 4px;
@@ -99,18 +100,30 @@
     }
 
     .search {
+        flex-direction: row-reverse;
+        -webkit-app-region: no-drag;
         box-shadow: 0px 0px 2px rgba(0,0,0,0.2);
         width: fit-content;
-        background-color: rgba(255,255,255,0.6);
-        border-radius: 18px;
+        background-color: rgba(255,255,255,0.4);
+        border-radius: 8px;
         padding: 0px 8px;
         margin: 8px;
     }
 
+    .avatar-container {
+        -webkit-app-region: no-drag;
+        position: absolute;
+        left: -48px;
+    }
+
+    .column {
+        overflow: visible;
+        position: relative;
+    }
 
 </style>
 
-<div class="column">
+<div class="column" style="margin-left: 64px;">
 <div class="column search">
     <span class="iconfont icon-search avatar menu" on:click={search}></span>
     
@@ -121,21 +134,23 @@
         on:blur={()=>setTimeout(()=>showHot=false)}
         on:input={getSuggest}>
 
-    <Avatar
-        on:click={show}
-        size={'normal'}
-        isUrl={avatarUrl}
-        avatar={avatarUrl || '\ue6bb'}
-        width={28}
-        height={28}
-    ></Avatar>
+    <div class="avatar-container">
+        <Avatar
+            on:click={show}
+            size={'big'}
+            isUrl={avatarUrl}
+            avatar={avatarUrl || '\ue6bb'}
+            width={32}
+            height={32}
+        />
+    </div>
 
 </div>
     <Popup
         on:layerClick={hide}
         on:animIn={animIn}
         showPopupWindow={showPopup}
-        cssText={"position: absolute; top: 88px"}>
+        cssText={"position: absolute; top: 54px;"}>
         <Profile
             bind:user={user}
         ></Profile>
@@ -145,7 +160,7 @@
         noLayer={true}
         on:layerClick={()=>showHot=false}
         showPopupWindow={showHot}
-        cssText={"position: fixed; top: 88px; width: 300px"}>
+        cssText={"position: fixed; top: 54px; width: 300px"}>
         {#if suggests}
 
         {#each suggests as el}

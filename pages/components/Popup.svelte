@@ -41,6 +41,7 @@
 
 <style>
     .layer {
+        -webkit-app-region: no-drag;
         position: fixed;
         z-index: 99999;
         left: 0px;
