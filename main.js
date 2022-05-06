@@ -35,7 +35,7 @@ function buildWindow(filePath='./index.html') {
     });
 
     browserWindow.loadFile(filePath);
-    //browserWindow.webContents.openDevTools();
+    // browserWindow.webContents.openDevTools();
 
     browserWindow.on('closed', () => {
         browserWindow = null;
@@ -97,7 +97,7 @@ createFuncBinding(suggest);
 createFuncBinding(checkIn);
 createFuncBinding(getUserPlaylist);
 createFuncBinding(getPlaylistDetail);
-createFuncBinding(getSongDetail);
+createFuncBinding(getSongDetail)
 createFuncBinding(getSongUrl);
 createFuncBinding(loginViaQRCode);
 createFuncBinding(validQRLogin);

@@ -101,12 +101,14 @@
 
     Pager.beforeSwitch(() => {
         const {save} = Pager.getContext()
-        save.collectionFolded = collectionFolded
+        if (save) {
+            save.collectionFolded = collectionFolded
+        }
     })
 
     onMount(() => {
         const {save} = Pager.getContext()
-        if (typeof save.collectionFolded === 'undefined') {
+        if (!save || typeof save.collectionFolded === 'undefined') {
             return
         }
         if (!save.collectionFolded) {

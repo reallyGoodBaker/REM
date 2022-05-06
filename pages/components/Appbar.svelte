@@ -67,9 +67,9 @@
     }
 
     .title {
-        width: 67px;
+        width: 115px;
         opacity: 0.7;
-        margin-left: 24px;
+        padding-left: 24px;
     }
 
     .title.debug::after {

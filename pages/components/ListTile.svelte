@@ -31,7 +31,7 @@
 <style>
 
     .c {
-        padding: 10px 0px;
+        padding: 8px 0px;
         width: 100%;
         justify-content: flex-start;
         overflow: hidden;

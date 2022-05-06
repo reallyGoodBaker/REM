@@ -3,9 +3,10 @@
     import Profile from "./Profile.svelte";
     import Avatar from "./Avatar.svelte";
     import ListTile from './ListTile.svelte';
+    import ScrollView from './ScrollView.svelte';
     import { onMount } from 'svelte';
 
-    let showPopup = false;
+    let showPopup = false
 
     const show = () => showPopup = true;
     const hide = () => {
@@ -59,10 +60,10 @@
     async function getSuggest() {
         if(!value) return suggests = null;
         const res = (await NeteaseApi.suggest(value)).body.result;
-        const {songs} = res;
-        suggests = songs.reduce((pre, cur) => {
-            return [...pre, cur.name];
-        }, []);
+        console.log(res);
+        if (Object.keys(res).length) {
+            suggests = res
+        }
     }
 
     function animIn(ev) {
@@ -71,6 +72,7 @@
             opacity: [0, 1]
         }, 100)
     }
+
 
 </script>
 
@@ -121,6 +123,12 @@
         position: relative;
     }
 
+    .title {
+        font-size: small;
+        padding: 12px 0px 4px 12px;
+
+    }
+
 </style>
 
 <div class="column" style="margin-left: 64px;">
@@ -160,19 +168,65 @@
         noLayer={true}
         on:layerClick={()=>showHot=false}
         showPopupWindow={showHot}
-        cssText={"position: fixed; top: 54px; width: 300px"}>
+        cssText={"position: fixed; top: 54px; width: 360px; overflow: hidden; max-height: calc(100vh - 148px);"}>
         {#if suggests}
 
-        {#each suggests as el}
-            <ListTile
-                size={"small"}
-                data={el}
-                isUrl={false}
-                avatar={''}
-                on:mousedown={()=>{value=el; search()}}/>
-        {/each}
+        {#if suggests.songs}
+            <div class="title">歌曲</div>
+            {#each suggests.songs as el}
+                <ListTile
+                    size={"small"}
+                    data={el.name}
+                    isUrl={false}
+                    avatar={''}
+                    on:mousedown={()=>{value=`${el.name}`; search()}}/>
+            {/each}
             <div style="height: 1px; background-color: #ddd"> </div>
         {/if}
+
+        {#if suggests.artists}
+            <div class="title">艺术家</div>
+            {#each suggests.artists as el}
+                <ListTile
+                    size={"small"}
+                    data={el.name}
+                    isUrl={true}
+                    avatar={el.img1v1Url}
+                    width={24}
+                    height={24}
+                    on:mousedown={()=>{value=`${el.name}`; search()}}/>
+            {/each}
+            <div style="height: 1px; background-color: #ddd"> </div>
+        {/if}
+
+        {#if suggests.albums}
+            <div class="title">专辑</div>
+            {#each suggests.albums as el}
+                <ListTile
+                    size={"small"}
+                    data={el.name}
+                    isUrl={false}
+                    avatar={' '}
+                    on:mousedown={()=>{value=`${el.name}`; search()}}/>
+            {/each}
+            <div style="height: 1px; background-color: #ddd"> </div>
+        {/if}
+
+        {#if suggests.playlists}
+            <div class="title">歌单</div>
+            {#each suggests.playlists as el}
+                <ListTile
+                    size={"small"}
+                    data={el.name}
+                    isUrl={true}
+                    avatar={el.coverImgUrl}
+                    width={24}
+                    height={24}
+                    on:mousedown={()=>{value=`${el.name}`; search()}}/>
+            {/each}
+        {/if}
+        
+        {:else}
 
         {#each hots as el, i}
             <ListTile
@@ -183,5 +237,6 @@
                 on:mousedown={()=>{value=el; search()}}/>
         {/each}
 
+        {/if}
     </Popup>
 </div>
