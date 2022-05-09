@@ -1,0 +1,51 @@
+export class AudioData {
+    constructor(data) {
+        this.data = data
+    }
+
+    urls = {}
+
+    async getPlayUrlAsync(quality='high') {
+        let br
+        
+        try {
+            br = quality === 'low'? this.data.l.br:
+                quality === 'medium'? this.data.m.br: this.data.h.br
+        } catch (error) {
+            switch (quality) {
+                case 'low': 
+                    br = this.data.h? this.data.h.br: false
+                    if(br) break
+                case 'high':
+                    br = this.data.m? this.data.m.br: false
+                    if(br) break
+                case 'medium': 
+                    br = this.data.l? this.data.l.br: false
+                    if(br) break
+            }
+        }
+
+
+        const res = this.urls[quality] = await NeteaseApi.getSongUrl(this.data.id, store.get('cookie'), br)
+
+        return res.body.data[0].url
+    }
+
+    async url(quality='high') {
+        if (this.urls[quality]) return this.urls[quality]
+        return this.getPlayUrlAsync(quality)
+    }
+
+    title() {
+        return this.data.name
+    }
+
+    album() {
+        return this.data.al
+    }
+
+    artist() {
+        return this.data.ar
+    }
+
+}

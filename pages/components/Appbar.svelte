@@ -62,8 +62,13 @@
         color: #fff;
     }
 
+    .btn-group {
+        margin-top: 8px;
+        align-self: flex-start;
+    }
+
     .btn-group > div:last-child {
-        margin-right: 11px;
+        margin-right: 8px;
     }
 
     .title {

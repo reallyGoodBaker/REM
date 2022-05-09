@@ -1,8 +1,9 @@
 <script>
     import Avatar from "./Avatar.svelte";
-    import {AudioData} from '../../utils/utils.js'
+    import {AudioData} from '../../utils/player/audiodata.js'
     import Progress from "./Progress.svelte";
-    import {globalMetadata} from '../../utils/utils.js'
+    import {globalMetadata} from '../../utils/player/metadata.js'
+    import {globalPlayer} from '../../utils/player/player.js'
 
 
     let content = {};
@@ -89,7 +90,7 @@
     //==========================================
     __emitter.on('setControlsContent', setContent);
     __emitter.on('loadedContent', () => {
-        duration = Player.duration();
+        duration = globalPlayer.duration();
         durationEle.innerText = s(duration);
         if (checker) {
             seekValue = 0;
@@ -98,7 +99,7 @@
         checker = setInterval(() => {
             if (isSeeking) return;
 
-            let cur = Player.seek();
+            let cur = globalPlayer.seek();
             seekValue = (cur/duration)*100;
             currentTimeEle.innerText = s(cur);
             //console.log(cur, duration);
@@ -116,19 +117,19 @@
         if (c) {
             c = new AudioData(c);
             setContent(c);
-            Player.loadData(c);
+            globalPlayer.loadData(c);
         }
 
     });
 
     function onClick() {
-        if(!Player.load()) return;
+        if(!globalPlayer.load()) return;
 
         if (playing) {
-            return Player.pause();
+            return globalPlayer.pause();
         }
 
-        return Player.play();
+        return globalPlayer.play();
     }
 
     window.addEventListener('keypress', ev => {
@@ -159,13 +160,13 @@
     }
 
     function setVolume(ev) {
-        Player.volume(ev.detail/100);
+        globalPlayer.volume(ev.detail/100);
     }
 
     let volume;
     if (volume = store.get('volume') || 50) {
         __emitter.once('playerReady', () => {
-            Player.volume(volume/100)
+            globalPlayer.volume(volume/100)
         })
     }
 
@@ -181,7 +182,7 @@
     function endSeek(ev) {
         isSeeking = false;
         try {
-            Player.seek((ev.detail/100)*duration);
+            globalPlayer.seek((ev.detail/100)*duration);
         } catch (e) {}
     }
 

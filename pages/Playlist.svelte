@@ -3,9 +3,7 @@
     import Avatar from "./components/Avatar.svelte";
     import ScrollView from "./components/ScrollView.svelte";
     import SplitList from "./components/SplitList.svelte";
-    import {AudioData} from '../utils/utils.js';
     import Input from "./components/Input.svelte";
-    import { onDestroy } from "svelte";
 
 
     export let header = null;

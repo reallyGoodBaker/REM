@@ -3,8 +3,6 @@
     import Profile from "./Profile.svelte";
     import Avatar from "./Avatar.svelte";
     import ListTile from './ListTile.svelte';
-    import ScrollView from './ScrollView.svelte';
-    import { onMount } from 'svelte';
 
     let showPopup = false
 
@@ -131,7 +129,7 @@
 
 </style>
 
-<div class="column" style="margin-left: 64px;">
+<div class="column" style="margin-left: 48px">
 <div class="column search">
     <span class="iconfont icon-search avatar menu" on:click={search}></span>
     
@@ -168,7 +166,7 @@
         noLayer={true}
         on:layerClick={()=>showHot=false}
         showPopupWindow={showHot}
-        cssText={"position: fixed; top: 54px; width: 360px; overflow: hidden; max-height: calc(100vh - 148px);"}>
+        cssText={"position: fixed; top: 54px; width: 360px; overflow: hidden; max-height: calc(100vh - 148px); min-height: 0"}>
         {#if suggests}
 
         {#if suggests.songs}
@@ -181,10 +179,10 @@
                     avatar={''}
                     on:mousedown={()=>{value=`${el.name}`; search()}}/>
             {/each}
-            <div style="height: 1px; background-color: #ddd"> </div>
         {/if}
 
         {#if suggests.artists}
+            <div style="height: 1px; background-color: #ddd"> </div>
             <div class="title">艺术家</div>
             {#each suggests.artists as el}
                 <ListTile
@@ -196,10 +194,10 @@
                     height={24}
                     on:mousedown={()=>{value=`${el.name}`; search()}}/>
             {/each}
-            <div style="height: 1px; background-color: #ddd"> </div>
         {/if}
 
         {#if suggests.albums}
+            <div style="height: 1px; background-color: #ddd"> </div>
             <div class="title">专辑</div>
             {#each suggests.albums as el}
                 <ListTile
@@ -209,10 +207,10 @@
                     avatar={' '}
                     on:mousedown={()=>{value=`${el.name}`; search()}}/>
             {/each}
-            <div style="height: 1px; background-color: #ddd"> </div>
         {/if}
 
         {#if suggests.playlists}
+            <div style="height: 1px; background-color: #ddd"> </div>
             <div class="title">歌单</div>
             {#each suggests.playlists as el}
                 <ListTile

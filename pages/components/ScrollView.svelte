@@ -32,7 +32,8 @@
             if(scrollThumb) scrollThumb.style.setProperty('--thumb-height', ph*scale+ 'px');
 
             const {save} = Pager.getContext()
-            if (shouldRestore && save) {
+
+            if (shouldRestore) {
                 scrollTo(thumbOY = save.pageOffsetY)
             }
 

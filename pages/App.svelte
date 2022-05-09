@@ -1,10 +1,9 @@
 <script>
     import Nav from './components/Nav.svelte';
-    import Search from './components/Search.svelte';
     import Control from './components/Control.svelte';
     import Pager from './Pager.svelte';
 
-    import {EventEmitter} from '../utils/utils.js';
+    import {EventEmitter} from '../utils/index.js';
 
     window.__emitter = new EventEmitter({captureRejections: true});
     window.appHooks = window.__emitter;
@@ -38,8 +37,8 @@
         let Props = [{}, {}],
             history = [0],
             saves = new Map()
-                .set(MinePage, {})
-                .set(Explorer, {}),
+                .set('我的', {})
+                .set('发现', {}),
             beforeSwitchHandlers = []
 
 
@@ -58,7 +57,7 @@
             tabs.push(name)
             tabs = tabs
             Props.push(props)
-            saves.set(component, {})
+            saves.set(name, {})
             return true
         }
 
@@ -94,7 +93,7 @@
         function removeByIndex(index) {
             if (index < 0 || index >= tabs.length) index = 0
 
-            saves.delete(selections[selected])
+            saves.delete(tabs[selected])
             beforeSwitchHandlers = []
 
             selections = selections
@@ -135,12 +134,14 @@
         }
 
         function getContext() {
-            const contructor = selections[selected]
+            const
+                contructor = selections[selected],
+                name = tabs[selected]
             return {
-                name: tabs[selected],
+                name,
                 class: contructor,
                 props: Props[selected],
-                save: saves.get(contructor)
+                save: saves.get(name)
             }
         }
 

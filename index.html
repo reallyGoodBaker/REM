@@ -20,11 +20,7 @@
             overflow: hidden;
         }
     </style>
-    <audio id="player"></audio>
     <script type="module">
-        import {AudioPlayer} from './utils/utils.js';
-        window.Player = new AudioPlayer();
-        AudioPlayer.setPlayer(document.getElementById('player'));
         window.Canvas = document.createElement('canvas');
         window.CanvasCtx = Canvas.getContext('2d');
         __emitter.emit('playerReady', Player);
