@@ -89,4 +89,5 @@ export class MainPlaylist {
     }
 }
 
-window.MainPlaylist = MainPlaylist
+navigator.mediaSession.setActionHandler('nexttrack', () => MainPlaylist.playNext())
+navigator.mediaSession.setActionHandler('previoustrack', () => MainPlaylist.playPrev())

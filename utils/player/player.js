@@ -75,6 +75,13 @@ export class AudioPlayer {
 
 }
 
+AudioPlayer.audioElement.addEventListener('ended', () => {
+    AudioPlayer.em.emit('ended')
+})
+
 export const globalPlayer = new AudioPlayer()
 
 window.Player = globalPlayer
+
+navigator.mediaSession.setActionHandler('play', () => globalPlayer.play())
+navigator.mediaSession.setActionHandler('pause', () => globalPlayer.pause())

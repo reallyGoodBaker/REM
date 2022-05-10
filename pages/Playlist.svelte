@@ -158,6 +158,8 @@
 
     }
 
+    import {MainPlaylist} from '../utils/player/playlist.js'
+
     async function dbClick(ev) {
         const {listData, i} = ev.detail;
 

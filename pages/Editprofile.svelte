@@ -3,6 +3,10 @@
     import Input from "./components/Input.svelte";
 
     let profile = store.get('profile');
+
+    function uploadAvatar() {
+
+    }
 </script>
 
 
@@ -25,6 +29,7 @@
     avatar={profile.avatarUrl}
     width={120}
     height={120}
+    on:click={uploadAvatar}
 />
 
 <div class="row input">
