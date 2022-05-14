@@ -43,7 +43,6 @@
         }
 
         renderList(listData)
-        // requestIdleCallback(() => renderList(listData))
     })
 
 
