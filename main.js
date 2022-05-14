@@ -35,7 +35,7 @@ function buildWindow(filePath='./index.html') {
     });
 
     browserWindow.loadFile(filePath);
-    browserWindow.webContents.openDevTools();
+    // browserWindow.webContents.openDevTools();
 
     browserWindow.on('closed', () => {
         browserWindow = null;

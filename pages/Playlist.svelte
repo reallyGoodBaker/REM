@@ -29,13 +29,20 @@
     let _listData = [], splitterContainer;
     let backup;
 
-    appHooks.once('pageSwipeAnimFinish', () => {
-        listData.then(data => {
-            backup = [...data];
-            data.sort(listSplitter.sortFunc[sortBy]);
-            !forwards && data.reverse();
-            _listData = data;
-        });
+    function renderList(data) {
+        backup = [...data]
+        data.sort(listSplitter.sortFunc[sortBy])
+        !forwards && data.reverse()
+        _listData = data
+    }
+
+    onMount(() => {
+        if (listData instanceof Promise) {
+            appHooks.once('pageSwipeAnimFinish', () => listData.then(data => renderList(data)))
+            return
+        }
+
+        renderList(listData)
     })
 
 
@@ -159,6 +166,7 @@
     }
 
     import {MainPlaylist} from '../utils/player/playlist.js'
+    import { onMount } from "svelte";
 
     async function dbClick(ev) {
         const {listData, i} = ev.detail;

@@ -67,11 +67,17 @@
         listData = data;
     }
 
-    async function getDetailX(id) {
+    function getDetailX(id) {
         let data = store.get(id);
         if (data) return data;
 
-        let cookie = store.get('cookie');
+        return getDetailXAsync(id)
+    }
+
+    async function getDetailXAsync(id) {
+        let cookie = store.get('cookie'),
+            data = store.get(id)
+        
         const list = (await NeteaseApi.getPlaylistDetail(id, cookie)).body.playlist.trackIds;
         
         let ids = list.reduce((pre, cur) => {
