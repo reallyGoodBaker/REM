@@ -1,37 +1,36 @@
 <script>
-    import Nav from './components/Nav.svelte';
-    import Control from './components/Control.svelte';
-    import Pager from './Pager.svelte';
+    import Nav from './components/Nav.svelte'
+    import Control from './components/Control.svelte'
+    import Pager from './Pager.svelte'
 
-    import {EventEmitter} from '../utils/index.js';
+    import {EventEmitter} from '../utils/index.js'
 
-    window.__emitter = new EventEmitter({captureRejections: true});
-    window.appHooks = window.__emitter;
+    window.appHooks = new EventEmitter({captureRejections: true})
 
-    import Mine from './Mine.svelte';
-    import Explorer from './Explorer.svelte';
-    import Appbar from './components/Appbar.svelte';
-    import Login from './Login.svelte';
+    import Mine from './Mine.svelte'
+    import Explorer from './Explorer.svelte'
+    import Appbar from './components/Appbar.svelte'
+    import Login from './Login.svelte'
 
 
-    let MinePage = Mine;
+    let MinePage = Mine
     if(store.get('profile')) {
-        NeteaseApi.checkIn(store.get('cookie'));
+        NeteaseApi.checkIn(store.get('cookie'))
     } else {
-        MinePage = Login;
+        MinePage = Login
     }
 
-    let selected = -1;
+    let selected = -1
     let selections = [
         MinePage, Explorer, 
-    ];
+    ]
 
     let tabs = [
         '我的',
         '发现',
-    ];
+    ]
 
-    let __pager;
+    let __pager
     window.Pager = (() => {
 
         let Props = [{}, {}],
@@ -79,15 +78,15 @@
         }
 
         function select(key, forceUpdate=false) {
-            if (typeof key !== 'number') key = tabs.indexOf(key);
-            selectByIndex(key, forceUpdate);
+            if (typeof key !== 'number') key = tabs.indexOf(key)
+            selectByIndex(key, forceUpdate)
         }
 
         function back() {
-            let sel = tabs.indexOf(history[selected]);
-            !~sel && (sel = 0);
+            let sel = tabs.indexOf(history[selected])
+            !~sel && (sel = 0)
 
-            selectByIndex(sel, true);
+            selectByIndex(sel, true)
         }
 
         function removeByIndex(index) {
@@ -114,23 +113,23 @@
 
             if(typeof onTabDestroy === 'function') onTabDestroy(index)
 
-            back();
+            back()
         }
 
         function remove(key) {
-            if (typeof key !== 'number') key = tabs.indexOf(key);
-            removeByIndex(key);
+            if (typeof key !== 'number') key = tabs.indexOf(key)
+            removeByIndex(key)
         }
 
         function has(key) {
-            if(typeof key === 'string') return ~tabs.indexOf(key);
-            return ~selections.indexOf(key);
+            if(typeof key === 'string') return ~tabs.indexOf(key)
+            return ~selections.indexOf(key)
         }
 
         function openNew(name, component, props, force=false) {
-            if(add(name, component, props, force)) return select(name);
+            if(add(name, component, props, force)) return select(name)
 
-            select(name, true);
+            select(name, true)
         }
 
         function getContext() {
@@ -154,101 +153,107 @@
             getContext, beforeSwitch
         }
 
-    })();
+    })()
 
-    function getWallpaperDataSrc() {
-        let rawData = wallpaper.getWallpaper(), blob = '', len = rawData.length;
-        for(let i = 0; i < len; i++) blob += String.fromCharCode(rawData[i]);
-        blob = btoa(blob);
-        return `data:image/jpeg;base64,${blob}`;
+    async function getWallpaperDataSrc() {
+        let rawData = await wallpaper.getWallpaper(),
+            blob = '',
+            len = rawData.length
+        
+        for(let i = 0; i < len; i++)
+            blob += String.fromCharCode(rawData[i])
+
+        return `data:image/jpeg;base64,${btoa(blob)}`
     }
 
-    window.getWallpaperDataSrc = getWallpaperDataSrc;
-    // let wallpaperImg = '';
-    // onMount(() => {
-    //     wallpaperImg = getWallpaperDataSrc();
-    // })
 
-    let wallpaperImg = getWallpaperDataSrc();
-    let settings = store.get('sys-settings');
-    let useAcrylic = false;
+    let wallpaperImg,
+        settings = store.get('sys-settings'),
+        useAcrylic = false
+
+    async function initBackground() {
+        wallpaperImg = await getWallpaperDataSrc()
+        // console.log(wallpaperImg);
+    }
+
+    initBackground()
 
     
     function getBounds() {
         return new Promise((res) => {
             hooks.once('win:bounds', (ev, data) => {
-                res(data);
-            });
-            hooks.send('winquery:bounds');
+                res(data)
+            })
+            hooks.send('winquery:bounds')
         })
     }
 
     function getScreenSize() {
         return new Promise((res) => {
             hooks.once('win:screenSize', (ev, data) => {
-                res(data);
-            });
-            hooks.send('winquery:screenSize');
+                res(data)
+            })
+            hooks.send('winquery:screenSize')
         })
     }
 
-    __emitter.on('__openMinePage', () => {
+    appHooks.on('__openMinePage', () => {
         window.Pager.openNew('我的', Mine, {}, true)
     })
 
 
     hooks.on('win:screenMove', (ev, data) => {
-        changePos(data.x, data.y);
-    });
+        changePos(data.x, data.y)
+    })
 
 
-    hooks.send('winbind:move');
+    hooks.send('winbind:move')
 
-    let wallpaperWidth = 1080, wpEle;
+    let wallpaperWidth = 1080, wpEle
 
     function changePos(x,y) {
         if (!useAcrylic) {
-            return;
+            return
         }
 
         if (wpEle) {
-            wpEle.style.setProperty('--top', -y + 'px');
-            wpEle.style.setProperty('--left', -x + 'px');
+            wpEle.style.setProperty('--top', -y + 'px')
+            wpEle.style.setProperty('--left', -x + 'px')
         }
     }
 
     (async () => {
-        let data = await getBounds(), ss = await getScreenSize();
+        let data = await getBounds(),
+            ss = await getScreenSize()
 
-        window.Pager.select(0);
-        wallpaperWidth = ss.width; 
-        changePos(data.x, data.y);
+        window.Pager.select(0)
+        wallpaperWidth = ss.width 
+        changePos(data.x, data.y)
     })()
 
 
 
+    //==================================================================
 
-    //
-
-    __emitter.on('playerReady', () => {
-        __setColor(document.body, wpEle, 1);
+    appHooks.on('playerReady', () => {
+        __setColor(document.body, wpEle, 1)
     })
 
-    __emitter.on('changeControlColor', color => {
-        document.body.style.setProperty('--controlColor', color);
+    appHooks.on('changeControlColor', color => {
+        document.body.style.setProperty('--controlColor', color)
     })
 
-    __emitter.on('useAcrylic', async boolean => {
-        settings.theme.useAcrylic = useAcrylic = boolean;
+    appHooks.on('useAcrylic', async boolean => {
+        settings.theme.useAcrylic = useAcrylic = boolean
         if (boolean) {
-            let data = await getBounds();
-            changePos(data.x, data.y);
+            let data = await getBounds()
+            changePos(data.x, data.y)
         }
-        store.set('sys-settings', settings);
+        store.set('sys-settings', settings)
     })
 
 
-    //
+    //=======================================================================
 
     if (!settings) {
         settings = {
@@ -259,16 +264,16 @@
 
         }
 
-        store.set('sys-settings', settings);
+        store.set('sys-settings', settings)
     }
 
-    let controlColors = settings.theme.controlColor.slice(1);
-    let controlColorSelected = settings.theme.controlColor[0];
+    let controlColors = settings.theme.controlColor.slice(1)
+    let controlColorSelected = settings.theme.controlColor[0]
 
     
 
-    __emitter.emit('changeControlColor', controlColors[controlColorSelected]);
-    __emitter.emit('useAcrylic', settings.theme.useAcrylic);
+    appHooks.emit('changeControlColor', controlColors[controlColorSelected])
+    appHooks.emit('useAcrylic', settings.theme.useAcrylic)
 
 </script>
 

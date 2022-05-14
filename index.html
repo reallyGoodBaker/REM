@@ -23,7 +23,7 @@
     <script type="module">
         window.Canvas = document.createElement('canvas');
         window.CanvasCtx = Canvas.getContext('2d');
-        __emitter.emit('playerReady', Player);
+        appHooks.emit('playerReady', Player);
     </script>
     <script src="./bundle/bundle.js"></script>
 </body>

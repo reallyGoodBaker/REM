@@ -42,7 +42,7 @@
             fill: 'forwards'
         });
 
-        __emitter.emit('pageSwipeAnimFinish');
+        appHooks.emit('pageSwipeAnimFinish');
     }
     
 </script>

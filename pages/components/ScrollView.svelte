@@ -108,12 +108,12 @@
             if (isNaN(thumbOY)) return;
             if (thumbOY <= 0) {
                 triggered = true;
-                __emitter.emit('__pageUnfold');
+                appHooks.emit('__pageUnfold');
                 thumbOY = 0;
             }
             if (thumbOY  > res) thumbOY = res;
             if (!triggered) {
-                __emitter.emit('__pageFold');
+                appHooks.emit('__pageFold');
             } else {
                 triggered = false;
             }
@@ -139,7 +139,7 @@
     }
 
     onMount(measure);
-    onDestroy(() => __emitter.emit('__pageUnfold'))
+    onDestroy(() => appHooks.emit('__pageUnfold'))
     Pager.beforeSwitch(() => {
         const {save} = Pager.getContext()
         save.pageOffsetY = thumbOY

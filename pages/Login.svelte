@@ -3,8 +3,8 @@
     import RippleLayer from './components/RippleLayer.svelte';
 
     const performClick = getContext('close') || (() => {
-        __emitter.emit('__openMinePage');
-        __emitter.emit('__updateLoginAvatar');
+        appHooks.emit('__openMinePage');
+        appHooks.emit('__updateLoginAvatar');
     });
 
     let phone, passwd, error = false;

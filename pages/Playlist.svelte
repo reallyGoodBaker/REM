@@ -29,7 +29,7 @@
     let _listData = [], splitterContainer;
     let backup;
 
-    __emitter.once('pageSwipeAnimFinish', () => {
+    appHooks.once('pageSwipeAnimFinish', () => {
         listData.then(data => {
             backup = [...data];
             data.sort(listSplitter.sortFunc[sortBy]);

@@ -1,7 +1,6 @@
 <script>
     import ScrollView from './components/ScrollView.svelte'
     import Input from './components/Input.svelte'
-    import ListTile from './components/ListTile.svelte'
     import RowList from './components/RowList.svelte';
     import SelectListTile from './components/SelectListTile.svelte';
     import ToggleListTile from './components/ToggleListTile.svelte';
@@ -17,14 +16,14 @@
     function onSelectedControlColor(ev) {
         const i = ev.detail;
         controlColorSelected = settings.theme.controlColor[0] = i;
-        __emitter.emit('changeControlColor', controlColors[controlColorSelected]);
+        appHooks.emit('changeControlColor', controlColors[controlColorSelected]);
         store.set('sys-settings', settings);
     }
 
     function onToggleUseAcrylic(ev) {
         const useAcrylic = ev.detail;
         settings.theme.useAcrylic = useAcrylic;
-        __emitter.emit('useAcrylic', useAcrylic);
+        appHooks.emit('useAcrylic', useAcrylic);
     }
 
 

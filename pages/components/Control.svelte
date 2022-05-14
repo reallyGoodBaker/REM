@@ -89,8 +89,8 @@
 
     let seekValue = 0;
     //==========================================
-    __emitter.on('setControlsContent', setContent);
-    __emitter.on('loadedContent', () => {
+    appHooks.on('setControlsContent', setContent);
+    appHooks.on('loadedContent', () => {
         duration = globalPlayer.duration();
         durationEle.innerText = s(duration);
         if (checker) {
@@ -107,7 +107,7 @@
         }, 500);
     });
 
-    __emitter.on('playerReady', async p => {
+    appHooks.on('playerReady', async p => {
         p.on('play', () => {
             playing = true;
         });
@@ -166,7 +166,7 @@
 
     let volume;
     if (volume = store.get('volume') || 50) {
-        __emitter.once('playerReady', () => {
+        appHooks.once('playerReady', () => {
             globalPlayer.volume(volume/100)
         })
     }
