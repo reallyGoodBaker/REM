@@ -33,16 +33,18 @@
 
         _display(page, props);
 
-        await anim(innerWindow, [
-            {opacity: 0, transform: 'scale(0.9)'},
-            {opacity: 1, transform: 'scale(1)'}
-        ], {
-            duration: 70,
-            ease: 'ease-out',
-            fill: 'forwards'
-        });
+        requestIdleCallback(async () => {
+            await anim(innerWindow, [
+                {opacity: 0, transform: 'scale(0.9)'},
+                {opacity: 1, transform: 'scale(1)'}
+            ], {
+                duration: 70,
+                ease: 'ease-out',
+                fill: 'forwards'
+            });
 
-        appHooks.emit('pageSwipeAnimFinish');
+            appHooks.emit('pageSwipeAnimFinish');
+        })
     }
     
 </script>

@@ -196,7 +196,9 @@
         transition: height 0.3s, opacity 0.3s;
     }
 
-    .bar.active > .thumb, .bar > .thumb:hover {
+    .bar > .thumb:hover,
+    .bar.active > .thumb,
+    .bar:hover > .thumb {
         border-radius: 0px;
     }
 
