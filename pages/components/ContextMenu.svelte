@@ -1,10 +1,14 @@
 <script>
+import { getContext } from "svelte";
+
 import ListTile from "./ListTile.svelte"
 
 export let display = false
 export let x = 0
 export let y = 0
 export let data = [{}]
+
+const disableLayer = getContext('disableLayer')
 
 </script>
 
@@ -65,6 +69,10 @@ export let data = [{}]
     size={'small'}
     isUrl={false}
     data={k}
+    on:click={context[k]? () => {
+        context[k].call(null)
+        disableLayer()
+    }: disableLayer}
 />
 {/each}
 

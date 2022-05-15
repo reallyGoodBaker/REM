@@ -1,4 +1,6 @@
 <script>
+import { setContext } from "svelte";
+
 let fade = false
 
 export function activeLayer() {
@@ -52,6 +54,8 @@ window.addEventListener('mousedown', ev => {
         showContextMenu(pageX, pageY, path)
     }
 })
+
+setContext('disableLayer', disableLayer)
 </script>
 
 <style>

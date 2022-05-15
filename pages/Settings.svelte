@@ -1,30 +1,36 @@
 <script>
-    import ScrollView from './components/ScrollView.svelte'
-    import Input from './components/Input.svelte'
-    import RowList from './components/RowList.svelte';
-    import SelectListTile from './components/SelectListTile.svelte';
-    import ToggleListTile from './components/ToggleListTile.svelte';
-
-    
-    let settings = store.get('sys-settings');
-
-    let controlColors = settings.theme.controlColor.slice(1);
-    let controlColorSelected = settings.theme.controlColor[0];
-    let useAcrylic = settings.theme.useAcrylic;
+import ScrollView from './components/ScrollView.svelte'
+import Input from './components/Input.svelte'
+import RowList from './components/RowList.svelte';
+import SelectListTile from './components/SelectListTile.svelte';
+import ToggleListTile from './components/ToggleListTile.svelte';
+import ListTile from './components/ListTile.svelte';
+import Popup from './components/Popup.svelte';
 
 
-    function onSelectedControlColor(ev) {
-        const i = ev.detail;
-        controlColorSelected = settings.theme.controlColor[0] = i;
-        appHooks.emit('changeControlColor', controlColors[controlColorSelected]);
-        store.set('sys-settings', settings);
-    }
+let settings = store.get('sys-settings');
 
-    function onToggleUseAcrylic(ev) {
-        const useAcrylic = ev.detail;
-        settings.theme.useAcrylic = useAcrylic;
-        appHooks.emit('useAcrylic', useAcrylic);
-    }
+let controlColors = settings.theme.controlColor.slice(1);
+let controlColorSelected = settings.theme.controlColor[0];
+let useAcrylic = settings.theme.useAcrylic;
+
+
+function onSelectedControlColor(ev) {
+    const i = ev.detail;
+    controlColorSelected = settings.theme.controlColor[0] = i;
+    appHooks.emit('changeControlColor', controlColors[controlColorSelected]);
+    store.set('sys-settings', settings);
+}
+
+function onToggleUseAcrylic(ev) {
+    const useAcrylic = ev.detail;
+    settings.theme.useAcrylic = useAcrylic;
+    appHooks.emit('useAcrylic', useAcrylic);
+}
+
+function clearCache() {
+    store.clear()
+}
 
 
 
@@ -72,6 +78,14 @@
             isUrl={false}
             bind:checked={useAcrylic}
             on:toggle={onToggleUseAcrylic}
+        />
+    </RowList>
+
+    <RowList title="缓存">
+        <ListTile
+            useAvatar={false}
+            data='清除所有缓存(请手动重启应用)'
+            on:click={clearCache}
         />
     </RowList>
 

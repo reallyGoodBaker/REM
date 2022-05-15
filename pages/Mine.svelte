@@ -67,7 +67,7 @@
         listData = data;
     }
 
-    function getDetailX(id) {
+    export function getDetailX(id) {
         let data = store.get(id);
         if (data) return data;
 

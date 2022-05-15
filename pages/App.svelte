@@ -309,7 +309,5 @@ appHooks.emit('useAcrylic', settings.theme.useAcrylic)
         <Control/>
         <Pager bind:this={__pager}/>
     </div>
-    <SurfaceLayer>
-        
-    </SurfaceLayer>
+    <SurfaceLayer></SurfaceLayer>
 </div>

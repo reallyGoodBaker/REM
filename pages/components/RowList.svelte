@@ -11,7 +11,7 @@
 
 </style>
 
-<div style="margin-top: 12px; width: 100%">
+<div style="margin-top: 24px; width: 100%">
     {#if title}
     <div style="color: var(--controlColor); font-weight: bold; margin-bottom: 12px; margin-left: calc(14px + {marginHorizon})">{title}</div>
     {/if}

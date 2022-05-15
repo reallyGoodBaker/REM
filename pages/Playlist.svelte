@@ -166,7 +166,7 @@
     }
 
     import {MainPlaylist} from '../utils/player/playlist.js'
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
 
     async function dbClick(ev) {
         const {listData, i} = ev.detail;
@@ -179,6 +179,23 @@
     function recalcHeight() {
         scrollv.measure();
     }
+
+
+    let container
+    onMount(() => {
+        contextMap.set(container, {
+            '刷新': () => {
+                const {name, props} = Pager.getContext()
+                const component = Pager.getContext().class
+
+                Pager.openNew(name, component, props, true)
+            }
+        })
+    })
+
+    onDestroy(() => {
+        contextMap.delete(container)
+    })
 
 </script>
 
@@ -299,7 +316,7 @@
 
 
 <ScrollView bind:this={scrollv}>
-<div class="row c">
+<div class="row c" bind:this={container}>
 
     {#if header}
     <div class="header column">
