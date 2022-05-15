@@ -46,10 +46,19 @@ const store = {
 		}
 
 		return !!this.get(key);
-	}
+	},
+
+    clear() {
+        for (const k of Object.keys(__storeCache)) {
+            this.rm(k)
+        }
+    }
 }
 
+import {EventEmitter} from '../utils/index.js'
 window.store = store;
+window.appHooks = new EventEmitter({captureRejections: true})
+window.contextMap = new Map()
 
 var app = new App({
 	target: document.body

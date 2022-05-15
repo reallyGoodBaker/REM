@@ -3,6 +3,12 @@ const Binder = require('./utils/jsBinder');
 const {createFuncBinding} = require('./utils/api/funcBinder');
 
 
+const {fetchJson} = require('./utils/server/fetch')
+new Binder('server')
+.use({
+    fetchJson
+})
+
 new Binder('hooks')
 .use({...ipcRenderer,
     on: (...args) => ipcRenderer.on.apply(ipcRenderer, args),

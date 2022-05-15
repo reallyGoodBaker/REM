@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import Measurable from "./components/Measurable.svelte";
     import ScrollView from "./components/ScrollView.svelte";
     import Playlist from "./Playlist.svelte";
@@ -12,7 +12,7 @@
     let desktopUrl;
     let outerContainer;
     async function getOneDayDesktop() {
-        let data = store.get('onDayDesktop');
+        let data = store.get('dailyDesktop');
 
         imgBgc.onload = () => {
             __setColor(container, imgBgc, 1);
@@ -24,11 +24,11 @@
             return (desktopUrl = data.url);
         }
 
-        data = await ((await fetch('https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1')).json());
+        data = await server.fetchJson('https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1');
         const url = 'https://www.bing.com' + data.images[0].url;
         desktopUrl = url;
 
-        store.set('onDayDesktop', {
+        store.set('dailyDesktop', {
             timeStamp: new Date().getTime(), url
         });
     }
@@ -113,6 +113,11 @@
     })
 
     onMount(() => {
+        contextMap.set(container, {
+            '复制图片链接': '',
+            '图片另存为': ''
+        })
+
         const {save} = Pager.getContext()
         if (!save || typeof save.collectionFolded === 'undefined') {
             return
@@ -120,6 +125,10 @@
         if (!save.collectionFolded) {
             changeHeight()
         }
+    })
+
+    onDestroy(() => {
+        contextMap.delete(container)
     })
 
 </script>
@@ -185,9 +194,11 @@
     .collection-bgc {
         position: absolute;
         z-index: -1;
+        width: 100%;
+        height: 470px;
         top: 0;
         left: 0;
-        object-fit: contain;
+        object-fit: cover;
     }
 
     .toggle {
