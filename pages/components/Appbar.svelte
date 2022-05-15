@@ -89,7 +89,7 @@
 
 <div class="column container">
     <div class="title debug">REM</div>
-    <Search/>
+    <div style="align-self: flex-start; margin-top: 16px"><Search/></div>
     <div class="column btn-group">
         <div class="column clk" on:click={min}>–</div>
         <div class="column clk" on:click={toggleMax}>{fullScreen?'◱':'▢'}</div>

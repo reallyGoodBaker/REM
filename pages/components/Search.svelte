@@ -107,7 +107,6 @@
         background-color: rgba(255,255,255,0.4);
         border-radius: 8px;
         padding: 0px 8px;
-        margin: 8px;
     }
 
     .avatar-container {
