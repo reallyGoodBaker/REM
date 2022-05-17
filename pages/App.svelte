@@ -241,7 +241,7 @@ appHooks.on('playerReady', () => {
 })
 
 appHooks.on('changeControlColor', color => {
-    document.body.style.setProperty('--controlColor', color)
+    document.body.style.setProperty('--controlHue', color)
 })
 
 appHooks.on('useAcrylic', async boolean => {
@@ -259,7 +259,7 @@ appHooks.on('useAcrylic', async boolean => {
 if (!settings) {
     settings = {
         theme: {
-            controlColor: [0, 'dodgerblue', 'teal', 'darkred', 'gold'],
+            controlColor: [2, 39, 148, 210, 270, 292, 322],
             useAcrylic: true,
         },
 

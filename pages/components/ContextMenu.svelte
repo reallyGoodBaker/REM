@@ -10,6 +10,15 @@ export let data = [{}]
 
 const disableLayer = getContext('disableLayer')
 
+function handlerWrapper(func) {
+    return context[k]
+        ? () => {
+            func.call(null)
+            disableLayer()
+          }
+        : disableLayer
+}
+
 </script>
 
 <style>
@@ -69,10 +78,7 @@ const disableLayer = getContext('disableLayer')
     size={'small'}
     isUrl={false}
     data={k}
-    on:click={context[k]? () => {
-        context[k].call(null)
-        disableLayer()
-    }: disableLayer}
+    on:click={handlerWrapper(context[k])}
 />
 {/each}
 

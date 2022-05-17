@@ -5,11 +5,17 @@
     border-radius: 12px;
     font-family: Roboto, sans-serif;
     user-select: none;
-    --controlColor: dodgerblue;
 }
 
 body {
     --color: #000;
+    --controlHue: 210;
+    --controlColor: hsl(var(--controlHue, 210), 80%, 50%);
+    --controlBright: hsl(var(--controlHue, 210), 80%, 70%);
+    --controlBrighter: hsl(var(--controlHue, 210), 80%, 90%);
+    --controlDark: hsl(var(--controlHue, 210), 80%, 30%);
+    --controlDarker: hsl(var(--controlHue, 210), 80%, 10%);
+
     background-color: var(--color);
 }
 

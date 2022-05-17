@@ -64,7 +64,7 @@ function clearCache() {
 
     <RowList title="主题">
         <SelectListTile
-            data="主题色"
+            data="主题色 (色相)"
             bind:dataList={controlColors}
             bind:selected={controlColorSelected}
             useAvatar={false}
@@ -84,7 +84,8 @@ function clearCache() {
     <RowList title="缓存">
         <ListTile
             useAvatar={false}
-            data='清除所有缓存(请手动重启应用)'
+            data='清除所有缓存'
+            extra='需手动重启应用'
             on:click={clearCache}
         />
     </RowList>

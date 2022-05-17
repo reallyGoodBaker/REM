@@ -207,7 +207,6 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-
         border-radius: 16px 16px 0px 0px;
     }
 
@@ -215,8 +214,8 @@
         --color: transparent;
         background-color: var(--color);
         width: 100%;
-        height: 160px;
-        min-height: 160px;
+        height: 244px;
+        min-height: 244px;
         justify-content: flex-start;
         box-sizing: border-box;
         padding: 0px 24px;
@@ -224,9 +223,9 @@
     }
 
     .nav {
+        padding-bottom: 12px;
         width: 100%;
-        height: 48px;
-        min-height:48px;
+        height: 60px;
         border-bottom: solid 1px rgba(0,0,0,0.12);
         justify-content: space-between;
         flex-direction: row-reverse;
@@ -244,23 +243,20 @@
     }
 
     .title {
-        font-size: larger;
+        display: block;
         font-weight: bold;
-        padding-bottom: 4px;
+        margin-bottom: 12px;
     }
 
     .subtitle {
-        color: #888;
+        color: var(--controlDarker);
     }
 
     .rowl {
+        height: 200px;
+        justify-content: space-between;
         margin-left: 24px;
         align-items: flex-start;
-    }
-
-    .ctrls {
-        padding: 12px 0px;
-
     }
 
     .list {
@@ -304,12 +300,25 @@
     }
 
     .btn {
-        border-color: #fff;
-        background-color: rgba(255,255,255,0.2);
+        color: var(--controlBrighter);
+        padding: 8px 12px;
+        border: none;
+        border-radius: 8px;
+    }
+
+    .accent {
+        background-color: var(--controlColor);
     }
 
     .btn:hover {
-        background-color: rgba(255,255,255,0.4);
+        filter: brightness(90%);
+    }
+
+    .bread-crumb {
+        margin-left: 12px;
+        font-weight: normal;
+        font-size: medium;
+        opacity: 0.6;
     }
 
 </style>
@@ -321,20 +330,20 @@
     {#if header}
     <div class="header column">
         <Avatar
-            width={140}
-            height={140}
+            width={200}
+            height={200}
             radius={'8%'}
             avatar={header.imgUrl}
-        ></Avatar>
+        />
         <div class="row rowl">
-            <div class="title">{header.title}</div>
-            <div class="subtitle">{header.subtitle}</div>
-
-            <div class="column ctrls">
-                <div class="btn big outlined"> {'\ue615'} 播放全部 </div>
+            <div>
+                <h1 class="title">{header.title}<span class="bread-crumb">{header.trackCount}首</span></h1>
+                <div class="subtitle">{header.subtitle}</div>
             </div>
 
-            <div class="subtitle">歌曲 {header.trackCount} &nbsp; 播放 {header.playCount}</div>
+            <div class="column">
+                <div class="btn big accent"> {'\ue615'} 播放 </div>
+            </div>
         </div>
     </div>
     {/if}

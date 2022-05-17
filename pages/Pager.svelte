@@ -24,10 +24,10 @@
     export async function display(page, props) {
         await anim(innerWindow, [
             {opacity: 1, transform: 'scale(1)'},
-            {opacity: 0, transform: 'scale(1.1)'}
+            {opacity: 0, transform: 'scale(1.06)'}
         ], {
-            duration: 90,
-            ease: 'ease-in',
+            duration: 60,
+            ease: 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
             fill: 'forwards'
         });
 
@@ -35,11 +35,11 @@
 
         requestIdleCallback(async () => {
             await anim(innerWindow, [
-                {opacity: 0, transform: 'scale(0.9)'},
+                {opacity: 0, transform: 'scale(0.96)'},
                 {opacity: 1, transform: 'scale(1)'}
             ], {
-                duration: 70,
-                ease: 'ease-out',
+                duration: 80,
+                ease: 'cubic-bezier(0.19, 1, 0.22, 1)',
                 fill: 'forwards'
             });
 
@@ -56,7 +56,6 @@
         height: calc(100% - 72px);
         overflow: hidden;
         position: relative;
-        /* transform: translateZ(0); */
     }
 
     .innerWindow {

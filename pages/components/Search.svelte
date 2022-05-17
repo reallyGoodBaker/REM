@@ -155,7 +155,7 @@
         on:layerClick={hide}
         on:animIn={animIn}
         showPopupWindow={showPopup}
-        cssText={"position: absolute; top: 54px;"}>
+        cssText={"position: absolute; top: 64px;"}>
         <Profile
             bind:user={user}
         ></Profile>
@@ -165,7 +165,7 @@
         noLayer={true}
         on:layerClick={()=>showHot=false}
         showPopupWindow={showHot}
-        cssText={"position: fixed; top: 54px; width: 360px; overflow: hidden; max-height: calc(100vh - 148px); min-height: 0"}>
+        cssText={"position: fixed; top: 56px; width: 360px; overflow: hidden; max-height: calc(100vh - 148px); min-height: 0"}>
         {#if suggests}
 
         {#if suggests.songs}

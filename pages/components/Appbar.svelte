@@ -43,6 +43,7 @@
     .clk {
         -webkit-app-region: no-drag;
         font-family: iconfont;
+        font-size: 14px;
         width: 32px;
         height: 32px;
         margin-right: 4px;
@@ -91,8 +92,8 @@
     <div class="title debug">REM</div>
     <div style="align-self: flex-start; margin-top: 16px"><Search/></div>
     <div class="column btn-group">
-        <div class="column clk" on:click={min}>–</div>
-        <div class="column clk" on:click={toggleMax}>{fullScreen?'◱':'▢'}</div>
+        <div class="column clk" on:click={min}>&#xe698;</div>
+        <div class="column clk" on:click={toggleMax}>{fullScreen?'\ue891':'\ue88f'}</div>
         <div class="column clk red" on:click={close}>⨉</div>
     </div>
 </div>

@@ -12,6 +12,7 @@
   "license": "GPLv2",
   "dependencies": {
     "download": "^8.0.0",
+    "electron-store": "^8.0.1",
     "NeteaseCloudMusicApi": "^4.5.14",
     "node-fetch": "^2.6.7"
   },
