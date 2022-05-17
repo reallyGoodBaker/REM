@@ -1,7 +1,7 @@
 {
   "name": "rem",
-  "version": "0.0.3",
-  "description": "Damson",
+  "version": "0.0.4",
+  "description": "Elderberry",
   "main": "main.js",
   "scripts": {
     "build": "rollup -c",
@@ -31,6 +31,6 @@
     "svelte": "^3.48.0"
   },
   "build": {
-    "appId": "com.rgb39.rem"
+    "appId": "top.rgb39.rem"
   }
 }

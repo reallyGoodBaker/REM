@@ -304,6 +304,13 @@
         font-size: x-small;
     }
 
+    .disable {
+        user-select: none;
+        pointer-events: none;
+        opacity: 0.8;
+        filter: brightness(64%);
+    }
+
 </style>
 
 
@@ -335,7 +342,7 @@
                 }}
             >{'\ue619'}</div>
             
-            <div class="btn big btn-nb"
+            <div class="btn big btn-nb{MainPlaylist.mode? ' disable': ''}"
                 on:click={playPrev}
             >{'\ue616'}</div>
 

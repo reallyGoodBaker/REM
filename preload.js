@@ -1,12 +1,20 @@
 const { ipcRenderer } = require('electron');
 const Binder = require('./utils/jsBinder');
 const {createFuncBinding} = require('./utils/api/funcBinder');
+const fs = require('fs')
 
 
 const {fetchJson} = require('./utils/server/fetch')
+const [
+    AppData, AppCache
+] = fs.readFileSync('./Path').toString().split('\n')
+
+const {saveToCache, getMedia} = require('./utils/server/media-cache')(AppCache)
 new Binder('server')
 .use({
-    fetchJson
+    fetchJson,
+    saveToCache,
+    getMedia
 })
 
 new Binder('hooks')

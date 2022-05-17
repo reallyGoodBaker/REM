@@ -27,8 +27,18 @@ export class AudioData {
 
 
         const res = this.urls[quality] = await NeteaseApi.getSongUrl(this.data.id, store.get('cookie'), br)
+        let url = res.body.data[0].url
 
-        return res.body.data[0].url
+        const media = await server.getMedia(`ne${this.data.id}`)
+
+        if (!media) {
+            server.saveToCache(url, `ne${this.data.id}`)
+            return url
+        }
+        
+        return URL.createObjectURL(
+            new Blob([media])
+        )
     }
 
     async url(quality='high') {
@@ -46,6 +56,10 @@ export class AudioData {
 
     artist() {
         return this.data.ar
+    }
+
+    uri() {
+        return this.data.id
     }
 
 }

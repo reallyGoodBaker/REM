@@ -70,3 +70,8 @@ body {
 .btn:active {
     background-color: #ddd;
 }
+
+.divider {
+    width: 100%;
+    border-bottom: solid 1px #ddd;
+}

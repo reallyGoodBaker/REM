@@ -11,7 +11,7 @@ export let data = [{}]
 const disableLayer = getContext('disableLayer')
 
 function handlerWrapper(func) {
-    return context[k]
+    return typeof func === 'function'
         ? () => {
             func.call(null)
             disableLayer()
@@ -57,11 +57,6 @@ function handlerWrapper(func) {
 
 .container > .divider:first-child {
     display: none;
-}
-
-.divider {
-    width: 100%;
-    border-bottom: solid 1px #ddd;
 }
 
 </style>
