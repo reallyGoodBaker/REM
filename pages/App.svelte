@@ -159,13 +159,15 @@ window.Pager = (() => {
 
 async function getWallpaperDataSrc() {
     let rawData = await wallpaper.getWallpaper(),
-        blob = '',
-        len = rawData.length
-    
-    for(let i = 0; i < len; i++)
-        blob += String.fromCharCode(rawData[i])
+        targetUrl = ''
 
-    return `data:image/jpeg;base64,${btoa(blob)}`
+    if (typeof rawData === 'string') {
+        targetUrl = rawData
+    } else {
+        targetUrl = URL.createObjectURL(new Blob([rawData]))
+    }
+
+    return targetUrl
 }
 
 
@@ -198,7 +200,7 @@ function getScreenSize() {
     })
 }
 
-appHooks.on('__openMinePage', () => {
+rem.on('__openMinePage', () => {
     window.Pager.openNew('我的', Mine, {}, true)
 })
 
@@ -236,15 +238,15 @@ function changePos(x,y) {
 
 //==================================================================
 
-appHooks.on('playerReady', () => {
+rem.on('playerReady', () => {
     __setColor(document.body, wpEle, 1)
 })
 
-appHooks.on('changeControlColor', color => {
+rem.on('changeControlColor', color => {
     document.body.style.setProperty('--controlHue', color)
 })
 
-appHooks.on('useAcrylic', async boolean => {
+rem.on('useAcrylic', async boolean => {
     settings.theme.useAcrylic = useAcrylic = boolean
     if (boolean) {
         let data = await getBounds()
@@ -262,6 +264,9 @@ if (!settings) {
             controlColor: [2, 39, 148, 210, 270, 292, 322],
             useAcrylic: true,
         },
+        beta: {
+            showDevTools: false
+        },
 
     }
 
@@ -273,8 +278,8 @@ let controlColorSelected = settings.theme.controlColor[0]
 
 
 
-appHooks.emit('changeControlColor', controlColors[controlColorSelected])
-appHooks.emit('useAcrylic', settings.theme.useAcrylic)
+rem.emit('changeControlColor', controlColors[controlColorSelected])
+rem.emit('useAcrylic', settings.theme.useAcrylic)
 </script>
 
 <style>

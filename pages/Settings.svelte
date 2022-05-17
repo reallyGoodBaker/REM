@@ -8,24 +8,33 @@ import ListTile from './components/ListTile.svelte';
 import Popup from './components/Popup.svelte';
 
 
-let settings = store.get('sys-settings');
+let settings = store.get('sys-settings')
 
-let controlColors = settings.theme.controlColor.slice(1);
-let controlColorSelected = settings.theme.controlColor[0];
-let useAcrylic = settings.theme.useAcrylic;
+let controlColors = settings.theme.controlColor.slice(1)
+let controlColorSelected = settings.theme.controlColor[0]
+let useAcrylic = settings.theme.useAcrylic
+let showDevTools = settings.beta.showDevTools
+
+function onToggleDevTools(ev) {
+    const show = ev.detail
+        ? 'open'
+        : 'close'
+
+    hooks.send(`devtools:${show}`)
+}
 
 
 function onSelectedControlColor(ev) {
     const i = ev.detail;
     controlColorSelected = settings.theme.controlColor[0] = i;
-    appHooks.emit('changeControlColor', controlColors[controlColorSelected]);
+    rem.emit('changeControlColor', controlColors[controlColorSelected]);
     store.set('sys-settings', settings);
 }
 
 function onToggleUseAcrylic(ev) {
     const useAcrylic = ev.detail;
     settings.theme.useAcrylic = useAcrylic;
-    appHooks.emit('useAcrylic', useAcrylic);
+    rem.emit('useAcrylic', useAcrylic);
 }
 
 function clearCache() {
@@ -61,6 +70,19 @@ function clearCache() {
             fullBorder={true}
         />
     </div>
+
+    {#if window.rem.isBeta}
+    <RowList title="测试功能">
+        <ToggleListTile
+            data='开发者工具'
+            extra="开启或关闭 DevTools"
+            useAvatar={false}
+            isUrl={false}
+            bind:checked={showDevTools}
+            on:toggle={onToggleDevTools}
+        />
+    </RowList>
+    {/if}
 
     <RowList title="主题">
         <SelectListTile

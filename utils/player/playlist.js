@@ -82,10 +82,10 @@ export class MainPlaylist {
         globalPlayer.loadData(ad)
         .then(async () => {
             await globalPlayer.play()
-            appHooks.emit('loadedContent')
+            rem.emit('loadedContent')
         })
 
-        appHooks.emit('setControlsContent', ad)
+        rem.emit('setControlsContent', ad)
     }
 }
 

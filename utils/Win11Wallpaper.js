@@ -21,10 +21,10 @@ async function getDailyBackgroundUrl() {
  * @returns {Buffer}
  */
 async function getWallpaper() {
-    if (platform !== 'win32' && release !== 10) {
-        return await getDailyBackgroundUrl()
+    if (platform === 'win32' && release === '10') {
+        return fs.readFileSync(`${userProfile}/Application Data/Microsoft/Windows/Themes/TranscodedWallpaper`)
     }
-    return fs.readFileSync(`${userProfile}\\Application Data\\Microsoft\\Windows\\Themes\\TranscodedWallpaper`)
+    return await getDailyBackgroundUrl()
 }
 
 /**

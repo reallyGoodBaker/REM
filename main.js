@@ -3,7 +3,6 @@ const path = require('path');
 
 Menu.setApplicationMenu(null);
 
-
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
 })
@@ -34,8 +33,16 @@ function buildWindow(filePath='./index.html') {
         }
     });
 
-    browserWindow.loadFile(filePath);
-    // browserWindow.webContents.openDevTools();
+    browserWindow.loadFile(filePath)
+    // browserWindow.webContents.openDevTools()
+
+    ipcMain.on('devtools:close', () => {
+        browserWindow.webContents.closeDevTools()
+    })
+
+    ipcMain.on('devtools:open', () => {
+        browserWindow.webContents.openDevTools()
+    })
 
     browserWindow.on('closed', () => {
         browserWindow = null;

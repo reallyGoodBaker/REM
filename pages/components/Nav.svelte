@@ -17,10 +17,10 @@
 
     let container;
 
-    appHooks.on('__pageFold', () => {
+    rem.on('__pageFold', () => {
         container.style.cssText = 'border-bottom: solid 1px rgba(0,0,0,0.2);';
     });
-    appHooks.on('__pageUnfold', () => {
+    rem.on('__pageUnfold', () => {
         container.style.cssText = '';
     });
 </script>

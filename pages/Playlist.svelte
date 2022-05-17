@@ -38,7 +38,7 @@
 
     onMount(() => {
         if (listData instanceof Promise) {
-            appHooks.once('pageSwipeAnimFinish', () => listData.then(data => renderList(data)))
+            rem.once('pageSwipeAnimFinish', () => listData.then(data => renderList(data)))
             return
         }
 

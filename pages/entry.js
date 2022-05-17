@@ -55,13 +55,17 @@ const store = {
     }
 }
 
+
 import {EventEmitter} from '../utils/index.js'
 window.store = store;
-window.appHooks = new EventEmitter({captureRejections: true})
+window.rem = new EventEmitter({captureRejections: true})
 window.contextMap = new Map()
 
-var app = new App({
-	target: document.body
-});
 
-export default app;
+rem.isBeta = true
+
+
+
+export default new App({
+	target: document.body
+})

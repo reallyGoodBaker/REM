@@ -43,7 +43,7 @@
                 fill: 'forwards'
             });
 
-            appHooks.emit('pageSwipeAnimFinish');
+            rem.emit('pageSwipeAnimFinish');
         })
     }
     

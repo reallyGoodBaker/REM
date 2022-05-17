@@ -89,7 +89,7 @@
 
 
 <div class="column container">
-    <div class="title debug">REM</div>
+    <div class="title{window.rem.isBeta?' debug' :''}">REM</div>
     <div style="align-self: flex-start; margin-top: 16px"><Search/></div>
     <div class="column btn-group">
         <div class="column clk" on:click={min}>&#xe698;</div>

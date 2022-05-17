@@ -36,7 +36,7 @@
         avatarUrl = profile? profile.avatarUrl: '';
     }
     showAvatar();
-    appHooks.on('__updateLoginAvatar', () => {
+    rem.on('__updateLoginAvatar', () => {
         profile = store.get('profile');
         showAvatar();
     });
