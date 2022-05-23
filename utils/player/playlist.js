@@ -1,6 +1,15 @@
 import {AudioData} from './audiodata.js'
 import {globalPlayer} from './player.js'
 
+/**
+ * @param {string[]} raw 
+ * @param {string} search 
+ * @returns 
+ */
+function searchStrArr(raw, search) {
+    return raw.filter(str => str.includes(search))
+}
+
 export class MainPlaylist {
     static listData = []
     static getAudioData(index) {
@@ -17,9 +26,28 @@ export class MainPlaylist {
     /**
      * @param {Array} list 
      */
-    static loadList(list) {
+    static loadList(list=[]) {
         this.listData = list.concat([])
         this.current = 0
+    }
+
+    /**
+     * @param {{name?: string; ar?: string[]; al?: string}} config 
+     * @returns {number[]}
+     */
+    static query(config) {
+        let matched = []
+
+        this.listData.forEach((el, i) => {
+            if (config.name) {
+                if (el.name.includes(config.name)) {
+                    matched.push(i)
+                }
+            }
+        })
+
+        return matched
+
     }
     
     static next() {

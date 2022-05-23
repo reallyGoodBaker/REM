@@ -171,8 +171,17 @@
     async function dbClick(ev) {
         const {listData, i} = ev.detail;
 
-        MainPlaylist.loadList(listData)
-        MainPlaylist.play(i);
+        const matches = MainPlaylist.query({
+            name: listData[i].name
+        })
+
+        if (!matches.length) {
+            MainPlaylist.loadList(listData)
+            MainPlaylist.play(i)
+            return
+        }
+
+        MainPlaylist.play(matches[0]);
     }
 
     let scrollv;
@@ -196,6 +205,22 @@
     onDestroy(() => {
         contextMap.delete(container)
     })
+
+    async function playAll() {
+        let list = (await listData).slice(0)
+
+        MainPlaylist.loadList(list)
+        MainPlaylist.play(0);
+    }
+
+    async function playRandom() {
+        let list = (await listData).slice(0)
+
+        MainPlaylist.loadList(list.sort(() => {
+            return Math.random() - 0.5
+        }))
+        MainPlaylist.play(0);
+    }
 
 </script>
 
@@ -304,14 +329,24 @@
         padding: 8px 12px;
         border: none;
         border-radius: 8px;
+        margin-right: 8px;
     }
 
     .accent {
         background-color: var(--controlColor);
     }
 
+    .bright {
+        background-color: var(--controlBright);
+        color: var(--controlDark)
+    }
+
     .btn:hover {
         filter: brightness(90%);
+    }
+
+    .btn:active {
+        transform: scale(0.92);
     }
 
     .bread-crumb {
@@ -342,7 +377,8 @@
             </div>
 
             <div class="column">
-                <div class="btn big accent"> {'\ue615'} 播放 </div>
+                <div class="btn big accent" on:click={playAll}> {'\ue615'} 播放 </div>
+                <div class="btn big bright" on:click={playRandom}> {'\ue619'} 随机 </div>
             </div>
         </div>
     </div>

@@ -20,8 +20,6 @@ let display,
     cmData
 
 function showContextMenu(x, y, path) {
-    activeLayer()
-
     cmX = visualViewport.width - x > 200
         ? x
         : x - 200
@@ -36,6 +34,7 @@ function showContextMenu(x, y, path) {
     }
 
     if (_cmData.length) {
+        activeLayer()
         cmData = _cmData
         display = true
     }

@@ -2,12 +2,6 @@
 import Nav from './components/Nav.svelte'
 import Control from './components/Control.svelte'
 import Pager from './Pager.svelte'
-
-contextMap.set(document.body, {
-    '关于': '',
-    '检测更新': ''
-})
-
 import Mine from './Mine.svelte'
 import Explorer from './Explorer.svelte'
 import Appbar from './components/Appbar.svelte'

@@ -2,7 +2,13 @@ const {app, ipcMain, Menu, BrowserWindow, screen, dialog} = require('electron');
 const path = require('path');
 const fs = require('fs')
 
-Menu.setApplicationMenu(null);
+Menu.setApplicationMenu(null)
+
+
+const appLock = app.requestSingleInstanceLock()
+if (!appLock) {
+    app.exit()
+}
 
 
 
@@ -75,6 +81,10 @@ function buildWindow(filePath='./index.html') {
         browserWindow = null;
     });
 
+    app.on('second-instance', () => {
+        browserWindow.show()
+    })
+
     activeAppBarBtns(browserWindow);
 
     return browserWindow;
@@ -123,7 +133,6 @@ const {Search, suggest} = require('./utils/api/search');
 const {checkIn} = require('./utils/api/dailySignin');
 const {getUserPlaylist, getPlaylistDetail} = require('./utils/api/playlist');
 const {getSongDetail, getSongUrl} = require('./utils/api/song');
-const { fstat } = require('fs');
 
 
 createFuncBinding(login);

@@ -122,8 +122,7 @@
 
     .title {
         font-size: small;
-        padding: 12px 0px 4px 12px;
-
+        padding: 12px 0px 4px 16px;
     }
 
 </style>
@@ -181,7 +180,7 @@
         {/if}
 
         {#if suggests.artists}
-            <div style="height: 1px; background-color: #ddd"> </div>
+            <div class="divider"></div>
             <div class="title">艺术家</div>
             {#each suggests.artists as el}
                 <ListTile
@@ -196,7 +195,7 @@
         {/if}
 
         {#if suggests.albums}
-            <div style="height: 1px; background-color: #ddd"> </div>
+            <div class="divider"></div>
             <div class="title">专辑</div>
             {#each suggests.albums as el}
                 <ListTile
@@ -209,7 +208,7 @@
         {/if}
 
         {#if suggests.playlists}
-            <div style="height: 1px; background-color: #ddd"> </div>
+            <div class="divider"></div>
             <div class="title">歌单</div>
             {#each suggests.playlists as el}
                 <ListTile

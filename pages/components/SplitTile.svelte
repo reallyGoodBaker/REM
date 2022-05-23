@@ -39,7 +39,7 @@
         justify-content: flex-start;
         cursor: default;
         font-size: small;
-        /* background-color: rgba(220,220,220,0.4);; */
+        user-select: all;
     }
 
     .t {
