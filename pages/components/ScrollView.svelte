@@ -15,7 +15,7 @@
         autoDisableRestore = null
 
     function init(innerHeight) {
-        ph = calcHeight(scrollView);
+        ph = visualViewport.height - 72 - 89
         h = innerHeight;
 
         if(ph >= h) {
@@ -38,16 +38,6 @@
             }
 
         } catch (error) {}
-    }
-
-    function calcHeight(element) {
-        let res;
-        try {
-            res = element.offsetHeight;
-        } catch (error) {
-            res = 0;
-        }
-        return res;
     }
 
     function mouseDown(ev) {
@@ -80,7 +70,7 @@
             thumbOY += ~~ev.deltaY*scale;
             if (thumbOY  < 0) thumbOY = 0;
             if (thumbOY  > res) thumbOY = res;
-            scrollTo(thumbOY);
+            scrollTo(thumbOY)
         });
         autoDisableRestore = setTimeout(() => {
             disableAutoRestore()
@@ -122,7 +112,7 @@
                 left: 0, 
                 top: thumbOY*h/ph,
                 behavior: 'auto'
-            });
+            })
         } catch (error) {}
     }
 
@@ -150,20 +140,28 @@
         meter.forceUpdate();
     }
 
+    onMount(() => {
+        window.addEventListener('resize', measure)
+    })
+    onDestroy(() => {
+        window.removeEventListener('resize', measure)
+    })
+
 </script>
 
 
 <style>
     .c {
-        overflow: hidden;
+        overflow: visible;
         position: relative;
         height: 100%;
         width: 100%;
     }
 
-    .contaienr {
+    .container {
+        transform: translateY(-89px);
         overflow: hidden;
-        height: 100%;
+        height: 100vh;
         width: 100%;
     }
 
@@ -215,13 +213,15 @@
 
 
 <div class="c" bind:this={outerWindow}>
-    <div class="contaienr" bind:this={scrollView}>
+    <div class="container" bind:this={scrollView}>
+        <div style="height: 89px;"></div>
         <Measurable
             bind:this={meter}
             cssStyle={'width: 100%'}
         >
             <slot/>
         </Measurable>
+        <div style="height: 72px;"></div>
     </div>
 
     <div class="bar{keepStretch?' active': ''}{!showScrollBar?' hide':''}">

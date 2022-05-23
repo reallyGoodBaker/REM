@@ -203,6 +203,10 @@ hooks.on('win:screenMove', (ev, data) => {
     changePos(data.x, data.y)
 })
 
+hooks.on('win:max', () => changePos(0, 0))
+hooks.on('win:unmax', (_, data) => {
+    changePos(data[0], data[1])
+})
 
 hooks.send('winbind:move')
 
@@ -214,10 +218,11 @@ function changePos(x,y) {
     }
 
     if (wpEle) {
-        wpEle.style.setProperty('--top', -y + 'px')
-        wpEle.style.setProperty('--left', -x + 'px')
+        wpEle.style.setProperty('--top', y)
+        wpEle.style.setProperty('--left', x)
     }
 }
+
 
 (async () => {
     let data = await getBounds(),
@@ -274,13 +279,17 @@ let controlColorSelected = settings.theme.controlColor[0]
 
 rem.emit('changeControlColor', controlColors[controlColorSelected])
 rem.emit('useAcrylic', settings.theme.useAcrylic)
+
+
 </script>
 
 <style>
     .window {
-        height: calc(100vh - 89px);
-        flex-direction: column-reverse;
+        height: 100vh;
         justify-content: flex-start;
+        display: grid;
+        grid-template-rows: 89px 1fr 72px;
+        grid-template-columns: 1fr;
     }
 
     .wallpaper {
@@ -291,22 +300,29 @@ rem.emit('useAcrylic', settings.theme.useAcrylic)
         z-index: -999;
         background-color: #000;
         filter: blur(48px);
-        transform: translate(var(--left), var(--top));
+        transform: translate(calc(var(--left) * -1px), calc(var(--top) * -1px));
         will-change: transfrom;
+    }
+
+    .head {
+        z-index: 2;
+        backdrop-filter: blur(12px);
     }
 
 </style>
 
 <div style="transition: background-color 0.2s; background-color: var({useAcrylic?'--acrylicBackgroundColor':'--noneAcrylicBackgroundColor'});">
     <img class="wallpaper" src={wallpaperImg} alt="" width={wallpaperWidth} bind:this={wpEle}>
-    <Appbar/>
-    <Nav
-        bind:selected
-        bind:tabs
-    ></Nav>
     <div class="row window">
-        <Control/>
+        <div class="row head">
+            <Appbar/>
+            <Nav
+                bind:selected
+                bind:tabs
+            ></Nav>
+        </div>
         <Pager bind:this={__pager}/>
+        <Control/>
     </div>
     <SurfaceLayer></SurfaceLayer>
 </div>

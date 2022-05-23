@@ -29,6 +29,13 @@
         fullScreen = false;
     }
 
+    hooks.on('win:max', () => {
+        fullScreen = true
+    })
+    hooks.on('win:unmax', () => {
+        fullScreen = false
+    })
+
 </script>
 
 

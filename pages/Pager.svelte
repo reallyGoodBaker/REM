@@ -53,21 +53,22 @@
 <style>
     .container {
         width: 100vw;
-        height: calc(100% - 72px);
-        overflow: hidden;
+        height: calc(100vh - 72px - 89px);
+        overflow: visible;
         position: relative;
+        z-index: 0;
     }
 
     .innerWindow {
         width: 100%;
         height: 100%;
-        overflow: auto;
+        overflow: visible;
         position: relative;
     }
 
 </style>
 
-<div class="container  row">
+<div class="container row">
     <div class="innerWindow row" bind:this={innerWindow}>
         <svelte:component this={_page} {..._props}/>
     </div>

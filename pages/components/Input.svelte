@@ -38,8 +38,8 @@
     .input {
         position: relative;
         overflow: hidden;
-        border-radius: 8px 8px 0px 0px;
-        background-color: rgba(255,255,255,0.6);
+        border-radius: 6px;
+        background-color: rgba(255,255,255,0.5);
     }
 
     .input::after {
@@ -49,8 +49,7 @@
         left: 50%;
         transform: translateX(-50%);
         width: 0%;
-        height: 2px;
-        background-color: var(--controlColor);
+        border-bottom: solid 2px var(--controlColor);
         transition: all 0.16s;
     }
 
@@ -63,7 +62,6 @@
         font-family: Roboto, sans-serif;
         outline: none;
         border: none;
-        border-bottom: solid 2px #aaa;
         width: 200px;
         background-color: transparent;
         padding: 8px;

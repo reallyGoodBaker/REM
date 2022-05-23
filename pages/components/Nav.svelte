@@ -28,6 +28,7 @@
 
 <style>
     .c {
+        width: 100%;
         height: 34px;
         overflow: hidden;
         border-bottom: solid 1px transparent;

@@ -209,11 +209,13 @@
         width: 100vw;
         height: 72px;
         background-color: var(--color);
+        backdrop-filter: blur(12px);
         justify-content: space-between;
         box-sizing: border-box;
         padding: 0px 24px;
         color: #fff;
         transition: background-color 0.2s;
+        z-index: 1;
     }
 
     .txt {

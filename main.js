@@ -69,6 +69,14 @@ function buildWindow(filePath='./index.html') {
     browserWindow.loadFile(filePath)
     // browserWindow.webContents.openDevTools()
 
+    browserWindow.on('maximize', () => {
+        browserWindow.webContents.send('win:max')
+    })
+
+    browserWindow.on("unmaximize", () => {
+        browserWindow.webContents.send('win:unmax', browserWindow.getPosition())
+    })
+
     ipcMain.on('devtools:close', () => {
         browserWindow.webContents.closeDevTools()
     })
