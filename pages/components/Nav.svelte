@@ -47,7 +47,12 @@
 
     .selected {
         padding: 0px 8px;
+        color: var(--controlNight);
         animation: sel forwards 0.12s;
+    }
+
+    .selected > .tab-text {
+        color: var(--controlNight);
     }
 
     @keyframes sel {
@@ -58,7 +63,6 @@
         to {
             font-weight: bold;
             border-radius: 17px;
-            color: var(--controlDarker);
             background-color: var(--controlBrighter);
         }
     }
@@ -81,9 +85,6 @@
         background-color: rgba(0,0,0,0.4);
     }
 
-    /* .fold {
-        border-bottom: solid 1px rgba(0,0,0,0.2);
-    } */
 </style>
 
 <div class="column c">

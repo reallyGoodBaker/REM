@@ -151,6 +151,7 @@
 
     function scrollbarFastSeek(ev) {
         scrollTo(ev.offsetY - ph*scale/2)
+        mouseDown({screenY: ev.screenY})
     }
 
 </script>

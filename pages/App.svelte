@@ -199,8 +199,11 @@ rem.on('__openMinePage', () => {
 })
 
 
-hooks.on('win:screenMove', (ev, data) => {
-    changePos(data.x, data.y)
+hooks.on('win:screen-move', (ev, x, y) => {
+    if (wpEle) {
+        wpEle.style.setProperty('--top', y)
+        wpEle.style.setProperty('--left', x)
+    }
 })
 
 hooks.on('win:max', () => changePos(0, 0))
@@ -239,6 +242,9 @@ function changePos(x,y) {
 
 rem.on('playerReady', () => {
     __setColor(document.body, wpEle, 1)
+    requestIdleCallback(() => {
+        hooks.send('win:show-main')
+    })
 })
 
 rem.on('changeControlColor', color => {
@@ -302,11 +308,12 @@ rem.on('__pageUnfold', () => {
     .wallpaper {
         --top: 0px;
         --left: 0px;
-        --scale: 1;
         position: fixed;
         z-index: -999;
         background-color: #000;
         filter: blur(48px);
+        /* top: calc(var(--top) * -1px);
+        left: calc(var(--left) * -1px); */
         transform: translate(calc(var(--left) * -1px), calc(var(--top) * -1px));
         will-change: transfrom;
     }

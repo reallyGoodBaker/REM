@@ -1,11 +1,11 @@
 {
   "name": "rem",
-  "version": "0.1.1",
-  "description": "Filbert",
+  "version": "0.1.2",
+  "description": "Guava",
   "main": "main.js",
   "scripts": {
     "build": "rollup -c",
-    "start": "rollup -c && electron .",
+    "start": "rollup -c && electron --trace-deprecation .",
     "postinstall": "electron-builder install-app-deps"
   },
   "author": "RGB",

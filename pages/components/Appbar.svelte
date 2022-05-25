@@ -20,13 +20,11 @@
     }
 
     function max() {
-        hooks.send('win:max');
-        fullScreen = true;
+        hooks.send('win:max')
     }
 
     function unmax() {
-        hooks.send('win:unmax');
-        fullScreen = false;
+        hooks.send('win:unmax')
     }
 
     hooks.on('win:max', () => {

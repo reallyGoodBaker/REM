@@ -1,6 +1,7 @@
 :root {
-    --noneAcrylicBackgroundColor: #cce6cc;
+    --noneAcrylicBackgroundColor: #d3ece0;
     --acrylicBackgroundColor: rgba(255,255,255,0.5);
+    /* --acrylicBackgroundColor: transparent; */
     -webkit-app-region: no-drag;
     border-radius: 12px;
     font-family: Roboto, sans-serif;
@@ -18,7 +19,10 @@ body {
     --controlDarker: hsl(var(--controlHue, 210), 80%, 30%);
     --controlNight: hsl(var(--controlHue, 210), 80%, 14%);
     --controlWhite: hsl(var(--controlHue, 210), 80%, 98%);
+    --controlBackground: hsl(var(--controlHue, 210), 80%, 95%);
     --controlBlack: hsl(var(--controlHue, 210), 80%, 6%);
+
+    --noneAcrylicBackgroundColor: var(--controlBackground);
 
     background-color: var(--controlWhite);
     color: var(--controlBlack);

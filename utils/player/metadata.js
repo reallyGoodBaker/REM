@@ -72,6 +72,7 @@ export class MetaData extends Observable {
 
     apply() {
         navigator.mediaSession.metadata = new MediaMetadata(this._metadata)
+        hooks.send('win:title', `${this._metadata.title} - ${this._metadata.artist}`)
     }
 }
 

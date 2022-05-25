@@ -14,6 +14,9 @@ export class AudioPlayer {
 
     static play() {
         this.em.emit('play')
+
+        hooks.send('thumbar:pause')
+
         return this.audioElement.play()
     }
     play() {
@@ -22,6 +25,9 @@ export class AudioPlayer {
 
     static pause() {
         this.audioElement.pause()
+
+        hooks.send('thumbar:play')
+
         this.em.emit('pause')
     }
     pause() {
@@ -85,3 +91,5 @@ window.Player = globalPlayer
 
 navigator.mediaSession.setActionHandler('play', () => globalPlayer.play())
 navigator.mediaSession.setActionHandler('pause', () => globalPlayer.pause())
+hooks.on('player:play', () => globalPlayer.play())
+hooks.on('player:pause', () => globalPlayer.pause())
