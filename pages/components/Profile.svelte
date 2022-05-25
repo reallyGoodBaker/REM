@@ -65,6 +65,7 @@
     .c {
         width: 300px;
         padding: 12px 0px;
+        background-color: var(--controlWhite);
     }
 
     header, .article {

@@ -274,7 +274,7 @@
     }
 
     .subtitle {
-        color: var(--controlDarker);
+        color: var(--controlNight);
     }
 
     .rowl {
@@ -282,6 +282,7 @@
         justify-content: space-between;
         margin-left: 24px;
         align-items: flex-start;
+        color: var(--controlBlack);
     }
 
     .list {
@@ -325,7 +326,7 @@
     }
 
     .btn {
-        color: var(--controlBrighter);
+        color: var(--controlWhite);
         padding: 8px 12px;
         border: none;
         border-radius: 8px;
@@ -339,7 +340,7 @@
 
     .bright {
         background-color: var(--controlBright);
-        color: var(--controlDark)
+        color: var(--controlNight)
     }
 
     .btn:hover {

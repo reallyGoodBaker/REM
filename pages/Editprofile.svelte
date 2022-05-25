@@ -39,7 +39,7 @@
     }
 
     .nickname {
-        color: var(--controlDark);
+        color: var(--controlDarker);
         font-size: x-large;
         font-weight: bold;
         margin: 20px 0 0;

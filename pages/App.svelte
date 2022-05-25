@@ -281,6 +281,13 @@ rem.emit('changeControlColor', controlColors[controlColorSelected])
 rem.emit('useAcrylic', settings.theme.useAcrylic)
 
 
+let coloredAppbar = false;
+rem.on('__pageFold', () => {
+    coloredAppbar = true
+});
+rem.on('__pageUnfold', () => {
+    coloredAppbar = false
+});
 </script>
 
 <style>
@@ -306,7 +313,13 @@ rem.emit('useAcrylic', settings.theme.useAcrylic)
 
     .head {
         z-index: 2;
-        backdrop-filter: blur(12px);
+        background-color: transparent;
+        transition: background-color 0.08s;
+    }
+
+    .head.color {
+        backdrop-filter: blur(20px);
+        background-color: var(--controlAcrylic);
     }
 
 </style>
@@ -314,7 +327,7 @@ rem.emit('useAcrylic', settings.theme.useAcrylic)
 <div style="transition: background-color 0.2s; background-color: var({useAcrylic?'--acrylicBackgroundColor':'--noneAcrylicBackgroundColor'});">
     <img class="wallpaper" src={wallpaperImg} alt="" width={wallpaperWidth} bind:this={wpEle}>
     <div class="row window">
-        <div class="row head">
+        <div class="row head{coloredAppbar? ' color': ''}">
             <Appbar/>
             <Nav
                 bind:selected

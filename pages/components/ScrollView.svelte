@@ -147,6 +147,12 @@
         window.removeEventListener('resize', measure)
     })
 
+
+
+    function scrollbarFastSeek(ev) {
+        scrollTo(ev.offsetY - ph*scale/2)
+    }
+
 </script>
 
 
@@ -224,7 +230,7 @@
         <div style="height: 72px;"></div>
     </div>
 
-    <div class="bar{keepStretch?' active': ''}{!showScrollBar?' hide':''}">
-        <div class="thumb" bind:this={scrollThumb} on:mousedown={mouseDown}></div>
+    <div class="bar{keepStretch?' active': ''}{!showScrollBar?' hide':''}" on:mousedown={scrollbarFastSeek}>
+        <div class="thumb" bind:this={scrollThumb} on:mousedown|stopPropagation={mouseDown}></div>
     </div>
 </div>

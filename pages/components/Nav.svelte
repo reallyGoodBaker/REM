@@ -15,14 +15,6 @@
         Pager.remove(selected);
     }
 
-    let container;
-
-    rem.on('__pageFold', () => {
-        container.style.cssText = 'border-bottom: solid 1px rgba(0,0,0,0.2);';
-    });
-    rem.on('__pageUnfold', () => {
-        container.style.cssText = '';
-    });
 </script>
 
 
@@ -45,6 +37,7 @@
     }
 
     .tab-text {
+        color: var(--controlBlack);
         overflow: hidden;
         word-break: keep-all;
         white-space: nowrap;
@@ -65,8 +58,8 @@
         to {
             font-weight: bold;
             border-radius: 17px;
-            color: #fff;
-            background-color: var(--controlColor);
+            color: var(--controlDarker);
+            background-color: var(--controlBrighter);
         }
     }
 
@@ -75,7 +68,7 @@
         width: 18px;
         height: 18px;
         margin-left: 4px;
-        color: #ddd;
+        color: var(--controlDark);
         border-radius: 50%;
         transition: all 0.12s;
     }
@@ -93,7 +86,7 @@
     } */
 </style>
 
-<div bind:this={container} class="column c">
+<div class="column c">
     {#each tabs as tab, i}
         {#if i === selected}
             {#if tab === '我的' || tab === '发现'}

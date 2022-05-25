@@ -209,13 +209,14 @@
         width: 100vw;
         height: 72px;
         background-color: var(--color);
-        backdrop-filter: blur(12px);
+        backdrop-filter: blur(20px);
         justify-content: space-between;
         box-sizing: border-box;
         padding: 0px 24px;
         color: #fff;
         transition: background-color 0.2s;
         z-index: 1;
+        text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.4);
     }
 
     .txt {
@@ -240,6 +241,7 @@
         font-weight: normal;
         margin: 0px 8px;
         transition: all 0.1s ease-in-out;
+        font-size: medium;
     }
 
     .btn:hover {

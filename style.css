@@ -10,13 +10,15 @@
 body {
     --color: #000;
     --controlHue: 210;
+    --controlAcrylic: hsla(var(--controlHue, 210), 80%, 98%, 0.3);
     --controlColor: hsl(var(--controlHue, 210), 80%, 50%);
     --controlBright: hsl(var(--controlHue, 210), 80%, 70%);
     --controlBrighter: hsl(var(--controlHue, 210), 80%, 90%);
-    --controlDark: hsl(var(--controlHue, 210), 80%, 30%);
-    --controlDarker: hsl(var(--controlHue, 210), 80%, 10%);
-    --controlWhite: hsl(var(--controlHue, 210), 80%, 95%);
-    --controlBlack: hsl(var(--controlHue, 210), 80%, 4%);
+    --controlDark: hsl(var(--controlHue, 210), 80%, 45%);
+    --controlDarker: hsl(var(--controlHue, 210), 80%, 30%);
+    --controlNight: hsl(var(--controlHue, 210), 80%, 14%);
+    --controlWhite: hsl(var(--controlHue, 210), 80%, 98%);
+    --controlBlack: hsl(var(--controlHue, 210), 80%, 6%);
 
     background-color: var(--controlWhite);
     color: var(--controlBlack);
@@ -85,6 +87,23 @@ body {
 .btn:active {
     transform: scale(0.94);
 }
+
+.accent {
+    background-color: var(--controlColor);
+}
+
+.bright {
+    background-color: var(--controlBright);
+    color: var(--controlNight)
+}
+
+.light {
+    background-color: var(--controlBrighter);
+    color: var(--controlDarker)
+}
+
+
+
 
 .divider {
     width: 100%;

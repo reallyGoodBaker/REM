@@ -154,7 +154,7 @@
         on:layerClick={hide}
         on:animIn={animIn}
         showPopupWindow={showPopup}
-        cssText={"position: absolute; top: 64px;"}>
+        cssText={"position: absolute; top: 64px; overflow: hidden;"}>
         <Profile
             bind:user={user}
         ></Profile>
