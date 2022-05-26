@@ -6,13 +6,13 @@ import {globalPlayer} from './player.js'
  * @param {string} search 
  * @returns 
  */
-function searchStrArr(raw, search) {
+export function searchStrArr(raw, search) {
     return raw.filter(str => str.includes(search))
 }
 
 export class MainPlaylist {
     static listData = []
-    static getAudioData(index) {
+    static getAudioData(index=this.current) {
         return new AudioData(this.listData[index])
     }
 
@@ -29,6 +29,10 @@ export class MainPlaylist {
     static loadList(list=[]) {
         this.listData = list.concat([])
         this.current = 0
+    }
+
+    static getCurrentData() {
+        return this.listData[this.current]
     }
 
     /**

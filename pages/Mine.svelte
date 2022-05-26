@@ -52,24 +52,14 @@
 
     getUserPlaylist();
 
-    let listData;
 
-    function onClick(i, props) {
-        Pager.openNew(playlists[i].name, Playlist, props);
+    function onClick(name, props) {
+        Pager.openNew(name, Playlist, props);
     }
     
 
-    /**
-     * @deprecated
-     */
-    async function getDetail(id) {
-        const _data = (await NeteaseApi.getPlaylistDetail(id, store.get('cookie'))).body;
-        const data = _data.playlist.tracks;
-        listData = data;
-    }
-
     export function getDetailX(id) {
-        let data = store.get(id);
+        let data = store.get('playlist'+id);
         if (data) return data;
 
         return getDetailXAsync(id)
@@ -77,7 +67,7 @@
 
     async function getDetailXAsync(id) {
         let cookie = store.get('cookie'),
-            data = store.get(id)
+            data = store.get('playlist'+id)
         
         const list = (await NeteaseApi.getPlaylistDetail(id, cookie)).body.playlist.trackIds;
         
@@ -87,7 +77,7 @@
 
         data = (await NeteaseApi.getSongDetail(ids, cookie)).body.songs;
 
-        store.setCache(id, data);
+        store.setCache('playlist'+id, data);
         
         return data;
     }
@@ -102,8 +92,12 @@
         });
     }
 
-    function clearCache(id) {
-        store.rm(id);
+    function clearPlaylist(id) {
+        store.rm('playlist'+id);
+    }
+
+    function clearAlbum(id) {
+        store.rm('al'+id);
     }
 
     Pager.beforeSwitch(() => {
@@ -136,6 +130,7 @@
         let data = pageStore.__artistSublist
         if (!data) {
             const favs = await NeteaseApi.getArtistSublist(store.get('cookie'))
+            favs.body.data.count = favs.body.count
             return pageStore.__artistSublist = favs.body.data
         }
 
@@ -149,13 +144,78 @@
     }
     renderArtistSublist()
 
+    async function getAlbumSublist() {
+        let data = pageStore.__alSublist
+        if (!data) {
+            const favs = await NeteaseApi.getAlbumSublist(store.get('cookie'))
+            favs.body.data.count = favs.body.count
+            return pageStore.__alSublist = favs.body.data
+        }
+
+        return data
+    }
+
+    let albumSublist = []
+    async function renderAlbumSublist() {
+        albumSublist = await getAlbumSublist()
+        outerContainer.recalc()
+    }
+    renderAlbumSublist()
+
+
+    import {MainPlaylist} from '../utils/player/playlist.js'
+
+    async function fastPlay(id, type=0) {
+        let list = type === 0
+            ? await getDetailX(id)
+            : await getAlbumDetail(id)
+        
+        const cur = MainPlaylist.getCurrentData()
+
+        MainPlaylist.loadList(list)
+
+        if (cur) {
+            let res = MainPlaylist.query({name: cur.name})
+            if (res.length) {
+                return MainPlaylist.play(res[0])
+            }
+        }
+        
+        MainPlaylist.play(0)
+    }
+
+
+    function dullParent() {
+        this.parentNode.classList.remove('active')
+    }
+
+    function activeParent() {
+        this.parentNode.classList.add('active')
+    }
+
+
+    function getAlbumDetail(id) {
+
+        let al = store.get('al' + id)
+        if (!al) {
+            return new Promise(async res => {
+                al = (await NeteaseApi.getAlbumDetail(id, store.get('cookie'))).body.songs
+                store.set('al'+id, al)
+                res(al)
+            })
+        }
+
+        return al
+        
+    }
+
 </script>
 
 
 <style>
 
     .card {
-        position: static;
+        position: relative;
         width: 160px;
         height: 200px;
         border-radius: 8px;
@@ -170,8 +230,8 @@
         width: 160px;
     }
 
-    .card:active {
-        transform: scale(0.94);
+    .card.active:active {
+        transform: scale(0.96);
     }
 
     .collection[data-title] {
@@ -284,6 +344,7 @@
         margin-bottom: 8px;
         height: 200px;
         border-radius: 8px;
+        transition: transform 0.12s;
     }
 
     .artist-c > .name {
@@ -303,6 +364,46 @@
         background-color: var(--controlAcrylicDark);
     }
 
+    .artist-c.active:active {
+        transform: scale(0.96);
+    }
+
+    .card > .btn {
+        position: absolute;
+        visibility: hidden;
+        bottom: 48px;
+        right: 8px;
+    }
+
+    .card:hover > .btn{
+        visibility: visible;
+    }
+
+    .album {
+        width: 140px;
+        height: 140px;
+        border-radius: 8px;
+        border: solid 2px var(--controlGray);
+    }
+
+    .artist-c.al {
+        height: 220px;
+        justify-content: flex-start;
+        padding-top: 12px;
+    }
+
+    .artist-c > .FAB {
+        position: absolute;
+        right: 16px;
+        top: 108px;
+        visibility: hidden;
+    }
+
+    .artist-c:hover > .FAB {
+        visibility: visible;
+    }
+
+
 </style>
 
 
@@ -316,10 +417,10 @@
     <Measurable bind:this={meter} cssStyle="width: 100%">
     <div class="column card-container">
     {#each playlists as list, i}
-        <div class="card row" title={list.name} on:click={() => {
+        <div class="card row active" title={list.name} on:click={() => {
             let id = list.id;
 
-            onClick(i, () => {
+            onClick(list.name, () => {
                 return {
                     header: {
                         imgUrl: list.coverImgUrl,
@@ -332,13 +433,18 @@
                     sortBy: window.store.get('sortBy'),
                     forwards: window.store.get('forwards'),
                     onTabDestroy() {
-                        clearCache(id)
+                        clearPlaylist(id)
                     },
                 }
             });
             
         }}>
             <div class="avatar" style="background-image: url({list.coverImgUrl});"></div>
+            <div class="btn light FAB"
+                on:click|stopPropagation={() => {fastPlay(list.id)}}
+                on:mouseenter|stopPropagation={dullParent}
+                on:mouseleave|stopPropagation={activeParent}
+            >{'\ue615'}</div>
             <div class="row title">
                 <div>{list.name}</div>
             </div>
@@ -350,12 +456,58 @@
 </div>
 
 {#if artistSublist.length}
-<div class="Row" row-title="收藏的歌手" style="--item-height: 200px; --item-width: 200px;">
+<div class="Row" row-title="收藏的艺术家" style="--item-height: 200px; --item-width: 200px;">
+    <div class="btn light" style="position: absolute; left: 200px; top: 0px; border-radius: 6px;">查看全部 {artistSublist.count} 位艺术家</div>
     {#each artistSublist.slice(0, 12) as artist, i}
-        <div class="Column artist-c">
+        <div class="Column artist-c active">
+            <div class="btn light FAB"
+                on:click|stopPropagation={() => {}}
+                on:mouseenter|stopPropagation={dullParent}
+                on:mouseleave|stopPropagation={activeParent}
+            >{'\ue615'}</div>
             <img class="artist" draggable="false" src={artist.picUrl} alt={artist.name}>
             <div class="name title">{artist.name}</div>
             <div class="name">{artist.alias.length? artist.alias[0]: ''}</div>
+        </div>
+    {/each}
+</div>
+{/if}
+
+{#if albumSublist.length}
+<div class="Row" row-title="收藏的专辑" style="--item-height: 200px; --item-width: 200px;">
+    <div class="btn light" style="position: absolute; left: 180px; top: 0px; border-radius: 6px;">查看全部 {albumSublist.count} 张专辑</div>
+    {#each albumSublist.slice(0, 12) as al, i}
+        <div class="Column artist-c al active"
+            on:click={() => {
+                let id = al.id;
+                
+
+                onClick(al.name, () => {
+                    return {
+                        header: {
+                            imgUrl: al.picUrl,
+                            title: al.name,
+                            subtitle: `${al.artists[0].name}`,
+                            playCount: al.playCount,
+                            trackCount: al.size,
+                        },
+                        listData: getAlbumDetail(id),
+                        sortBy: window.store.get('sortBy'),
+                        forwards: window.store.get('forwards'),
+                        onTabDestroy() {
+                            clearAlbum(id)
+                        },
+                    }
+                })
+            }}
+        >
+            <div class="btn light FAB"
+                on:click|stopPropagation={() => {fastPlay(al.id, 1)}}
+                on:mouseenter|stopPropagation={dullParent}
+                on:mouseleave|stopPropagation={activeParent}
+            >{'\ue615'}</div>
+            <img class="album" draggable="false" src={al.picUrl} alt={al.name}>
+            <div class="name title" style="width: calc(100% - 16px);">{al.name}</div>
         </div>
     {/each}
 </div>

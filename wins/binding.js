@@ -2,7 +2,10 @@ const {createFuncBinding} = require('../utils/api/funcBinder');
 const {login, loginViaQRCode, validQRLogin, getUserAccount, logout} = require('../utils/api/login');
 const {Search, suggest} = require('../utils/api/search');
 const {checkIn} = require('../utils/api/dailySignin');
-const {getUserPlaylist, getPlaylistDetail, getArtistSublist, getAlbumSublist} = require('../utils/api/playlist');
+const {
+    getUserPlaylist, getPlaylistDetail, getArtistSublist, getAlbumSublist,
+    getAlbumDetail
+} = require('../utils/api/playlist');
 const {getSongDetail, getSongUrl} = require('../utils/api/song');
 
 
@@ -23,6 +26,7 @@ createFuncBinding(getUserAccount)
 createFuncBinding(logout)
 createFuncBinding(getArtistSublist)
 createFuncBinding(getAlbumSublist)
+createFuncBinding(getAlbumDetail)
 
 
 }

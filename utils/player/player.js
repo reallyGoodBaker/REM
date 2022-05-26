@@ -79,6 +79,13 @@ export class AudioPlayer {
         return AudioPlayer.duration()
     }
 
+    static isPlaying() {
+        return !this.audioElement.paused
+    }
+    isPlaying() {
+        return AudioPlayer.isPlaying()
+    }
+
 }
 
 AudioPlayer.audioElement.addEventListener('ended', () => {

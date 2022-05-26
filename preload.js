@@ -32,7 +32,10 @@ new Binder('wallpaper').bind('getWallpaper', getWallpaper);
 const {login, loginViaQRCode, validQRLogin, getUserAccount} = require('./utils/api/login');
 const {Search, suggest} = require('./utils/api/search');
 const {checkIn} = require('./utils/api/dailySignin');
-const {getUserPlaylist, getPlaylistDetail, getArtistSublist, getAlbumSublist} = require('./utils/api/playlist');
+const {
+    getUserPlaylist, getPlaylistDetail, getArtistSublist, getAlbumSublist,
+    getAlbumDetail,
+} = require('./utils/api/playlist');
 const {getSongDetail, getSongUrl} = require('./utils/api/song');
 const { logout } = require('NeteaseCloudMusicApi');
 
@@ -52,6 +55,7 @@ new Binder('NeteaseApi')
 .bind('logout', createFuncBinding(logout))
 .bind('getAlbumSublist', createFuncBinding(getAlbumSublist))
 .bind('getArtistSublist', createFuncBinding(getArtistSublist))
+.bind('getAlbumDetail', createFuncBinding(getAlbumDetail))
 
 
 
