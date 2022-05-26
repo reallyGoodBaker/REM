@@ -68,6 +68,7 @@ setContext('disableLayer', disableLayer)
         background-color: transparent;
         pointer-events: none;
         transition: background-color 0.2s;
+        z-index: 3;
     }
 
     .container.fade {

@@ -35,8 +35,9 @@
 
     onMount(getOneDayDesktop);
 
+    let pageStore = Pager.getContext().save
     async function getUserPlaylist() {
-        if(window.__playlists) return playlists = window.__playlists;
+        if(pageStore.__playlists) return playlists = pageStore.__playlists;
 
         const cookie = store.get('cookie'),
         uid = store.get('profile').userId;
@@ -45,7 +46,7 @@
 
         if(_playlist.status != 200) return;
         
-        window.__playlists = playlists = _playlist.body.playlist;
+        pageStore.__playlists = playlists = _playlist.body.playlist;
 
     }
 
@@ -131,6 +132,23 @@
         contextMap.delete(container)
     })
 
+    async function getArtistSublist() {
+        let data = pageStore.__artistSublist
+        if (!data) {
+            const favs = await NeteaseApi.getArtistSublist(store.get('cookie'))
+            return pageStore.__artistSublist = favs.body.data
+        }
+
+        return data
+    }
+
+    let artistSublist = []
+    async function renderArtistSublist() {
+        artistSublist = await getArtistSublist()
+        outerContainer.recalc()
+    }
+    renderArtistSublist()
+
 </script>
 
 
@@ -156,7 +174,7 @@
         transform: scale(0.94);
     }
 
-    .collection[title] {
+    .collection[data-title] {
         --start: 370px;
         --height: 370px;
         --color: #eee;
@@ -182,10 +200,9 @@
         height: var(--height);
     }
 
-    .collection[title]::before {
+    .collection[data-title]::before {
         font-size: xx-large;
-        font-weight: bold;
-        content: attr(title);
+        content: attr(data-title);
         width: calc(100% - 48px);
         height: 136px;
         text-shadow: 0px 1px 6px rgba(0,0,0,1);
@@ -253,20 +270,53 @@
         opacity: 1;
     }
 
+    .artist {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        border: solid 2px var(--controlGray);
+    }
+
+    .artist-c {
+        justify-content: center;
+        width: 160px;
+        margin-right: 4px;
+        margin-bottom: 8px;
+        height: 200px;
+        border-radius: 8px;
+    }
+
+    .artist-c > .name {
+        color: var(--controlNight);
+        height: 18px;
+        line-height: 18px;
+        font-size: small;
+    }
+
+    .name.title {
+        color: var(--controlBlack);
+        font-weight: bold;
+        font-size: small;
+    }
+
+    .artist-c:hover {
+        background-color: var(--controlAcrylicDark);
+    }
+
 </style>
 
 
 <ScrollView bind:this={outerContainer}>
 <div class="row">
 
-<div class="collection{!collectionFolded?' unfold':''}" title="我的收藏" bind:this={container}>
+<div class="collection{!collectionFolded?' unfold':''}" data-title="我的歌单" bind:this={container}>
     <img class="collection-bgc" src={desktopUrl} alt="" bind:this={imgBgc}>
-    <div class="toggle{!collectionFolded?' unfold':''}" on:click={changeHeight}>▼</div>
+    <div title="展开" class="toggle{!collectionFolded?' unfold':''}" on:click={changeHeight}>▼</div>
     
     <Measurable bind:this={meter} cssStyle="width: 100%">
     <div class="column card-container">
     {#each playlists as list, i}
-        <div class="card row" on:click={() => {
+        <div class="card row" title={list.name} on:click={() => {
             let id = list.id;
 
             onClick(i, () => {
@@ -291,8 +341,6 @@
             <div class="avatar" style="background-image: url({list.coverImgUrl});"></div>
             <div class="row title">
                 <div>{list.name}</div>
-                <!-- <div>{list.trackCount}</div>
-                <div>{list.playCount}</div> -->
             </div>
         </div>
     {/each}
@@ -301,6 +349,17 @@
     
 </div>
 
+{#if artistSublist.length}
+<div class="Row" row-title="收藏的歌手" style="--item-height: 200px; --item-width: 200px;">
+    {#each artistSublist.slice(0, 12) as artist, i}
+        <div class="Column artist-c">
+            <img class="artist" draggable="false" src={artist.picUrl} alt={artist.name}>
+            <div class="name title">{artist.name}</div>
+            <div class="name">{artist.alias.length? artist.alias[0]: ''}</div>
+        </div>
+    {/each}
+</div>
+{/if}
 
 </div>
 </ScrollView>

@@ -43,9 +43,11 @@
     }
 
     .t {
-        height: 32px;
+        box-sizing: border-box;
+        height: 44px;
         line-height: 32px;
         padding: 6px 0px;
+        padding-left: 6px;
         overflow: hidden;
         text-overflow: ellipsis;
         word-break: keep-all;

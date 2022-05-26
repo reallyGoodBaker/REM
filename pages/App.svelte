@@ -312,16 +312,18 @@ rem.on('__pageUnfold', () => {
         z-index: -999;
         background-color: #000;
         filter: blur(48px);
-        /* top: calc(var(--top) * -1px);
-        left: calc(var(--left) * -1px); */
         transform: translate(calc(var(--left) * -1px), calc(var(--top) * -1px));
-        will-change: transfrom;
+        will-change: transform;
     }
 
     .head {
         z-index: 2;
         background-color: transparent;
         transition: background-color 0.08s;
+    }
+
+    .head.noneAcrylic, .head.color.noneAcrylic {
+        background-color: var(--controlBackground);
     }
 
     .head.color {
@@ -334,7 +336,7 @@ rem.on('__pageUnfold', () => {
 <div style="transition: background-color 0.2s; background-color: var({useAcrylic?'--acrylicBackgroundColor':'--noneAcrylicBackgroundColor'});">
     <img class="wallpaper" src={wallpaperImg} alt="" width={wallpaperWidth} bind:this={wpEle}>
     <div class="row window">
-        <div class="row head{coloredAppbar? ' color': ''}">
+        <div class="row head{coloredAppbar? ' color': ''}{useAcrylic?'':' noneAcrylic'}">
             <Appbar/>
             <Nav
                 bind:selected

@@ -32,6 +32,7 @@
 
 
     function logOut() {
+        NeteaseApi.logout()
         store.rm('profile');
         store.rm('token');
         user = {

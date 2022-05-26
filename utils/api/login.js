@@ -1,4 +1,4 @@
-const {login_cellphone, login_qr_check, login_qr_create, login_qr_key, login_status} = require('NeteaseCloudMusicApi');
+const {login_cellphone, login_qr_check, login_qr_create, login_qr_key, login_status, logout: lo} = require('NeteaseCloudMusicApi');
 
 async function login(phone, passwd) {
     return await login_cellphone({
@@ -19,6 +19,10 @@ async function getUserAccount(cookie) {
     return await login_status({cookie});
 }
 
+async function logout() {
+    lo()
+}
+
 module.exports = {
-    login, loginViaQRCode, validQRLogin, getUserAccount
+    login, loginViaQRCode, validQRLogin, getUserAccount, logout
 }

@@ -5,7 +5,6 @@ const path = require('path')
 
 
 Menu.setApplicationMenu(null)
-// app.commandLine.appendSwitch("enable-transparent-visuals");
 
 
 const appLock = app.requestSingleInstanceLock()
@@ -19,10 +18,9 @@ function buildWindow() {
         icon: '',
         minWidth: 860,
         minHeight: 580,
-        title: '',
+        title: 'rem',
         frame: false,
         backgroundColor: '#d3ece0',
-        show: false,
 
         webPreferences: {
             preload: path.resolve(__dirname, '../preload.js'),
@@ -46,12 +44,13 @@ function buildWindow() {
     })
 
     ipcMain.once('win:show-main', () => {
-        browserWindow.show()
         setThumbarButtons(browserWindow)
     })
 
     initMainWin(browserWindow)
     activeAppBarBtns(browserWindow)
+
+    browserWindow.show()
 
     return browserWindow
 

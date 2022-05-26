@@ -52,10 +52,16 @@
     }
 </style>
 
-<div class="column{clickable?' clkable':''}" on:click={handleClick} style="width: fit-content; heigth: fit-content;{cssText}">
+<div class="column{clickable?' clkable':''}" on:click={handleClick} style="width: fit-content; heigth: fit-content; overflow: hidden; border-radius: {radius};{cssText}">
 {#if isUrl}
-    <img on:load={handleOnLoaded} bind:this={ctx} src={avatar} class="avatar" alt="avatar size-{size? size: 'normal'}" draggable="false" {width} {height} style="border-radius: {radius};{cssText}">
+    <img on:load={handleOnLoaded}
+        bind:this={ctx}
+        src={avatar}
+        class="avatar"
+        alt="avatar size-{size? size: 'normal'}"
+        draggable="false" 
+        {width} {height}>
 {:else}
-    <span class="avatar iconfont size-{size? size: 'normal'}" style="border-radius: {radius};{cssText}">{avatar}</span>
+    <span class="avatar iconfont size-{size? size: 'normal'}">{avatar}</span>
 {/if}
 </div>

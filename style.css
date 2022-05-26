@@ -12,6 +12,7 @@ body {
     --color: #000;
     --controlHue: 210;
     --controlAcrylic: hsla(var(--controlHue, 210), 80%, 98%, 0.3);
+    --controlAcrylicDark: hsla(var(--controlHue, 210), 80%, 10%, 0.2);
     --controlColor: hsl(var(--controlHue, 210), 80%, 50%);
     --controlBright: hsl(var(--controlHue, 210), 80%, 70%);
     --controlBrighter: hsl(var(--controlHue, 210), 80%, 90%);
@@ -19,8 +20,9 @@ body {
     --controlDarker: hsl(var(--controlHue, 210), 80%, 30%);
     --controlNight: hsl(var(--controlHue, 210), 80%, 14%);
     --controlWhite: hsl(var(--controlHue, 210), 80%, 98%);
-    --controlBackground: hsl(var(--controlHue, 210), 80%, 95%);
+    --controlBackground: hsl(var(--controlHue, 210), 80%, 96%);
     --controlBlack: hsl(var(--controlHue, 210), 80%, 6%);
+    --controlGray: hsl(var(--controlHue, 210), 10%, 70%);
 
     --noneAcrylicBackgroundColor: var(--controlBackground);
 
@@ -112,4 +114,51 @@ body {
 .divider {
     width: 100%;
     border-bottom: solid 1px #ddd;
+}
+
+
+
+.Row {
+    display: flex;
+    position: relative;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.Row[row-title] {
+    margin-top: 24px;
+    padding: 48px 24px 0;
+    box-sizing: border-box;
+}
+
+.Row[row-title]::after {
+    content: attr(row-title);
+    position: absolute;
+    font-size: x-large;
+    top: 0px;
+    left: 24px;
+}
+
+.Column {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.Column[column-title] {
+    margin-top: 24px;
+    padding: 48px 24px 0;
+    box-sizing: border-box;
+}
+
+.Column[column-title]::after {
+    content: attr(column-title);
+    position: absolute;
+    font-size: x-large;
+    top: 0;
+    left: 24px;
 }

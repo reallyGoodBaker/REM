@@ -73,9 +73,9 @@
         }
         setTimeout(() => {
             _listData = arr;
+            recalcHeight();
         });
 
-        recalcHeight();
     }
 
     sortList(sortBy);
@@ -294,6 +294,9 @@
     }
 
     .splitterTab {
+        box-sizing: border-box;
+        border-radius: 4px;
+        padding-left: 6px;
         position: relative;
         line-height: 32px;
         height: 32px;
@@ -305,7 +308,7 @@
 
     .splitterTab.forwards::after {
         content: '▲';
-        color: #888;
+        color: var(--controlDarker);
         line-height: 6px;
         font-size: 8px;
         position: absolute;
@@ -316,13 +319,13 @@
 
     .splitterTab.backwards::after {
         content: '▼';
-        color: #888;
+        color: var(--controlDarker);
         line-height: 6px;
         font-size: 8px;
         position: absolute;
         top: 0px;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translateX(-50%) scaleX(1.2);
     }
 
     .btn {

@@ -3,7 +3,7 @@ const {contextBridge} = require('electron');
 module.exports =  class Binder {
 
     static binders = [];
-    static bindAll() {
+    static async bindAll() {
         this.binders.forEach(binder => binder.createBinding());
     }
 
@@ -20,7 +20,7 @@ module.exports =  class Binder {
         return this;
     }
 
-    createBinding() {
+    async createBinding() {
         contextBridge.exposeInMainWorld(this.name, this._m);
     }
 
