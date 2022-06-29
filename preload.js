@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron');
+const { ipcRenderer, screen } = require('electron');
 const Binder = require('./utils/jsBinder');
 const {createFuncBinding} = require('./utils/api/funcBinder');
 const fs = require('fs')
@@ -21,7 +21,7 @@ new Binder('hooks')
 .use({...ipcRenderer,
     on: (...args) => ipcRenderer.on.apply(ipcRenderer, args),
     once: (...args) => ipcRenderer.once.apply(ipcRenderer, args),
-    rm: (...args) => ipcRenderer.removeListener.apply(ipcRenderer, args)
+    rm: (...args) => ipcRenderer.removeListener.apply(ipcRenderer, args),
 });
 
 const {getWallpaper} = require('./utils/Win11Wallpaper');

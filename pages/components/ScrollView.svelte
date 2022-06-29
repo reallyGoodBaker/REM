@@ -92,28 +92,40 @@
         mousedown = false;
     }
 
-    let triggered = false;
-    function scrollTo(thumbOY) {
+    let triggered = false
+    function scrollTo(thumbOffsetY) {
         try {
-            if (isNaN(thumbOY)) return;
-            if (thumbOY <= 0) {
+            if (isNaN(thumbOffsetY)) return;
+            if (thumbOffsetY <= 0) {
                 triggered = true;
                 rem.emit('__pageUnfold');
-                thumbOY = 0;
+                thumbOffsetY = 0;
             }
-            if (thumbOY  > res) thumbOY = res;
+            if (thumbOffsetY  > res) thumbOffsetY = res;
             if (!triggered) {
                 rem.emit('__pageFold');
             } else {
                 triggered = false;
             }
-            if(scrollThumb) scrollThumb.style.setProperty('--progress', thumbOY + 'px');
+            if(scrollThumb) scrollThumb.style.setProperty('--progress', thumbOffsetY + 'px');
+            thumbOY = thumbOffsetY
             scrollView.scrollTo({
                 left: 0, 
-                top: thumbOY*h/ph,
+                top: thumbOffsetY*h/ph,
                 behavior: 'auto'
             })
         } catch (error) {}
+    }
+
+    function scrollUp(dy) {
+        if (!showScrollBar) return
+        if (isNaN(thumbOY)) {
+            thumbOY = 0
+        }
+        thumbOY += ~~dy*ph/h;
+        if (thumbOY  < 0) thumbOY = 0;
+        if (thumbOY  > res) thumbOY = res;
+        scrollTo(thumbOY)
     }
 
 
@@ -142,9 +154,13 @@
 
     onMount(() => {
         window.addEventListener('resize', measure)
+        rem.on('scroll', scrollTo)
+        rem.on('scroll-up', scrollUp)
     })
     onDestroy(() => {
         window.removeEventListener('resize', measure)
+        rem.off('scroll', scrollTo)
+        rem.off('scroll-up', scrollUp)
     })
 
 

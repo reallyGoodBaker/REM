@@ -8,15 +8,19 @@ export let x = 0
 export let y = 0
 export let data = [{}]
 
-const disableLayer = getContext('disableLayer')
+const layerEvents = getContext('layerEvents')
+
+layerEvents.on('disable', () => {
+    display = false
+})
 
 function handlerWrapper(func) {
     return typeof func === 'function'
         ? () => {
             func.call(null)
-            disableLayer()
-          }
-        : disableLayer
+            display = false
+        }
+        : () => display = false
 }
 
 </script>

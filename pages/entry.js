@@ -65,6 +65,8 @@ window.contextMap = new Map()
 rem.isBeta = true
 
 
+console.log(hooks);
+
 
 export default new App({
 	target: document.body

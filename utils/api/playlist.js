@@ -23,13 +23,13 @@ function deletePlaylist() {
 
 }
 
-async function getAlbumSublist(cookie) {
-    const data = await album_sublist({cookie})
+async function getAlbumSublist(cookie, count=12) {
+    const data = await album_sublist({cookie, limit: count})
     return data
 }
 
-async function getArtistSublist(cookie) {
-    const data = await artist_sublist({cookie})
+async function getArtistSublist(cookie, count=12) {
+    const data = await artist_sublist({cookie, limit: count})
     return data
 }
 

@@ -12,15 +12,21 @@ if (!appLock) app.exit()
 
 
 function buildWindow() {
+
+    const displayBounds = screen.getPrimaryDisplay().bounds
+
+    const width = screen.screenToDipPoint({x: 1360, y: 0}).x,
+        height = ~~(displayBounds.height * 0.8)
+
     let browserWindow = new BrowserWindow({
-        width: 1080,
-        height: 720,
+        width,
+        height,
         icon: '',
-        minWidth: 860,
-        minHeight: 580,
         title: 'rem',
         frame: false,
         backgroundColor: '#d3ece0',
+        minWidth: width,
+        minHeight: height,
 
         webPreferences: {
             preload: path.resolve(__dirname, '../preload.js'),
@@ -103,7 +109,7 @@ function activeAppBarBtns(browserWindow) {
     })
         
     browserWindow.on('will-move', (ev, bounds) => {
-        browserWindow.webContents.send('win:screen-move', bounds.x, bounds.y);
+        browserWindow.webContents.executeJavaScript(`window.__changeBgPos && window.__changeBgPos(${bounds.x}, ${bounds.y})`)
     })
 
 }

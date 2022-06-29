@@ -144,9 +144,20 @@ window.Pager = (() => {
         beforeSwitchHandlers.push(handler)
     }
 
+    function size() {
+        return tabs.length
+    }
+
+    function index() {
+        return selected
+    }
+
     return {
         add, select, remove, has, openNew,
-        getContext, beforeSwitch
+        getContext, beforeSwitch, size, index,
+        removeByIndex: i => {
+            if(i > 1) removeByIndex(i)
+        },
     }
 
 })()
@@ -197,6 +208,8 @@ function getScreenSize() {
 rem.on('__openMinePage', () => {
     window.Pager.openNew('我的', Mine, {}, true)
 })
+
+window.__changeBgPos = changePos
 
 
 hooks.on('win:screen-move', (ev, x, y) => {

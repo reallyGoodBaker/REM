@@ -1,6 +1,6 @@
 :root {
     --noneAcrylicBackgroundColor: #d3ece0;
-    --acrylicBackgroundColor: rgba(255,255,255,0.5);
+    --acrylicBackgroundColor: rgba(255, 255, 255, 0.5);
     /* --acrylicBackgroundColor: transparent; */
     -webkit-app-region: no-drag;
     border-radius: 12px;
@@ -25,6 +25,9 @@ body {
     --controlGray: hsl(var(--controlHue, 210), 10%, 70%);
 
     --noneAcrylicBackgroundColor: var(--controlBackground);
+
+    --fade: rgba(0, 0, 0, 0.3);
+    --fadeDark: rgba(0, 0, 0, 0.5);
 
     background-color: var(--controlWhite);
     color: var(--controlBlack);
@@ -52,11 +55,19 @@ body {
 }
 
 .btn {
+    font-weight: bold;
     padding: 8px 12px;
     font-family: iconfont, Roboto, sans-serif;
     font-size: small;
     transition: all 0.12s, visibility 0s;
     cursor: pointer;
+}
+
+.btn.margin {
+    margin: 4px;
+}
+.btn.margin.px8 {
+    margin: 8px;
 }
 
 .btn.outlined {
@@ -93,7 +104,7 @@ body {
     line-height: 40px;
     text-align: center;
     border-radius: 8px;
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.5);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 .btn:hover {
@@ -148,7 +159,7 @@ body {
     position: absolute;
     font-size: x-large;
     top: 0px;
-    left: 24px;
+    left: 32px;
 }
 
 .Column {
@@ -171,5 +182,84 @@ body {
     position: absolute;
     font-size: x-large;
     top: 0;
-    left: 24px;
+    left: 32px;
+}
+
+.radius {
+    border-radius: 8px;
+}
+
+.radius.px4 {
+    border-radius: 4px;
+}
+
+.radius.px12 {
+    border-radius: 12px;
+}
+
+.radius.px16 {
+    border-radius: 16px;
+}
+
+.radius.px24 {
+    border-radius: 24px;
+}
+
+
+progress, .progress {
+    border: none;
+    border-radius: 0;
+    appearance: none;
+}
+/*设置进度条颜色*/
+::-webkit-progress-value, .progress {
+    background-color: var(--controlDark);
+}
+/*设置进度条背景颜色*/
+::-webkit-progress-bar, .progress-bar {
+    background-color: var(--controlGray);
+}
+
+progress.horizontal {
+    display: block;
+    height: 8px;
+    width: 100%;
+}
+
+.horizontal::-webkit-progress-value {
+    border-radius: 3px;
+}
+
+
+.outline {
+    outline: solid 2px;
+}
+.outline.px4 {
+    outline: solid 2px;
+}
+.outline.dark {
+    outline-color: var(--controlDark);
+}
+.outline.bright {
+    outline-color: var(--controlBright);
+}
+
+
+
+.scrollable::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: transparent;
+}
+.scrollable::-webkit-scrollbar-thumb {
+    background-color: var(--controlGray);
+    border-radius: 2px;
+}
+.scrollable.horizontal {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.scrollable.vertical {
+    overflow-y: auto;
+    overflow-x: hidden;
 }

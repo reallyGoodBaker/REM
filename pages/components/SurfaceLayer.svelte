@@ -1,20 +1,27 @@
 <script>
-import { setContext } from "svelte";
+import { onMount, setContext } from "svelte";
+import {EventEmitter} from '../../utils/events.js'
 
-let fade = false
+let layer = false
+
+const layerEvents = new EventEmitter()
 
 export function activeLayer() {
-    fade = true
+    layer = true
 }
 
 export function disableLayer() {
-    fade = false
-    display = false
+    layer = false
+    cmDisplay = false
 }
 
-import ContextMenu from "./ContextMenu.svelte";
+layerEvents.on('active', activeLayer)
+layerEvents.on('disable', disableLayer)
 
-let display,
+import ContextMenu from "./ContextMenu.svelte";
+import VirtualCursor from "./VirtualCursor.svelte";
+
+let cmDisplay,
     cmX,
     cmY,
     cmData
@@ -36,7 +43,7 @@ function showContextMenu(x, y, path) {
     if (_cmData.length) {
         activeLayer()
         cmData = _cmData
-        display = true
+        cmDisplay = true
     }
 }
 
@@ -44,8 +51,8 @@ window.addEventListener('mousedown', ev => {
     if (ev.button === 2) {
         const {pageX, pageY, path} = ev
 
-        if (display) {
-            disableLayer()
+        if (cmDisplay) {
+            layerEvents.emit('disable')
             return requestIdleCallback(() => showContextMenu(pageX, pageY, path))
         }
 
@@ -54,7 +61,63 @@ window.addEventListener('mousedown', ev => {
     }
 })
 
-setContext('disableLayer', disableLayer)
+setContext('layerEvents', layerEvents)
+
+
+import {xboxControllerMouseSupporter} from '../../utils/controller-support/xbox/controllerSupport.js'
+import {defaultWizard} from '../../utils/wizard/wizard.js'
+
+let layerElement
+
+let virtCursor,
+    vcEnable,
+    vcActive,
+    virtProxy = new Proxy({
+        click: false,
+        scroll: 0,
+        x: visualViewport.width / 2,
+        y: visualViewport.height / 2,
+        enable: vcEnable,
+    }, {
+        get(t, p) {
+            return t[p]
+        },
+
+        set(t, p, v) {
+            switch (p) {
+                case 'click':
+                    vcActive = v
+                    t[p] = v
+                    break;
+                case 'enable':
+                    vcEnable = v
+                    t[p] = v
+                    break;
+                case 'x':
+                    virtCursor.style.left = v + 'px'
+                    t[p] = v
+                    break;
+                case 'y':
+                    virtCursor.style.top = v + 'px'
+                    t[p] = v
+                    break;
+            }
+            return true
+        }
+    })
+
+onMount(() => {
+    xboxControllerMouseSupporter.init(virtProxy)
+    defaultWizard.inject(layerElement)
+    defaultWizard.setButtonsDisplay(1|2|4)
+    window.addEventListener('mousedown', ev => {
+        console.log(ev);
+        if (ev.button === 1) {
+            defaultWizard.display(true)
+        }
+    })
+})
+
 </script>
 
 <style>
@@ -68,22 +131,27 @@ setContext('disableLayer', disableLayer)
         background-color: transparent;
         pointer-events: none;
         transition: background-color 0.2s;
-        z-index: 3;
+        z-index: 4;
     }
 
-    .container.fade {
+    .container.layer {
         -webkit-app-region: no-drag;
         pointer-events: all;
-        /* background-color: rgba(0, 0, 0, 0.3); */
     }
+
 </style>
 
-<div class="container {fade? 'fade': ''}" on:click={disableLayer}>
+<div class="container {layer? 'layer': ''}" on:click={() => layerEvents.emit('disable')} bind:this={layerElement}>
     <ContextMenu
-        bind:display
+        bind:display={cmDisplay}
         bind:x={cmX}
         bind:y={cmY}
         bind:data={cmData}
+    />
+    <VirtualCursor
+        bind:enable={vcEnable}
+        bind:active={vcActive}
+        bind:htmlElement={virtCursor}
     />
     <slot></slot>
 </div>

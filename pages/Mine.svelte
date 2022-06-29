@@ -129,7 +129,8 @@
     async function getArtistSublist() {
         let data = pageStore.__artistSublist
         if (!data) {
-            const favs = await NeteaseApi.getArtistSublist(store.get('cookie'))
+            let favs = await NeteaseApi.getArtistSublist(store.get('cookie'), 1)
+            favs = await NeteaseApi.getArtistSublist(store.get('cookie'), favs.body.count)
             favs.body.data.count = favs.body.count
             return pageStore.__artistSublist = favs.body.data
         }
@@ -139,7 +140,13 @@
 
     let artistSublist = []
     async function renderArtistSublist() {
-        artistSublist = await getArtistSublist()
+        let sublist = await getArtistSublist()
+        artistSublist = pageStore.showAllArtists
+            ? sublist
+            : sublist.slice(0, 12)
+
+        artistSublist.count = sublist.count
+        
         outerContainer.recalc()
     }
     renderArtistSublist()
@@ -147,7 +154,8 @@
     async function getAlbumSublist() {
         let data = pageStore.__alSublist
         if (!data) {
-            const favs = await NeteaseApi.getAlbumSublist(store.get('cookie'))
+            let favs = await NeteaseApi.getAlbumSublist(store.get('cookie'), 1)
+            favs = await NeteaseApi.getAlbumSublist(store.get('cookie'), favs.body.count)
             favs.body.data.count = favs.body.count
             return pageStore.__alSublist = favs.body.data
         }
@@ -156,11 +164,17 @@
     }
 
     let albumSublist = []
-    async function renderAlbumSublist() {
-        albumSublist = await getAlbumSublist()
+    async function renderAlbumSublist(count) {
+        const raw = await getAlbumSublist()
+        albumSublist = raw.slice(0, count || raw.count)
+        albumSublist.count = raw.count
         outerContainer.recalc()
     }
-    renderAlbumSublist()
+    if (pageStore.showAllAlbums) {
+        renderAlbumSublist()
+    } else {
+        renderAlbumSublist(12)
+    }
 
 
     import {MainPlaylist} from '../utils/player/playlist.js'
@@ -403,6 +417,10 @@
         visibility: visible;
     }
 
+    img {
+        background-color: var(--controlGray);
+    }
+
 
 </style>
 
@@ -457,15 +475,26 @@
 
 {#if artistSublist.length}
 <div class="Row" row-title="收藏的艺术家" style="--item-height: 200px; --item-width: 200px;">
-    <div class="btn light" style="position: absolute; left: 200px; top: 0px; border-radius: 6px;">查看全部 {artistSublist.count} 位艺术家</div>
-    {#each artistSublist.slice(0, 12) as artist, i}
+    <div class="btn light"
+        style="position: absolute; left: 200px; top: 0px; border-radius: 6px;"
+        on:click={() => {
+            if (!pageStore.showAllArtists) {
+                pageStore.showAllArtists = true
+                renderArtistSublist()
+            } else {
+                pageStore.showAllArtists = false
+                renderArtistSublist()
+            }
+        }}
+    >{pageStore.showAllArtists?'收起':'查看'}全部 {artistSublist.count} 位艺术家</div>
+    {#each artistSublist as artist, i}
         <div class="Column artist-c active">
             <div class="btn light FAB"
                 on:click|stopPropagation={() => {}}
                 on:mouseenter|stopPropagation={dullParent}
                 on:mouseleave|stopPropagation={activeParent}
             >{'\ue615'}</div>
-            <img class="artist" draggable="false" src={artist.picUrl} alt={artist.name}>
+            <img class="artist" draggable="false" src={artist.picUrl} alt={artist.name} decoding="async">
             <div class="name title">{artist.name}</div>
             <div class="name">{artist.alias.length? artist.alias[0]: ''}</div>
         </div>
@@ -475,19 +504,29 @@
 
 {#if albumSublist.length}
 <div class="Row" row-title="收藏的专辑" style="--item-height: 200px; --item-width: 200px;">
-    <div class="btn light" style="position: absolute; left: 180px; top: 0px; border-radius: 6px;">查看全部 {albumSublist.count} 张专辑</div>
-    {#each albumSublist.slice(0, 12) as al, i}
+    <div class="btn light"
+        style="position: absolute; left: 180px; top: 0px; border-radius: 6px;"
+        on:click={() => {
+            if (!pageStore.showAllAlbums) {
+                renderAlbumSublist()
+                pageStore.showAllAlbums = true
+            } else {
+                renderAlbumSublist(12)
+                pageStore.showAllAlbums = false
+            }
+        }}
+    >{pageStore.showAllAlbums?'收起':'查看'}全部 {albumSublist.count} 张专辑</div>
+    {#each albumSublist as al, i}
         <div class="Column artist-c al active"
             on:click={() => {
                 let id = al.id;
                 
-
                 onClick(al.name, () => {
                     return {
                         header: {
                             imgUrl: al.picUrl,
                             title: al.name,
-                            subtitle: `${al.artists[0].name}`,
+                            subtitle: `${al.artists.reduce((pre, cur) => [...pre, cur.name], []).join(' ')}`,
                             playCount: al.playCount,
                             trackCount: al.size,
                         },
@@ -506,7 +545,7 @@
                 on:mouseenter|stopPropagation={dullParent}
                 on:mouseleave|stopPropagation={activeParent}
             >{'\ue615'}</div>
-            <img class="album" draggable="false" src={al.picUrl} alt={al.name}>
+            <img class="album" draggable="false" src={al.picUrl} alt={al.name} decoding="async">
             <div class="name title" style="width: calc(100% - 16px);">{al.name}</div>
         </div>
     {/each}
