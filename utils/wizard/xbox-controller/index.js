@@ -1,7 +1,18 @@
-import {WizardContainer} from '../wizard.js'
+import {defaultWizard} from '../wizard.js'
+import {AvatarWidget} from '../../widget/avatar.js'
 
-const xboxControllerWizard = new WizardContainer()
+export function init() {
+    let profile = store.get('profile'),
+        avatarUrl = profile.avatarUrl
 
-xboxControllerWizard.addContent(
-    
-)
+    const avatar = new AvatarWidget({
+        url: avatarUrl
+    })
+
+    defaultWizard.setButtonsDisplay(1|2|4)
+    defaultWizard.addContent(
+        avatar
+    )
+
+    return defaultWizard
+}

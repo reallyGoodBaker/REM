@@ -20,7 +20,6 @@
 
     .input > span {
         margin: 8px;
-
     }
 
     .profile-card {

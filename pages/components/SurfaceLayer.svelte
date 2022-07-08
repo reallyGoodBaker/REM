@@ -65,7 +65,7 @@ setContext('layerEvents', layerEvents)
 
 
 import {xboxControllerMouseSupporter} from '../../utils/controller-support/xbox/controllerSupport.js'
-import {defaultWizard} from '../../utils/wizard/wizard.js'
+import {init} from '../../utils/wizard/edit-profile/index.js'
 
 let layerElement
 
@@ -108,14 +108,7 @@ let virtCursor,
 
 onMount(() => {
     xboxControllerMouseSupporter.init(virtProxy)
-    defaultWizard.inject(layerElement)
-    defaultWizard.setButtonsDisplay(1|2|4)
-    window.addEventListener('mousedown', ev => {
-        console.log(ev);
-        if (ev.button === 1) {
-            defaultWizard.display(true)
-        }
-    })
+    init(layerElement)
 })
 
 </script>

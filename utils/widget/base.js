@@ -6,6 +6,7 @@ function generateUid() {
 
 const _isWidgetClass = Symbol()
 
+
 class InjectWidgetService {
     /**@private*/ _store = new Map()
 

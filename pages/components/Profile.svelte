@@ -6,6 +6,7 @@
     import {getContext} from 'svelte';
     import RippleLayer from "./RippleLayer.svelte";
     import Settings from "../Settings.svelte";
+    import {defaultWizard} from '../../utils/wizard/edit-profile/index.js'
 
 
     let close = getContext('close');
@@ -45,7 +46,8 @@
 
     let showEditProfile = () => {
         close();
-        Pager.openNew('个人信息', Editprofile, {});
+        // Pager.openNew('个人信息', Editprofile, {});
+        defaultWizard.display(true)
     }
 
     function showSettings() {

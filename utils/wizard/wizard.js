@@ -1,4 +1,4 @@
-import {Widget, injectService} from '../widget/base.js'
+import {injectService} from '../widget/base.js'
 import {PopWindowWidget} from '../widget/popwin.js'
 import {ScrollWidget} from '../widget/scroll.js'
 
@@ -11,6 +11,55 @@ function button(text) {
 }
 
 export class WizardContainer extends PopWindowWidget {
+    /**@private*/ _pageIndex = 0
+    /**@private*/ _pages = []
+
+    get pageIndex() {
+        return this._pageIndex
+    }
+
+    set pageIndex(v) {
+        if (v < 0 || v >= this._pages.length) {
+            return false
+        }
+
+        if (!v) {
+            this.setButtonsDisplay(1|4)
+            this.next.innerText = '下一步'
+        } else if(v === this._pages.length - 1) {
+            this.setButtonsDisplay(1|2|4)
+            this.next.innerText = '完成'
+        } else {
+            this.setButtonsDisplay(1|2|4)
+            this.next.innerText = '下一步'
+        }
+
+        this._changePage(this._pageIndex, v)
+        this._pageIndex = v
+        this.progress.value = v + 1
+    }
+
+    /**@private*/ _changePage(from, to) {
+        const direction = to - from > 0
+            ? -1
+            : 1
+
+        this.content.children[0].animate([
+            {transform: 'translateX(0)', opacity: 1},
+            {transform: `translateX(${direction * 25}%)`, opacity: 0},
+        ], 100).onfinish = () => {
+            this.content.children[0].remove()
+            this.content.appendChild(this._pages[to])
+            this._pages[to].animate([
+                {transform: `translateX(${direction * -25}%)`, opacity: 0},
+                {transform: `translateX(0)`, opacity: 1},
+            ], 100)
+        }
+
+
+    }
+    
+
     constructor() {
         super()
 
@@ -19,7 +68,7 @@ export class WizardContainer extends PopWindowWidget {
             + 'display: none;'
             + 'height: 560px;'
             + 'max-height: 88%;'
-            + 'border-radius: 12px;'
+            + 'border-radius: 8px;'
             + 'box-shadow: 0px 8px 12px rgba(0,0,0,0.32);'
             + 'overflow: hidden;'
             + 'background-color: var(--controlBackground);'
@@ -49,6 +98,20 @@ export class WizardContainer extends PopWindowWidget {
         prev.classList.add('bright')
         next.classList.add('accent')
         cancel.classList.add('light')
+
+        prev.addEventListener('click', () => {
+            if (this.pageIndex === 1) {
+                this.setButtonsDisplay(1|4)
+            }
+            this.pageIndex--
+        })
+        next.addEventListener('click', () => {
+            if (this.pageIndex === this._pages.length - 1) {
+                return this.onFinishWizard()
+            }
+            this.pageIndex++
+            this.setButtonsDisplay(1|2|4)
+        })
         
         btnGroup2.appendChild(prev)
         btnGroup2.appendChild(next)
@@ -68,15 +131,24 @@ export class WizardContainer extends PopWindowWidget {
 
         cancel.addEventListener('click', () => this.hide())
 
+        this.setButtonsDisplay(1|4)
     }
 
-    addContent(...children) {
+    onFinishWizard() {}
+
+    addPage(...children) {
         for (const child of children) {
-            this.content.appendChild(child)
+            this._pages.push(child)
         }
+
+        if (!this.progress.value) {
+            this.progress.value = 1
+            this.content.appendChild(this._pages[0])
+        }
+        this.progress.max = this._pages.length
     }
 
-    setButtonsDisplay(displayInfo) {
+    /**@private*/ setButtonsDisplay(displayInfo) {
         const next = !!(displayInfo & 1),
             prev = !!(displayInfo & 2),
             cancel = !!(displayInfo & 4)
@@ -104,10 +176,6 @@ export class ButtonDisplay {
     static NEXT = 1
     static PREV = 2
     static CANCEL = 4
-}
-
-export class WizardContentPage extends ScrollWidget {
-    
 }
 
 export const defaultWizard = injectService.getInstance(WizardContainer)

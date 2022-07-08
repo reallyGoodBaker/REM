@@ -41,6 +41,10 @@ function clearCache() {
     store.clear()
 }
 
+function clearMusicCache() {
+
+}
+
 
 
 </script>
@@ -106,9 +110,14 @@ function clearCache() {
     <RowList title="缓存">
         <ListTile
             useAvatar={false}
-            data='清除所有缓存'
+            data='清除用户信息'
             extra='需手动重启应用'
             on:click={clearCache}
+        />
+        <ListTile
+            useAvatar={false}
+            data='清除歌曲缓存'
+            on:click={clearMusicCache}
         />
     </RowList>
 

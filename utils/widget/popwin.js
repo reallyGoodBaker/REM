@@ -10,7 +10,6 @@ export class PopWindowWidget extends WillCreateLayerWidget {
 
     constructor() {
         super()
-        this.getLayer().addEventListener('click', () => this.hide())
         this.addEventListener('click', ev => ev.stopPropagation())
     }
 

@@ -247,8 +247,8 @@ progress.horizontal {
 
 
 .scrollable::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
     background-color: transparent;
 }
 .scrollable::-webkit-scrollbar-thumb {

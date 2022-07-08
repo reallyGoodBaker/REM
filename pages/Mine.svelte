@@ -322,26 +322,15 @@
         width: 160px;
         height: 160px;
         background-size: 160px 160px;
+        transition: 0.1s;
     }
 
-    .avatar::after {
-        content: '';
-        position: absolute;
-        width: 160px;
-        height: 160px;
-        background: inherit;
-        bottom: -10px;
-        left: 0px;
-        filter: blur(12px) opacity(0.7);
-        border-radius: 12px;
-        z-index: -1;
-        opacity: 0;
-        transform: scale(1.1);
-        transition: opacity 0.1s ease-out;
+    .avatar:hover {
+        box-shadow: 0px 6px 8px rgba(0,0,0,0.2);
     }
 
-    .avatar:hover::after {
-        opacity: 1;
+    .card:hover {
+        transform: translateY(-2px);
     }
 
     .artist {
