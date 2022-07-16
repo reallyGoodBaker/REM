@@ -1,7 +1,7 @@
 {
   "name": "rem",
-  "version": "0.1.2",
-  "description": "Guava",
+  "version": "0.1.3",
+  "description": "Hickory",
   "main": "main.js",
   "scripts": {
     "build": "rollup -c",

@@ -2,8 +2,6 @@
 
  Network music player based on netease music api
 
-
-
 ### run
 
 ```bash
@@ -13,8 +11,6 @@ npm i
 ```bash
 npm start
 ```
-
-
 
 ### build
 
