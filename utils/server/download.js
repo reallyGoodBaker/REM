@@ -26,6 +26,7 @@ function saveTo(from, to, onProgressChange = (receved, total) => {}) {
             res.on('end', () => {
                 resolve()
             })
+            res.on('error', er => reject(er))
         })
     })
 }

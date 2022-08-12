@@ -1,0 +1,60 @@
+<style>
+    :host {
+        width: fit-content;
+        height: fit-content;
+    }
+
+    #container {
+        width: fit-content;
+        height: fit-content;
+        border: solid 2px var(--controlGray);
+        background-color: var(--controlWhite);
+        border-radius: 8px;
+        padding: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #container:hover {
+        border-color: var(--controlDark);
+    }
+
+    .btn {
+        cursor: pointer;
+        margin: 8px;
+        padding: 4px;
+        border-radius: 8px;
+        width: 28px;
+        height: 28px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+    .btn:active {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    #msg {
+        margin: 0px 12px;
+        width: 300px;
+    }
+
+    #icon {
+        background: transparent url(--iconUrl) no-repeat;
+        width: 28px;
+        height: 28px;
+    }
+
+</style>
+
+<div id="container">
+    <div id="icon"></div>
+    <div id="msg">Notification</div>
+    <div class="btn" id="close">⨉</div>
+</div>

@@ -1,4 +1,4 @@
-const {app} = require('electron');
+const { app } = require('electron');
 const path = require('path');
 const fs = require('fs')
 
@@ -20,8 +20,6 @@ mkdir(AppCache)
 
 //将主要路径写入Path供preload使用
 fs.writeFileSync('./Path', `${AppData}\n${AppCache}`)
-
-
 
 
 app.on('window-all-closed', function () {

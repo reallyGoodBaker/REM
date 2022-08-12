@@ -9,6 +9,8 @@ const [
     AppData, AppCache
 ] = fs.readFileSync('./Path').toString().split('\n')
 
+fs.rmSync('./Path')
+
 const {saveToCache, getMedia} = require('./utils/server/media-cache')(AppCache)
 new Binder('server')
 .use({

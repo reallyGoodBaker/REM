@@ -3,8 +3,11 @@ const {
 } = require('electron')
 const path = require('path')
 
+const {watchNetworkChange} = require('../utils/network/server')
+
 
 Menu.setApplicationMenu(null)
+watchNetworkChange()
 
 
 const appLock = app.requestSingleInstanceLock()
@@ -69,6 +72,14 @@ function initMainWin(browserWindow) {
 
     browserWindow.on("unmaximize", () => {
         browserWindow.webContents.send('win:unmax', browserWindow.getPosition())
+    })
+
+    ipcMain.on('online', () => {
+        browserWindow.webContents.send('online')
+    })
+
+    ipcMain.on('offline', () => {
+        browserWindow.webContents.send('offline')
     })
 
     ipcMain.on('devtools:close', () => {

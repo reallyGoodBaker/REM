@@ -1,117 +1,142 @@
 <script>
-import { onMount, setContext } from "svelte";
-import {EventEmitter} from '../../utils/events.js'
+    import { onMount, setContext } from "svelte";
+    import { EventEmitter } from "../../utils/events.js";
 
-let layer = false
+    let layer = false;
 
-const layerEvents = new EventEmitter()
+    const layerEvents = new EventEmitter();
 
-export function activeLayer() {
-    layer = true
-}
-
-export function disableLayer() {
-    layer = false
-    cmDisplay = false
-}
-
-layerEvents.on('active', activeLayer)
-layerEvents.on('disable', disableLayer)
-
-import ContextMenu from "./ContextMenu.svelte";
-import VirtualCursor from "./VirtualCursor.svelte";
-
-let cmDisplay,
-    cmX,
-    cmY,
-    cmData
-
-function showContextMenu(x, y, path) {
-    cmX = visualViewport.width - x > 200
-        ? x
-        : x - 200
-
-    cmY = y
-
-    let _cmData = []
-    for (const k of contextMap.keys()) {
-        if (path.includes(k)) {
-            _cmData.push(contextMap.get(k))
-        }
+    export function activeLayer() {
+        layer = true;
     }
 
-    if (_cmData.length) {
-        activeLayer()
-        cmData = _cmData
-        cmDisplay = true
+    export function disableLayer() {
+        layer = false;
+        cmDisplay = false;
     }
-}
 
-window.addEventListener('mousedown', ev => {
-    if (ev.button === 2) {
-        const {pageX, pageY, path} = ev
+    layerEvents.on("active", activeLayer);
+    layerEvents.on("disable", disableLayer);
 
-        if (cmDisplay) {
-            layerEvents.emit('disable')
-            return requestIdleCallback(() => showContextMenu(pageX, pageY, path))
-        }
+    import ContextMenu from "./ContextMenu.svelte";
+    import VirtualCursor from "./VirtualCursor.svelte";
 
-        ev.preventDefault()
-        showContextMenu(pageX, pageY, path)
-    }
-})
+    let cmDisplay, cmX, cmY, cmData;
 
-setContext('layerEvents', layerEvents)
+    function showContextMenu(x, y, path) {
+        cmX = visualViewport.width - x > 200 ? x : x - 200;
 
+        cmY = y;
 
-import {xboxControllerMouseSupporter} from '../../utils/controller-support/xbox/controllerSupport.js'
-import {init} from '../../utils/wizard/edit-profile/index.js'
-
-let layerElement
-
-let virtCursor,
-    vcEnable,
-    vcActive,
-    virtProxy = new Proxy({
-        click: false,
-        scroll: 0,
-        x: visualViewport.width / 2,
-        y: visualViewport.height / 2,
-        enable: vcEnable,
-    }, {
-        get(t, p) {
-            return t[p]
-        },
-
-        set(t, p, v) {
-            switch (p) {
-                case 'click':
-                    vcActive = v
-                    t[p] = v
-                    break;
-                case 'enable':
-                    vcEnable = v
-                    t[p] = v
-                    break;
-                case 'x':
-                    virtCursor.style.left = v + 'px'
-                    t[p] = v
-                    break;
-                case 'y':
-                    virtCursor.style.top = v + 'px'
-                    t[p] = v
-                    break;
+        let _cmData = [];
+        for (const k of contextMap.keys()) {
+            if (path.includes(k)) {
+                _cmData.push(contextMap.get(k));
             }
-            return true
         }
+
+        if (_cmData.length) {
+            activeLayer();
+            cmData = _cmData;
+            cmDisplay = true;
+        }
+    }
+
+    window.addEventListener("mousedown", (ev) => {
+        if (ev.button === 2) {
+            const { pageX, pageY, path } = ev;
+
+            if (cmDisplay) {
+                layerEvents.emit("disable");
+                return requestIdleCallback(() =>
+                    showContextMenu(pageX, pageY, path)
+                );
+            }
+
+            ev.preventDefault();
+            showContextMenu(pageX, pageY, path);
+        }
+    });
+
+    setContext("layerEvents", layerEvents);
+
+    import { xboxControllerMouseSupporter } from "../../utils/controller-support/xbox/controllerSupport.js";
+    import { init } from "../../utils/wizard/edit-profile/index.js";
+
+    let layerElement;
+
+    let virtCursor,
+        vcEnable,
+        vcActive,
+        virtProxy = new Proxy(
+            {
+                click: false,
+                scroll: 0,
+                x: visualViewport.width / 2,
+                y: visualViewport.height / 2,
+                enable: vcEnable,
+            },
+            {
+                get(t, p) {
+                    return t[p];
+                },
+
+                set(t, p, v) {
+                    switch (p) {
+                        case "click":
+                            vcActive = v;
+                            t[p] = v;
+                            break;
+                        case "enable":
+                            vcEnable = v;
+                            t[p] = v;
+                            break;
+                        case "x":
+                            virtCursor.style.left = v + "px";
+                            t[p] = v;
+                            break;
+                        case "y":
+                            virtCursor.style.top = v + "px";
+                            t[p] = v;
+                            break;
+                    }
+                    return true;
+                },
+            }
+        );
+
+    onMount(() => {
+        xboxControllerMouseSupporter.init(virtProxy);
+        init(layerElement);
+    });
+
+    import { networkErrorNotif, networkRecoverNotif } from "../../utils/network/browser.js"
+    onMount(() => {
+        networkErrorNotif.inject(layerElement)
+        networkRecoverNotif.inject(layerElement)
     })
 
-onMount(() => {
-    xboxControllerMouseSupporter.init(virtProxy)
-    init(layerElement)
-})
 
 </script>
+
+<div
+    class="container {layer ? 'layer' : ''}"
+    on:click={() => layerEvents.emit("disable")}
+    bind:this={layerElement}
+>
+    <ContextMenu
+        bind:display={cmDisplay}
+        bind:x={cmX}
+        bind:y={cmY}
+        bind:data={cmData}
+    />
+    <VirtualCursor
+        bind:enable={vcEnable}
+        bind:active={vcActive}
+        bind:htmlElement={virtCursor}
+    />
+    <slot />
+</div>
 
 <style>
     .container {
@@ -131,20 +156,4 @@ onMount(() => {
         -webkit-app-region: no-drag;
         pointer-events: all;
     }
-
 </style>
-
-<div class="container {layer? 'layer': ''}" on:click={() => layerEvents.emit('disable')} bind:this={layerElement}>
-    <ContextMenu
-        bind:display={cmDisplay}
-        bind:x={cmX}
-        bind:y={cmY}
-        bind:data={cmData}
-    />
-    <VirtualCursor
-        bind:enable={vcEnable}
-        bind:active={vcActive}
-        bind:htmlElement={virtCursor}
-    />
-    <slot></slot>
-</div>

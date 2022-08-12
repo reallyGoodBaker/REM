@@ -1,6 +1,6 @@
-const {contextBridge} = require('electron');
+const { contextBridge } = require('electron');
 
-module.exports =  class Binder {
+module.exports = class Binder {
 
     static binders = [];
     static async bindAll() {
@@ -27,5 +27,5 @@ module.exports =  class Binder {
     use(obj) {
         this._m = obj;
     }
-    
+
 }
