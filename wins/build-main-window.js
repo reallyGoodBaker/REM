@@ -2,8 +2,10 @@ const {
     BrowserWindow, ipcMain, app, nativeImage, screen, Menu
 } = require('electron')
 const path = require('path')
+const RemStore = require('../utils/server/rem-store')
+const remStore = new RemStore()
 
-const {watchNetworkChange} = require('../utils/network/server')
+const { watchNetworkChange } = require('../utils/network/server')
 
 
 Menu.setApplicationMenu(null)
@@ -18,7 +20,7 @@ function buildWindow() {
 
     const displayBounds = screen.getPrimaryDisplay().bounds
 
-    const width = screen.screenToDipPoint({x: 1360, y: 0}).x,
+    const width = screen.screenToDipPoint({ x: 1360, y: 0 }).x,
         height = ~~(displayBounds.height * 0.8)
 
     let browserWindow = new BrowserWindow({
@@ -36,7 +38,7 @@ function buildWindow() {
         }
     });
 
-    
+
     browserWindow.loadFile(path.resolve(__dirname, '../index.html'))
     // browserWindow.webContents.openDevTools()
 
@@ -89,6 +91,22 @@ function initMainWin(browserWindow) {
     ipcMain.on('devtools:open', () => {
         browserWindow.webContents.openDevTools()
     })
+
+    ipcMain.handle('store:get', (_, name) => {
+        return remStore.get(name)
+    })
+
+    ipcMain.handle('store:set', (_, k, v) => {
+        return remStore.set(k, v)
+    })
+
+    ipcMain.handle('store:rm', (_, k) => {
+        return remStore.rm(k)
+    })
+
+    ipcMain.on('store:getSync', (ev, k) => {
+        ev.returnValue = remStore.get(k)
+    })
 }
 
 /**
@@ -118,7 +136,7 @@ function activeAppBarBtns(browserWindow) {
     ipcMain.on('winquery:screenSize', ev => {
         ev.sender.send('win:screenSize', screen.getPrimaryDisplay().bounds)
     })
-        
+
     browserWindow.on('will-move', (ev, bounds) => {
         browserWindow.webContents.executeJavaScript(`window.__changeBgPos && window.__changeBgPos(${bounds.x}, ${bounds.y})`)
     })
@@ -138,22 +156,22 @@ function setThumbarButtons(win) {
             win.webContents.send('player:previous')
         }
     },
-    nextBtn = {
-        icon: nextIcon,
-        click() {
-            win.webContents.send('player:next')
-        }
-    },
-    playBtn = {
-        icon: playIcon,
-        click: onPlayBtn
-    },
-    pauseBtn = {
-        icon: pauseIcon,
-        click: onPauseBtn
-    },
-    playBtns = [preBtn, playBtn, nextBtn],
-    pauseBtns = [preBtn, pauseBtn, nextBtn]
+        nextBtn = {
+            icon: nextIcon,
+            click() {
+                win.webContents.send('player:next')
+            }
+        },
+        playBtn = {
+            icon: playIcon,
+            click: onPlayBtn
+        },
+        pauseBtn = {
+            icon: pauseIcon,
+            click: onPauseBtn
+        },
+        playBtns = [preBtn, playBtn, nextBtn],
+        pauseBtns = [preBtn, pauseBtn, nextBtn]
 
     function onPlayBtn() {
         setPause()

@@ -1,44 +1,52 @@
 const { ipcRenderer, screen } = require('electron');
 const Binder = require('./utils/jsBinder');
-const {createFuncBinding} = require('./utils/api/funcBinder');
+const { createFuncBinding } = require('./utils/api/funcBinder');
 const fs = require('fs')
 
 
-const {fetchJson} = require('./utils/server/fetch')
+const { fetchJson } = require('./utils/server/fetch')
 const [
     AppData, AppCache
 ] = fs.readFileSync('./Path').toString().split('\n')
 
-fs.rmSync('./Path')
+const {
+    saveToCache,
+    getMedia,
+    saveToPlaylist,
+    getPlaylist
+} = require('./utils/server/media-cache')(AppCache)
 
-const {saveToCache, getMedia} = require('./utils/server/media-cache')(AppCache)
+
 new Binder('server')
 .use({
     fetchJson,
     saveToCache,
-    getMedia
+    getMedia,
+    getPlaylist,
+    saveToPlaylist,
 })
 
 new Binder('hooks')
-.use({...ipcRenderer,
+.use({
+    ...ipcRenderer,
     on: (...args) => ipcRenderer.on.apply(ipcRenderer, args),
     once: (...args) => ipcRenderer.once.apply(ipcRenderer, args),
     rm: (...args) => ipcRenderer.removeListener.apply(ipcRenderer, args),
-});
+})
 
-const {getWallpaper} = require('./utils/Win11Wallpaper');
+const { getWallpaper } = require('./utils/Win11Wallpaper');
 new Binder('wallpaper').bind('getWallpaper', getWallpaper);
 
 
 
-const {login, loginViaQRCode, validQRLogin, getUserAccount} = require('./utils/api/login');
-const {Search, suggest} = require('./utils/api/search');
-const {checkIn} = require('./utils/api/dailySignin');
+const { login, loginViaQRCode, validQRLogin, getUserAccount } = require('./utils/api/login');
+const { Search, suggest } = require('./utils/api/search');
+const { checkIn } = require('./utils/api/dailySignin');
 const {
     getUserPlaylist, getPlaylistDetail, getArtistSublist, getAlbumSublist,
     getAlbumDetail,
 } = require('./utils/api/playlist');
-const {getSongDetail, getSongUrl} = require('./utils/api/song');
+const { getSongDetail, getSongUrl } = require('./utils/api/song');
 const { logout } = require('NeteaseCloudMusicApi');
 
 
@@ -62,3 +70,4 @@ new Binder('NeteaseApi')
 
 
 Binder.bindAll();
+fs.rmSync('./Path')

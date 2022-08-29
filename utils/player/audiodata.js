@@ -26,7 +26,7 @@ export class AudioData {
         }
 
 
-        const res = this.urls[quality] = await NeteaseApi.getSongUrl(this.data.id, store.get('cookie'), br)
+        const res = this.urls[quality] = await NeteaseApi.getSongUrl(this.data.id, await store.get('cookie'), br)
         let url = res.body.data[0].url
 
         const media = await server.getMedia(`ne${this.data.id}`)

@@ -16,15 +16,6 @@ export const networkErrorNotif = new NetworkStateWindow().setMessage('您似乎�
 export const networkRecoverNotif = new NetworkStateWindow().setMessage('网络已重新连接')
 
 export function initNetworkWatcher() {
-    hooks.on('online', online => triggerOnlineStateChange(true))
-    hooks.on('offline', online => triggerOnlineStateChange(false))
-}
-
-function triggerOnlineStateChange(online) {
-
-    if (online) {
-        return networkRecoverNotif.display()
-    }
-
-    networkErrorNotif.display()
+    hooks.on('online', () => networkRecoverNotif.display())
+    hooks.on('offline', () => networkErrorNotif.display())
 }

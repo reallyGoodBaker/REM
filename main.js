@@ -3,23 +3,30 @@ const path = require('path');
 const fs = require('fs')
 
 
-function mkdir(path) {
-    if (!fs.existsSync(path)) {
-        fs.mkdirSync(path)
+function mkdir(paths) {
+    for (const filename of paths) {
+        if (!fs.existsSync(filename)) {
+            fs.mkdirSync(filename)
+        }
     }
 }
 
-const
-    AppRoot = path.resolve(app.getPath('documents'), 'rem'),
-    AppData = path.resolve(AppRoot, 'data'),
-    AppCache = path.resolve(AppRoot, 'cache')
+const AppRoot = path.resolve(app.getPath('documents'), 'rem')
 
-mkdir(AppRoot)
-mkdir(AppData)
-mkdir(AppCache)
+function pathResolve(name) {
+    return path.resolve(AppRoot, name)
+}
+
+const paths = [
+    pathResolve('data'),
+    pathResolve('cache'),
+    pathResolve('download'),
+]
+
+mkdir(paths)
 
 //将主要路径写入Path供preload使用
-fs.writeFileSync('./Path', `${AppData}\n${AppCache}`)
+fs.writeFileSync('./Path', paths.join('\n'))
 
 
 app.on('window-all-closed', function () {

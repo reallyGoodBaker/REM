@@ -12,7 +12,7 @@
     let desktopUrl;
     let outerContainer;
     async function getOneDayDesktop() {
-        let data = store.get('dailyDesktop');
+        let data = await store.get('dailyDesktop');
 
         imgBgc.onload = () => {
             __setColor(container, imgBgc, 1);
@@ -39,8 +39,8 @@
     async function getUserPlaylist() {
         if(pageStore.__playlists) return playlists = pageStore.__playlists;
 
-        const cookie = store.get('cookie'),
-        uid = store.get('profile').userId;
+        const cookie = await store.get('cookie'),
+        uid = (await store.get('profile')).userId;
 
         const _playlist = await NeteaseApi.getUserPlaylist(uid, cookie);
 
@@ -53,21 +53,23 @@
     getUserPlaylist();
 
 
-    function onClick(name, props) {
+    async function onClick(name, props) {
+        props = await props()
+        console.log(props);
         Pager.openNew(name, Playlist, props);
     }
     
 
     export function getDetailX(id) {
-        let data = store.get('playlist'+id);
+        let data = store.getSync('playlist'+id);
         if (data) return data;
 
         return getDetailXAsync(id)
     }
 
     async function getDetailXAsync(id) {
-        let cookie = store.get('cookie'),
-            data = store.get('playlist'+id)
+        let cookie = await store.get('cookie'),
+            data = await store.get('playlist'+id)
         
         const list = (await NeteaseApi.getPlaylistDetail(id, cookie)).body.playlist.trackIds;
         
@@ -129,8 +131,8 @@
     async function getArtistSublist() {
         let data = pageStore.__artistSublist
         if (!data) {
-            let favs = await NeteaseApi.getArtistSublist(store.get('cookie'), 1)
-            favs = await NeteaseApi.getArtistSublist(store.get('cookie'), favs.body.count)
+            let favs = await NeteaseApi.getArtistSublist(await store.get('cookie'), 1)
+            favs = await NeteaseApi.getArtistSublist(await store.get('cookie'), favs.body.count)
             favs.body.data.count = favs.body.count
             return pageStore.__artistSublist = favs.body.data
         }
@@ -154,8 +156,8 @@
     async function getAlbumSublist() {
         let data = pageStore.__alSublist
         if (!data) {
-            let favs = await NeteaseApi.getAlbumSublist(store.get('cookie'), 1)
-            favs = await NeteaseApi.getAlbumSublist(store.get('cookie'), favs.body.count)
+            let favs = await NeteaseApi.getAlbumSublist(await store.get('cookie'), 1)
+            favs = await NeteaseApi.getAlbumSublist(await store.get('cookie'), favs.body.count)
             favs.body.data.count = favs.body.count
             return pageStore.__alSublist = favs.body.data
         }
@@ -210,10 +212,10 @@
 
     function getAlbumDetail(id) {
 
-        let al = store.get('al' + id)
+        let al = store.getSync('al' + id)
         if (!al) {
             return new Promise(async res => {
-                al = (await NeteaseApi.getAlbumDetail(id, store.get('cookie'))).body.songs
+                al = (await NeteaseApi.getAlbumDetail(id, await store.get('cookie'))).body.songs
                 store.set('al'+id, al)
                 res(al)
             })
@@ -427,7 +429,7 @@
         <div class="card row active" title={list.name} on:click={() => {
             let id = list.id;
 
-            onClick(list.name, () => {
+            onClick(list.name, async () => {
                 return {
                     header: {
                         imgUrl: list.coverImgUrl,
@@ -437,8 +439,8 @@
                         trackCount: list.trackCount,
                     },
                     listData: getDetailX(id),
-                    sortBy: window.store.get('sortBy'),
-                    forwards: window.store.get('forwards'),
+                    sortBy: await window.store.get('playlist/sortBy'),
+                    forwards: await window.store.get('playlist/forwards'),
                     onTabDestroy() {
                         clearPlaylist(id)
                     },
@@ -510,7 +512,7 @@
             on:click={() => {
                 let id = al.id;
                 
-                onClick(al.name, () => {
+                onClick(al.name, async() => {
                     return {
                         header: {
                             imgUrl: al.picUrl,
@@ -520,8 +522,8 @@
                             trackCount: al.size,
                         },
                         listData: getAlbumDetail(id),
-                        sortBy: window.store.get('sortBy'),
-                        forwards: window.store.get('forwards'),
+                        sortBy: await window.store.get('playlist/sortBy'),
+                        forwards: await window.store.get('playlist/forwards'),
                         onTabDestroy() {
                             clearAlbum(id)
                         },

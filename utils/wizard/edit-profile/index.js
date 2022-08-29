@@ -21,7 +21,7 @@ const head = (txt, lvl=1) => {
 }
 
 export function init(ele) {
-    const profile = store.get('profile')
+    const profile = store.getSync('profile')
     const avatar = new AvatarWidget({url: profile.avatarUrl}),
         inputNickname = new InputWidget(),
         header = head('修改你的头像与昵称', 2)

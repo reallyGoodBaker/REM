@@ -8,7 +8,7 @@ import ListTile from './components/ListTile.svelte';
 import Popup from './components/Popup.svelte';
 
 
-let settings = store.get('sys-settings')
+let settings = store.getSync('sys-settings')
 
 let controlColors = settings.theme.controlColor.slice(1)
 let controlColorSelected = settings.theme.controlColor[0]
@@ -108,6 +108,14 @@ function clearMusicCache() {
     </RowList>
 
     <RowList title="缓存">
+        <SelectListTile
+            data="缓存音乐质量"
+            bind:dataList={controlColors}
+            bind:selected={controlColorSelected}
+            useAvatar={false}
+            isUrl={false}
+            on:selected={onSelectedControlColor}
+        />
         <ListTile
             useAvatar={false}
             data='清除用户信息'
@@ -119,6 +127,7 @@ function clearMusicCache() {
             data='清除歌曲缓存'
             on:click={clearMusicCache}
         />
+        
     </RowList>
 
 

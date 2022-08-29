@@ -54,10 +54,10 @@
 
        const w12 = w/2, h12 = h/2, w14 = w/4, w34 = w12 + w14, h14 = h/4, h34 = h12 + h14;
         let lt = __getColorInfo(imageData, w, w14, h14),
-        rt = __getColorInfo(imageData, w, w34, h14),
-        c = __getColorInfo(imageData, w, w12, h12),
-        lb = __getColorInfo(imageData, w, w14, h34),
-        rb = __getColorInfo(imageData, w, w34, h34);
+            rt = __getColorInfo(imageData, w, w34, h14),
+            c = __getColorInfo(imageData, w, w12, h12),
+            lb = __getColorInfo(imageData, w, w14, h34),
+            rb = __getColorInfo(imageData, w, w34, h34);
 
         let color = [];
 
@@ -114,7 +114,7 @@
         p.on('pause', () => playing = false);
         p.on('ended', () => MainPlaylist.playNext());
 
-        let c = store.get('loadedContent');
+        let c = await store.get('loadedContent');
         if (c) {
             c = new AudioData(c);
             setContent(c);
@@ -165,11 +165,13 @@
     }
 
     let volume;
-    if (volume = store.get('volume') || 50) {
-        rem.once('playerReady', () => {
-            globalPlayer.volume(volume/100)
-        })
-    }
+    (async() => {
+        if (volume = await store.get('volume') || 50) {
+            rem.once('playerReady', () => {
+                globalPlayer.volume(volume/100)
+            })
+        }
+    })()
 
     function saveVolume() {
         store.set('volume', volume);
@@ -332,7 +334,7 @@
         />
         <div class="row txt">
             <div class="title">{content.title || '暂未播放歌曲'}</div>
-            <div class="subtitle">{content.artist}</div>
+            <div class="subtitle">{content.artist || ''}</div>
         </div>
     </div>
     

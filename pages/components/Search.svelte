@@ -7,9 +7,9 @@
     let showPopup = false
 
     const show = () => showPopup = true;
-    const hide = () => {
+    const hide = async () => {
         showPopup = false;
-        const profile = store.get('profile');
+        const profile = await store.get('profile');
         if (profile) {
             user = {
                 avatarUrl: profile.avatarUrl,
@@ -19,14 +19,14 @@
         avatarUrl = profile? profile.avatarUrl: '';
     }
 
-    let profile = store.get('profile');
+    let profile = store.getSync('profile')
     let user = {
         avatarUrl: '',
         name: '未登录',
     };
     export let avatarUrl = profile? profile.avatarUrl: '';
 
-    function showAvatar() {
+    async function showAvatar() {
         if (profile) {
             user = {
                 avatarUrl: profile.avatarUrl,
@@ -36,8 +36,8 @@
         avatarUrl = profile? profile.avatarUrl: '';
     }
     showAvatar();
-    rem.on('__updateLoginAvatar', () => {
-        profile = store.get('profile');
+    rem.on('__updateLoginAvatar', async () => {
+        profile = await store.get('profile');
         showAvatar();
     });
 
@@ -127,7 +127,7 @@
 
 </style>
 
-<div class="column" style="margin-left: 48px">
+<div class="column" style="margin-left: 48px; -webkit-app-region: no-drag;">
 <div class="column search">
     <span class="iconfont icon-search avatar menu" on:click={search}></span>
     

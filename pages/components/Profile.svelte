@@ -16,9 +16,9 @@
     let isLogedin = !!user.avatarUrl;
 
     let pop = false;
-    let hide = () => {
+    let hide = async () => {
         pop = false;
-        const profile = store.get('profile');
+        const profile = await store.get('profile');
         if (profile) {
             user = {
                 avatarUrl: profile.avatarUrl,

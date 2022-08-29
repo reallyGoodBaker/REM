@@ -28,6 +28,10 @@ async function watchNetworkChange() {
             }
         }
     }, 5000)
+
+    ipcMain.on('onlineState', (_, callback) => {
+        return callback.call(null, online)
+    })
 }
 
 module.exports = {

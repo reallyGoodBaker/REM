@@ -9,10 +9,9 @@
     export let header = null;
 
     const defaultSortFunc = () => 1;
-    export let listSplitter = store.get('splitter') || {
-        location: [2, 8, 30, 70],
+    export let listSplitter = store.getSync('playlist/splitter') || {
+        location: [0, 10, 40, 70],
         names: ['功能', '歌曲名', '艺术家', '专辑'],
-
     };
 
     listSplitter.sortFunc = [
@@ -62,8 +61,8 @@
         sortf = listSplitter.sortFunc[key] || defaultSortFunc;
         sortBy = key;
 
-        store.set('sortBy', sortBy);
-        store.set('forwards', forwards);
+        store.set('playlist/sortBy', sortBy);
+        store.set('playlist/forwards', forwards);
 
         let arr = [...backup];
 
@@ -102,6 +101,9 @@
         if (element === splitterContainer) return;
 
         index = [...element.parentNode.children].indexOf(element);
+        if (index === 0) {
+            return
+        }
         splitWindowWidth = ev.path[1].offsetWidth;
         dragging = true;
         raw = ev.target.offsetLeft;
@@ -136,7 +138,7 @@
             raw = rx = ox = index = 0;
             element = null;
 
-            store.set('splitter', {location, names: listSplitter.names});
+            store.set('playlist/splitter', {location, names: listSplitter.names});
         }
     }
 
@@ -397,7 +399,7 @@
     </div>
 
     <div class="column splitter"
-        style="padding-left: {location[0]}%"
+        style="width: calc(100% - 48px); margin: 0px 24px;"
         bind:this={splitterContainer}
         on:mousedown={startSplitDrag}
     >

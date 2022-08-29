@@ -2,7 +2,7 @@ import {defaultWizard} from '../wizard.js'
 import {AvatarWidget} from '../../widget/avatar.js'
 
 export function init() {
-    let profile = store.get('profile'),
+    let profile = store.getSync('profile'),
         avatarUrl = profile.avatarUrl
 
     const avatar = new AvatarWidget({

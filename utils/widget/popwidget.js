@@ -66,8 +66,8 @@ export class PopWidget extends Widget {
         this.style.display = 'block'
 
         this.animate([
-            {opacity: 1, transform: `translate(${offsetX}px, ${offsetY}px)`},
-            {opacity: 0, transform: 'translate(0, 0)'},
+            {opacity: 0, transform: `translate(${offsetX}px, ${offsetY}px)`},
+            {opacity: 1, transform: 'translate(0, 0)'},
         ], 100).onfinish = () => {
             this.isPoped = true
         }

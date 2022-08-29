@@ -1,14 +1,12 @@
 <script>
-    import Search from './Search.svelte'
-
     let fullScreen = false;
 
     function min() {
-        hooks.send('win:min');
+        hooks.send("win:min");
     }
 
     function close() {
-        hooks.send('win:close');
+        hooks.send("win:close");
     }
 
     function toggleMax() {
@@ -20,29 +18,36 @@
     }
 
     function max() {
-        hooks.send('win:max')
+        hooks.send("win:max");
     }
 
     function unmax() {
-        hooks.send('win:unmax')
+        hooks.send("win:unmax");
     }
 
-    hooks.on('win:max', () => {
-        fullScreen = true
-    })
-    hooks.on('win:unmax', () => {
-        fullScreen = false
-    })
-
+    hooks.on("win:max", () => {
+        fullScreen = true;
+    });
+    hooks.on("win:unmax", () => {
+        fullScreen = false;
+    });
 </script>
-
 
 <style>
     .container {
-        width: 100vw;
+        position: fixed;
+        top: 0;
+        width: fit-content;
         height: 54px;
-        -webkit-app-region: drag;
-        justify-content: space-between;
+        align-items: center;
+    }
+
+    .container.right {
+        right: 0;
+    }
+
+    .container.left {
+        left: 0;
     }
 
     .clk {
@@ -55,12 +60,15 @@
         border-radius: 8px;
         cursor: pointer;
         background-color: transparent;
-        transition: background-color 0.12s,
-            color 0.12s;
+        transition: background-color 0.12s, color 0.12s;
+    }
+
+    .clk.small {
+        font-size: 12px;
     }
 
     .clk:hover {
-        background-color: rgba(0,0,0,0.2);
+        background-color: rgba(0, 0, 0, 0.2);
     }
 
     .clk.red:hover {
@@ -84,7 +92,7 @@
     }
 
     .title.debug::after {
-        content: 'Beta';
+        content: "Beta";
         color: red;
         font-size: small;
         margin: 0px 4px;
@@ -92,13 +100,16 @@
 
 </style>
 
-
-<div class="column container">
-    <div class="title{window.rem.isBeta?' debug' :''}">REM</div>
-    <div style="align-self: flex-start; margin-top: 16px"><Search/></div>
+<div class="column container right">
     <div class="column btn-group">
         <div class="column clk" on:click={min}>&#xe698;</div>
-        <div class="column clk" on:click={toggleMax}>{fullScreen?'\ue891':'\ue88f'}</div>
+        <div class="column clk small" on:click={toggleMax}>
+            {fullScreen ? "\ue891" : "\ue88f"}
+        </div>
         <div class="column clk red" on:click={close}>⨉</div>
     </div>
+</div>
+
+<div class="column container left">
+    <div class="title{window.rem.isBeta ? ' debug' : ''}">REM</div>
 </div>

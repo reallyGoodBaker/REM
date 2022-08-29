@@ -2,7 +2,7 @@
     import Avatar from "./components/Avatar.svelte";
     import Input from "./components/Input.svelte";
 
-    let profile = store.get('profile');
+    let profile = store.getSync('profile')
 
     function uploadAvatar() {
 

@@ -7,11 +7,12 @@ import Explorer from './Explorer.svelte'
 import Appbar from './components/Appbar.svelte'
 import Login from './Login.svelte'
 import SurfaceLayer from './components/SurfaceLayer.svelte';
+import Search from './components/Search.svelte'
 
 
 let MinePage = Mine
-if(store.get('profile')) {
-    NeteaseApi.checkIn(store.get('cookie'))
+if(store.getSync('profile')) {
+    store.get('cookie').then(data => NeteaseApi.checkIn(data))
 } else {
     MinePage = Login
 }
@@ -122,7 +123,7 @@ window.Pager = (() => {
         return ~selections.indexOf(key)
     }
 
-    function openNew(name, component, props, force=false) {
+    async function openNew(name, component, props, force=false) {
         if(add(name, component, props, force)) return select(name)
 
         select(name, true)
@@ -177,7 +178,7 @@ async function getWallpaperDataSrc() {
 
 
 let wallpaperImg,
-    settings = store.get('sys-settings'),
+    settings = store.getSync('sys-settings'),
     useAcrylic = false
 
 async function initBackground() {
@@ -280,12 +281,15 @@ if (!settings) {
     settings = {
         theme: {
             controlColor: [2, 39, 148, 210, 270, 292, 322],
-            useAcrylic: true,
+            useAcrylic: false,
         },
         beta: {
             showDevTools: false
         },
-
+        quality: {
+            dataList: ['低', '中', '高', '最佳'],
+            selected: 3,
+        }
     }
 
     store.set('sys-settings', settings)
@@ -316,6 +320,7 @@ rem.on('__pageUnfold', () => {
         display: grid;
         grid-template-rows: 89px 1fr 72px;
         grid-template-columns: 1fr;
+        contain: strict;
     }
 
     .wallpaper {
@@ -344,13 +349,16 @@ rem.on('__pageUnfold', () => {
         background-color: var(--controlAcrylic);
     }
 
+
 </style>
 
 <div style="transition: background-color 0.2s; background-color: var({useAcrylic?'--acrylicBackgroundColor':'--noneAcrylicBackgroundColor'});">
     <img class="wallpaper" src={wallpaperImg} alt="" width={wallpaperWidth} bind:this={wpEle}>
     <div class="row window">
         <div class="row head{coloredAppbar? ' color': ''}{useAcrylic?'':' noneAcrylic'}">
-            <Appbar/>
+            <div style="width: 100vw; height: 54px; justify-content: center; -webkit-app-region: drag;" class="Row">
+                <Search/>
+            </div>
             <Nav
                 bind:selected
                 bind:tabs
@@ -360,4 +368,5 @@ rem.on('__pageUnfold', () => {
         <Control/>
     </div>
     <SurfaceLayer></SurfaceLayer>
+    <Appbar/>
 </div>

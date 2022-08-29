@@ -28,6 +28,7 @@ export class MainPlaylist {
      */
     static loadList(list=[]) {
         this.listData = list.concat([])
+        store.set('listPlaying', this.listData)
         this.current = 0
     }
 

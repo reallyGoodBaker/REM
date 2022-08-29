@@ -62,10 +62,9 @@
     .innerWindow {
         width: 100%;
         height: 100%;
-        /* overflow: visible; */
-        contain: content;
-        content-visibility: auto;
-        contain-intrinsic-size: 0 100vh;
+        overflow: visible;
+        /* contain: strict; */
+        /* content-visibility: auto; */
         position: relative;
     }
 

@@ -22,8 +22,24 @@ function getMedia(uri) {
     return null
 }
 
+function saveToPlaylist(playlist, name) {
+    fs.writeFile(path.join(cache, name), JSON.stringify(playlist), err => {
+        if (err) {
+            console.log(err)
+        }
+    })
+}
+
+function getPlaylist(name) {
+    const playlistPath = path.join(cache, name)
+    if (fs.existsSync(playlistPath)) {
+        return fs.readFileSync(playlistPath)
+    }
+    return null
+}
+
 return {
-    saveToCache, getMedia
+    saveToCache, getMedia, saveToPlaylist, getPlaylist
 }
 
 }

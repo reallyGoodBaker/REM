@@ -16,10 +16,12 @@
             error = true;
             return ;
         }
-        localStorage.setItem('profile', JSON.stringify(res.body.profile));
-        localStorage.setItem('token', JSON.stringify(res.body.token));
-        store.set('cookie', res.cookie.join(''));
-        performClick();
+        await Promise.all([
+            store.set('profile', JSON.stringify(res.body.profile)),
+            store.set('token', JSON.stringify(res.body.token)),
+            store.set('cookie', res.cookie.join('')),
+        ])
+        saveAccount()
     }
 
     let loginTypeEnum = ['手机', '二维码'];
@@ -53,7 +55,7 @@
 
                 case 803: {
                     store.set('cookie', res.body.cookie);
-                    getAccount(); 
+                    saveAccount(); 
                     break;
                 }
             }
@@ -64,8 +66,8 @@
 
     }
 
-    async function getAccount() {
-        const res = await NeteaseApi.getUserAccount(store.get('cookie'));
+    async function saveAccount() {
+        const res = await NeteaseApi.getUserAccount(await store.get('cookie'));
         store.set('profile', res.body.data.profile);
         performClick();
     }

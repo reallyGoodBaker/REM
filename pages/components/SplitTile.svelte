@@ -34,8 +34,8 @@
 
 <style>
     .tile {
-        box-sizing: border-box;
-        width: 100%;
+        width: calc(100% - 48px);
+        padding: 0 24px;
         justify-content: flex-start;
         cursor: default;
         font-size: small;
@@ -73,7 +73,7 @@
 </style>
 
 
-<div class="column tile{selected?' selected': ''}{focus?' focus': ''}" style="padding-left: {location[0]}%"
+<div class="column tile{selected?' selected': ''}{focus?' focus': ''}"
     on:click={onClick}
     on:dblclick={dbClick}
 >
