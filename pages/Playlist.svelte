@@ -1,7 +1,7 @@
 <script>
 
     import Avatar from "./components/Avatar.svelte";
-    import ScrollView from "./components/ScrollView.svelte";
+    import ScrollView from "./components/ScrollView2.svelte";
     import SplitList from "./components/SplitList.svelte";
     import Input from "./components/Input.svelte";
 
@@ -71,8 +71,7 @@
             arr = arr.reverse();
         }
         setTimeout(() => {
-            _listData = arr;
-            recalcHeight();
+            _listData = arr
         });
 
     }
@@ -186,12 +185,6 @@
         MainPlaylist.play(matches[0]);
     }
 
-    let scrollv;
-    function recalcHeight() {
-        scrollv.measure();
-    }
-
-
     let container
     onMount(() => {
         contextMap.set(container, {
@@ -238,15 +231,15 @@
     }
 
     .header {
-        --color: transparent;
+        --color: var(--controlBrighter);
         background-color: var(--color);
-        width: 100%;
-        height: 244px;
-        min-height: 244px;
+        width: 252px;
+        height: calc(100% - 48px);
         justify-content: flex-start;
         box-sizing: border-box;
-        padding: 0px 24px;
-        padding-top: 24px;
+        padding: 32px 12px;
+        margin: 24px;
+        border-radius: 12px;
     }
 
     .nav {
@@ -282,7 +275,6 @@
     .rowl {
         height: 200px;
         justify-content: space-between;
-        margin-left: 24px;
         align-items: flex-start;
         color: var(--controlBlack);
     }
@@ -332,11 +324,18 @@
 
     .btn {
         color: var(--controlWhite);
-        padding: 8px 12px;
+        padding: 10px;
         border: none;
         border-radius: 8px;
-        margin-right: 8px;
+        margin-right: 4px;
         font-size: medium;
+        text-align: center;
+    }
+
+    .btn.big {
+        height: 16px;
+        font-weight: bold;
+        line-height: 16px;
     }
 
     .accent {
@@ -365,58 +364,60 @@
 
 </style>
 
-
-<ScrollView bind:this={scrollv}>
-<div class="row c" bind:this={container}>
-
-    {#if header}
-    <div class="header column">
-        <Avatar
-            width={200}
-            height={200}
-            radius={'8%'}
-            avatar={header.imgUrl}
-        />
-        <div class="row rowl">
-            <div>
-                <h1 class="title">{header.title}<span class="bread-crumb">{header.trackCount}首</span></h1>
-                <div class="subtitle">{header.subtitle}</div>
-            </div>
-
-            <div class="column">
-                <div class="btn big accent" on:click={playAll}> {'\ue615'} 播放 </div>
-                <div class="btn big bright" on:click={playRandom}> {'\ue619'} 随机 </div>
-            </div>
+<div class="Row" style="width: 100%; height: 100%;">
+<div class="header Column" style="justify-content: space-between;">
+    <Avatar
+        width={200}
+        height={200}
+        radius={'8px'}
+        avatar={header.imgUrl}
+    />
+    <div class="Column rowl" style="align-items: center;">
+        <div style="align-self: flex-start;">
+            <h3 class="title">{header.title}<span class="bread-crumb">{header.trackCount}首</span></h3>
+            <div class="subtitle">{header.subtitle}</div>
         </div>
-    </div>
-    {/if}
 
-    <div class="nav column">
-        <Input type="text" placeholder={'\ue6a8  搜索列表'} fullBorder={true}/>
-        <div class="column">
-            
+        <div class="Row">
+            <div class="btn big accent" on:click={playAll}> {'\ue615'} 播放 </div>
+            <div class="btn big bright" on:click={playRandom}>{'\ue619'}</div>
         </div>
-    </div>
-
-    <div class="column splitter"
-        style="width: calc(100% - 48px); margin: 0px 24px;"
-        bind:this={splitterContainer}
-        on:mousedown={startSplitDrag}
-    >
-        {#each listSplitter.names as name, i}
-        <div class="splitterTab{sortBy===i?!forwards?' forwards': ' backwards': ''}" style="width: {widths[i]}%" on:click={() => sortList(i)}>{name}</div>
-        {/each}
-    </div>
-
-    <div class="row list">
-        <SplitList
-            on:mount={recalcHeight}
-            on:click={onClick}
-            on:dbclick={dbClick}
-            bind:listData={_listData}
-            bind:location
-            bind:selections
-        ></SplitList>
     </div>
 </div>
-</ScrollView>
+
+<div style="width: calc(100% - 300px); height: 100%;">
+    <ScrollView>
+        <div class="Column c" bind:this={container}>
+        
+            <div class="nav Row">
+                <Input type="text" placeholder={'\ue6a8  搜索列表'} fullBorder={true}/>
+                <div class="Row">
+                    
+                </div>
+            </div>
+        
+            <div class="Row splitter"
+                style="width: calc(100% - 48px); margin: 0px 24px;"
+                bind:this={splitterContainer}
+                on:mousedown={startSplitDrag}
+            >
+                {#each listSplitter.names as name, i}
+                <div class="splitterTab{sortBy===i?!forwards?' forwards': ' backwards': ''}" style="width: {widths[i]}%" on:click={() => sortList(i)}>{name}</div>
+                {/each}
+            </div>
+        
+            <div class="Column list">
+                <SplitList
+                    on:click={onClick}
+                    on:dbclick={dbClick}
+                    bind:listData={_listData}
+                    bind:location
+                    bind:selections
+                ></SplitList>
+            </div>
+        
+        </div>
+    </ScrollView>
+</div>
+
+</div>

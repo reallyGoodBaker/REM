@@ -1,7 +1,7 @@
 <script>
     import { onDestroy, onMount } from "svelte";
     import Measurable from "./components/Measurable.svelte";
-    import ScrollView from "./components/ScrollView.svelte";
+    import ScrollView from "./components/ScrollView2.svelte";
     import Playlist from "./Playlist.svelte";
 
 
@@ -9,15 +9,13 @@
 
     let container, imgBgc;
 
-    let desktopUrl;
-    let outerContainer;
+    let desktopUrl
     async function getOneDayDesktop() {
         let data = await store.get('dailyDesktop');
 
         imgBgc.onload = () => {
             __setColor(container, imgBgc, 1);
-            container.style.setProperty('--start', 220 + 'px');
-            outerContainer.recalc();
+            container.style.setProperty('--start', 220 + 'px')
         }
 
         if(data && new Date().getTime() - data.timeStamp < 57600000) {
@@ -89,8 +87,10 @@
     function changeHeight() {
         collectionFolded = !collectionFolded;
         meter.measure(({height}) => {
-            container.style.setProperty('--height', height + 160 + 'px');
-            outerContainer.recalc();
+            container.style.setProperty('--height', height + 160 + 'px')
+            requestAnimationFrame(() => {
+                scrollv.update()
+            })
         });
     }
 
@@ -148,8 +148,6 @@
             : sublist.slice(0, 12)
 
         artistSublist.count = sublist.count
-        
-        outerContainer.recalc()
     }
     renderArtistSublist()
 
@@ -170,7 +168,6 @@
         const raw = await getAlbumSublist()
         albumSublist = raw.slice(0, count || raw.count)
         albumSublist.count = raw.count
-        outerContainer.recalc()
     }
     if (pageStore.showAllAlbums) {
         renderAlbumSublist()
@@ -224,6 +221,8 @@
         return al
         
     }
+
+    let scrollv
 
 </script>
 
@@ -416,7 +415,7 @@
 </style>
 
 
-<ScrollView bind:this={outerContainer}>
+<ScrollView bind:this={scrollv}>
 <div class="row">
 
 <div class="collection{!collectionFolded?' unfold':''}" data-title="我的歌单" bind:this={container}>

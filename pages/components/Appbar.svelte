@@ -35,6 +35,7 @@
 
 <style>
     .container {
+        z-index: 9999;
         position: fixed;
         top: 0;
         width: fit-content;
@@ -56,7 +57,7 @@
         font-size: 14px;
         width: 32px;
         height: 32px;
-        margin-right: 4px;
+        /* margin-right: 4px; */
         border-radius: 8px;
         cursor: pointer;
         background-color: transparent;
@@ -81,10 +82,6 @@
         align-self: flex-start;
     }
 
-    .btn-group > div:last-child {
-        margin-right: 8px;
-    }
-
     .title {
         width: 115px;
         opacity: 0.7;
@@ -98,12 +95,19 @@
         margin: 0px 4px;
     }
 
+    .appbtns {
+        padding: 4px;
+        background-color: var(--noneAcrylicBackgroundColor);
+        margin-right: 8px;
+        border-radius: 8px;
+    }
+
 </style>
 
 <div class="column container right">
-    <div class="column btn-group">
+    <div class="column btn-group appbtns">
         <div class="column clk" on:click={min}>&#xe698;</div>
-        <div class="column clk small" on:click={toggleMax}>
+        <div class="column clk small" style="margin: 0 4px;" on:click={toggleMax}>
             {fullScreen ? "\ue891" : "\ue88f"}
         </div>
         <div class="column clk red" on:click={close}>⨉</div>

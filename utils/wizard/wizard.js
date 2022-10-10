@@ -172,10 +172,10 @@ export class WizardContainer extends PopWindowWidget {
 
 }
 
+injectService.add(WizardContainer)
+
 export class ButtonDisplay {
     static NEXT = 1
     static PREV = 2
     static CANCEL = 4
 }
-
-export const defaultWizard = injectService.getInstance(WizardContainer)

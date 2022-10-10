@@ -62,6 +62,7 @@
 
     import { xboxControllerMouseSupporter } from "../../utils/controller-support/xbox/controllerSupport.js";
     import { init } from "../../utils/wizard/edit-profile/index.js";
+    import { WillCreateLayerWidget } from '../../utils/widget/layer.js'
 
     let layerElement;
 
@@ -106,8 +107,9 @@
         );
 
     onMount(() => {
-        xboxControllerMouseSupporter.init(virtProxy);
-        init(layerElement);
+        xboxControllerMouseSupporter.init(virtProxy)
+        WillCreateLayerWidget.injectLayer(layerElement)
+        init(layerElement)
     });
 
     import { networkErrorNotif, networkRecoverNotif } from "../../utils/network/browser.js"

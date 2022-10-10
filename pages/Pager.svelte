@@ -1,6 +1,16 @@
 <script>
     import Blank from "./Blank.svelte";
     import {anim} from '../utils/anims.js';
+    import { onMount } from "svelte";
+
+    let pages = [
+        // {
+        //     component: Blank,
+        //     props: {}
+        // }
+    ]
+    let page = new Map()
+    let currentPage = 0
 
     let _page = Blank;
     let _props = {};
@@ -18,6 +28,17 @@
         _props = props;
         _page = page;
     }
+
+    // function _display(pageInfo) {
+
+    //     if (condition) {
+            
+    //     }
+
+    //     pages.push(pageInfo)
+
+    //     currentPage
+    // }
 
     let innerWindow;
 
@@ -46,6 +67,12 @@
             rem.emit('pageSwipeAnimFinish');
         })
     }
+
+    onMount(() => {
+        new MutationObserver(() => {
+            rem.emit('pageContentChange')
+        }).observe(innerWindow, {childList: true, subtree: true, attributes: false})
+    })
     
 </script>
 
@@ -63,8 +90,8 @@
         width: 100%;
         height: 100%;
         overflow: visible;
-        /* contain: strict; */
-        /* content-visibility: auto; */
+        /* contain: strict;
+        content-visibility: auto; */
         position: relative;
     }
 
@@ -74,4 +101,9 @@
     <div class="innerWindow row" bind:this={innerWindow}>
         <svelte:component this={_page} {..._props}/>
     </div>
+    <!-- {#each pages as {component, computedProps}}
+    <div class="innerWindow row" bind:this={innerWindow}>
+        <svelte:component this={component} {...computedProps}/>
+    </div>
+    {/each} -->
 </div>

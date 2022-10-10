@@ -2,9 +2,7 @@
     import ListTile from "./ListTile.svelte";
     import Popup from './Popup.svelte';
     import Login from '../Login.svelte';
-    import Editprofile from "../Editprofile.svelte";
     import {getContext} from 'svelte';
-    import RippleLayer from "./RippleLayer.svelte";
     import Settings from "../Settings.svelte";
     import {defaultWizard} from '../../utils/wizard/edit-profile/index.js'
 

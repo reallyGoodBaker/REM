@@ -2,21 +2,24 @@ import Widget from './base.js'
 
 function buildLayer() {
     const _layer = document.createElement('div')
-    _layer.style.cssText = 'z-index: 3; display: none;'
-        + 'position: fixed; width: 100vw; height: 100vh; top: 0px; left: 0px;'
+    _layer.style.cssText = 'display: none; width: 100vw; height: 100vh;'
+        + 'position: fixed; top: 0px; left: 0px; pointer-events: all;'
 
-    document.body.appendChild(_layer)
     return _layer
 }
 
-const layer = buildLayer()
-
 export class WillCreateLayerWidget extends Widget {
+
+    static layer = buildLayer()
+
+    static injectLayer(ele) {
+        ele.appendChild(this.layer)
+    }
 
     showLayer(fade=true) {
         const color = fade? 'var(--fade)': 'transparent'
-        layer.style.display = 'block'
-        layer.animate([
+        WillCreateLayerWidget.layer.style.display = 'block'
+        WillCreateLayerWidget.layer.animate([
             {opacity: 0, backgroundColor: color},
             {opacity: 1, backgroundColor: color}
         ], {
@@ -26,13 +29,13 @@ export class WillCreateLayerWidget extends Widget {
     }
 
     disableLayer() {
-        layer.animate([
+        WillCreateLayerWidget.layer.animate([
             {opacity: 1},
             {opacity: 0}
-        ], 100).onfinish = () => layer.style.display = 'none'
+        ], 100).onfinish = () => WillCreateLayerWidget.layer.style.display = 'none'
     }
 
     getLayer() {
-        return layer
+        return WillCreateLayerWidget.layer
     }
 }

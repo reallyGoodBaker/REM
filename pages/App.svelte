@@ -61,7 +61,7 @@ window.Pager = (() => {
         if (index < 0 || index >= tabs.length) index = 0
 
         let props = Props[index]
-        if(typeof props === 'function') props = props()
+        if(typeof props === 'function') props = props.call(null)
 
         if(selected === index && !forceUpdate) return
 
@@ -69,7 +69,14 @@ window.Pager = (() => {
         beforeSwitchHandlers = []
 
         history[index] = tabs[selected]
-        __pager.display(selections[index], props)
+        // __pager.display({
+        //     component: selections[index],
+        //     props
+        // })
+        __pager.display(
+            selections[index],
+            props
+        )
 
         selected = index
     }
@@ -368,5 +375,6 @@ rem.on('__pageUnfold', () => {
         <Control/>
     </div>
     <SurfaceLayer></SurfaceLayer>
-    <Appbar/>
 </div>
+
+<Appbar/>

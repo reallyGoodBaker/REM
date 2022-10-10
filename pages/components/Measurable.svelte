@@ -1,5 +1,5 @@
 <script>
-    let measureMeter;
+    export let measureMeter;
 
     export let cssStyle;
 
@@ -29,6 +29,13 @@
     export function forceUpdate() {
         measureMeter.setAttribute('__force-update__', '');
         measureMeter.removeAttribute('__force-update__');
+    }
+
+    export function currentSize() {
+        return {
+            width: measureMeter.offsetWidth,
+            height: measureMeter.offsetHeight
+        }
     }
 
 </script>
