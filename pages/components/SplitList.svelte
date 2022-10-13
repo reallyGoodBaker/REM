@@ -1,6 +1,6 @@
 <script>
     import SplitTile from "./SplitTile.svelte";
-    import {createEventDispatcher, onMount} from 'svelte';
+    import {afterUpdate, createEventDispatcher, onMount} from 'svelte';
 
     let emit = createEventDispatcher();
 
@@ -19,6 +19,12 @@
 
     onMount(() => {
         emit('mount');
+    })
+
+    afterUpdate(() => {
+        if (listData.length > 0) {
+            emit('update')
+        }
     })
 
 </script>

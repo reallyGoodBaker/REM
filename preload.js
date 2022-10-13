@@ -6,7 +6,7 @@ const fs = require('fs')
 
 const { fetchJson } = require('./utils/server/fetch')
 const [
-    AppData, AppCache
+    _, AppData, AppCache
 ] = fs.readFileSync('./Path').toString().split('\n')
 
 const {

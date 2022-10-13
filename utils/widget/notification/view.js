@@ -3,8 +3,8 @@ import { PopWidget } from '../popwidget.js'
 import { ViewImplementor } from '../impl.js'
 
 class NotificationContent extends ViewImplementor {
-    icon = ''
-    msg = 'Notification'
+    icon = null
+    msg = null
 
     constructor(container) {
         super('./utils/widget/notification/view.html')
@@ -19,29 +19,24 @@ class NotificationContent extends ViewImplementor {
             msg = root.getElementById('msg'),
             close = root.getElementById('close')
 
-        const _icon = this.icon,
-            _msg = this.msg
-
-        Object.defineProperties(this, {
-            icon: {
-                set(v) {
-                    icon.innerText = v
-                }
-            },
-
-            msg: {
-                set(v) {
-                    msg.innerText = v
-                }
-            }
-        })
-
-        this.icon = _icon
-        this.msg = _msg
+        this.icon = icon
+        this.msg = msg
 
         close.addEventListener('click', () => {
             this.outerContainer.fade()
         })
+    }
+
+    setIcon(url) {
+        if (this.icon) {
+            this.icon.innerText = url
+        }
+    }
+
+    setMessage(msg) {
+        if (this.msg) {
+            this.msg.innerText = msg
+        }
     }
 }
 customElements.define('pop-widgetcontent', NotificationContent)
@@ -56,12 +51,12 @@ export class NotificationWidget extends PopWidget {
     }
 
     setIcon(url) {
-        this.notifContent.icon = url
+        this.notifContent.setIcon(url)
         return this
     }
 
     setMessage(text) {
-        this.notifContent.msg = text
+        this.notifContent.setMessage(text)
         return this
     }
 

@@ -1,3 +1,4 @@
+import { NotificationWidget } from "../../widget/notification/view";
 import { EventEmitter } from "./events";
 
 interface Gamepads {
@@ -6,6 +7,8 @@ interface Gamepads {
 }
 
 export const gamepads: Gamepads;
+
+export const connectNotif: NotificationWidget
 
 type GameControllerEventTypes = 'press'|'release'|'value'|'axel'|'button-change';
 

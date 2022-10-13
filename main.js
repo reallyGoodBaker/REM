@@ -18,6 +18,7 @@ function pathResolve(name) {
 }
 
 const paths = [
+    AppRoot,
     pathResolve('data'),
     pathResolve('cache'),
     pathResolve('download'),

@@ -6,6 +6,7 @@ import SelectListTile from './components/SelectListTile.svelte';
 import ToggleListTile from './components/ToggleListTile.svelte';
 import ListTile from './components/ListTile.svelte';
 import Popup from './components/Popup.svelte';
+    import { onMount, tick } from 'svelte';
 
 
 let settings = store.getSync('sys-settings')
@@ -45,7 +46,35 @@ function clearMusicCache() {
 
 }
 
+let [selectedRightRatio, ...rightStickRatios] = store.getSync('stickScrollSpeedRatio') || [
+    1, {label: '慢', value: 0.3}, {label: '中', value: 0.65}, {label: '快', value: 1}
+]
+let [selectedLeftRatio, ...leftStickRatios] = store.getSync('cursorMoveSpeedRatio') || [
+    1, {label: '慢', value: 0.3}, {label: '中', value: 0.65}, {label: '快', value: 1}
+]
+function onSelectStickSpeedRatio(ev) {
+    const i = ev.detail
+    selectedRightRatio = i
+    store.set('stickScrollSpeedRatio', [i, ...rightStickRatios])
+}
+function onSelectCursorMoveSpeedRatio(ev) {
+    const i = ev.detail
+    selectedLeftRatio = i
+    store.set('cursorMoveSpeedRatio', [i, ...leftStickRatios])
+}
 
+let scrollv
+Pager.beforeSwitch(() => {
+    if (scrollv?.prepared()) {
+        const {save} = Pager.getContext()
+        save.offsetRatio = scrollv.getOffsetRatio()
+    }
+})
+onMount(async () => {
+    const {save} = Pager.getContext()
+    await tick()
+    scrollv.setOffsetRatio(save.offsetRatio)
+})
 
 </script>
 
@@ -66,7 +95,7 @@ function clearMusicCache() {
 </style>
 
 
-<ScrollView><div class="row c">
+<ScrollView bind:this={scrollv}><div class="row c">
     <div class="column grid-margin" style="justify-content: space-between; width: calc(100% - 48px)">
         <h1>设置</h1>
         <Input
@@ -130,5 +159,24 @@ function clearMusicCache() {
         
     </RowList>
 
+    <RowList title="控制器">
+        <SelectListTile
+            data="页面滚动速度"
+            bind:dataList={rightStickRatios}
+            bind:selected={selectedRightRatio}
+            useAvatar={false}
+            isUrl={false}
+            on:selected={onSelectStickSpeedRatio}
+        />
+
+        <SelectListTile
+            data="指针移动速度"
+            bind:dataList={leftStickRatios}
+            bind:selected={selectedLeftRatio}
+            useAvatar={false}
+            isUrl={false}
+            on:selected={onSelectCursorMoveSpeedRatio}
+        />
+    </RowList>
 
 </div></ScrollView>

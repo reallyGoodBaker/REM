@@ -2,14 +2,17 @@
     import { createEventDispatcher } from "svelte";
 
 
-    export let type = 'text';
-    export let id = 'default-id';
-    export let value = '';
-    export let singleLine = true;
-    export let maxLength = 999999;
-    export let cssText = '';
-    export let fullBorder = false;
-    export let placeholder = '';
+    export let type = 'text'
+    export let id = 'default-id'
+    export let value = ''
+    export let singleLine = true
+    export let maxLength = 999999
+    export let cssText = ''
+    export let fullBorder = false
+    export let placeholder = ''
+    export let spellcheck = false
+
+    let input
     
     let emit = createEventDispatcher();
     let focused = false;
@@ -25,11 +28,11 @@
     }
 
     function onChange() {
-        emit('change');
+        emit('change', input.value);
     }
 
     function onInput() {
-        emit('input');
+        emit('input', input.value);
     }
 </script>
 
@@ -103,6 +106,7 @@
         on:change={onChange}
         on:input={onInput}
         on:blur={onBlur}
+        bind:this={input}
         {value}
         style={cssText}
         {placeholder}>
@@ -114,9 +118,11 @@
         on:change={onChange}
         on:input={onInput}
         on:blur={onBlur}
+        bind:this={input}
         {value} {maxLength}
         style={cssText}
         {placeholder}
+        {spellcheck}
     ></textarea>
         
     {/if}

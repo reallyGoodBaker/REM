@@ -38,8 +38,35 @@
         return data;
     }
 
+    function rgbtohsl(r,g,b){
+        r=r/255;
+        g=g/255;
+        b=b/255;
+
+        var min=Math.min(r,g,b);
+        var max=Math.max(r,g,b);
+        var l=(min+max)/2;
+        var difference = max-min;
+        var h,s,l;
+        if(max==min){
+            h=0;
+            s=0;
+        }else{
+            s=l>0.5?difference/(2.0-max-min):difference/(max+min);
+            switch(max){
+                case r: h=(g-b)/difference+(g < b ? 6 : 0);break;
+                case g: h=2.0+(b-r)/difference;break;
+                case b: h=4.0+(r-g)/difference;break;
+            }
+            h=Math.round(h*60);
+        }
+        s=Math.round(s*100);//转换成百分比的形式
+        l=Math.round(l*100);
+        return [h,s,l];
+    }
+
     let ctx, container;
-    window.__setColor = function __setColor(container, ctx, alpha=0.7) {
+    window.__setColor = function __setColor(container, ctx, alpha=1) {
         if(!ctx) return;
         /**
          * @type {CanvasRenderingContext2D}
@@ -62,12 +89,13 @@
         let color = [];
 
         for (let i = 0; i < 4; i++) {
-            let aver = (lt[i] + rt[i] + c[i] + lb[i] + rb[i])/5,
-            ratio = 0.0007 * aver + 0.5;
-            color[i] = ~~(ratio * aver);
+            let aver = (lt[i] + rt[i] + c[i] + lb[i] + rb[i])/5
+            color[i] = ~~aver;
         }
 
-        const colorStr = `rgba(${color[0]},${color[1]},${color[2]}, ${alpha})`;
+        color = rgbtohsl(...color)
+
+        const colorStr = `hsla(${color[0]},${color[1] > 40? 40: color[1]}%,${color[2] > 50? 50: color[2]}%, ${alpha})`;
 
         container.style.setProperty('--color', colorStr)
 
@@ -371,7 +399,7 @@
         <div class="column" style="width: 100%;">
             <span class="time" bind:this={currentTimeEle}>0:00</span>
             <Progress
-                cssStyle="width: 200px"
+                width={200}
                 bind:value={seekValue}
                 on:mousedown={startSeeking}
                 on:mousemove={seekMove}

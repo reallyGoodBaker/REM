@@ -30,7 +30,9 @@
 <ListTile {...$$props} breakLine={true}>
     <div class="column" style="padding-top: 8px;">
         {#each dataList as data, i}
-        <div class="btn outlined{selected === i? ' selected':''}" on:click={ev => onClick(ev, i)} on:mousedown={ev=>ev.stopPropagation()}>{data}</div>
+        <div class="btn outlined{selected === i? ' selected':''}" on:click={ev => onClick(ev, i)} on:mousedown={ev=>ev.stopPropagation()}>
+            {data.label || data}
+        </div>
         {/each}
     </div>
 </ListTile>

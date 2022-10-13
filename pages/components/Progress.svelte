@@ -3,16 +3,22 @@
 
     export let value;
     export let cssStyle = '';
+    export let width = 100
+    export let thumbWidth = 12
+
+    $: dispalyWidth = ((width - thumbWidth) * value / (width * 100)) * width + thumbWidth / 2
 
     let emit = createEventDispatcher();
 
     let startMove = false;
     let input;
+
     function mouseDown(ev) {
         startMove = true;
-        let value = ev.offsetX/input.offsetWidth*100;
-        input.value = value;
-        emit('mousedown', value);
+        let _value = ev.offsetX/input.offsetWidth*100;
+        input.value = _value;
+        value = _value
+        emit('mousedown', _value);
     }
 
     function mouseMove() {
@@ -33,8 +39,11 @@
 <style>
     input[type=range] {
         --progress: 50%;
+        --thumb-width: 12px;
+        --rail-width: 200px;
+        --display-progress: 50%;
         background-color: transparent;
-        width: 100px;
+        width: var(--rail-width);
         height: 10px;
         display: block;
         -webkit-appearance: none;
@@ -46,8 +55,13 @@
     }
     
     input[type=range]::-webkit-slider-runnable-track {
-        height: 2px;
-        background: linear-gradient(90deg, var(--controlColor) var(--progress), #ddd var(--progress));
+        border-radius: 3px;
+        height: 6px;
+        background: linear-gradient(
+            90deg,
+            var(--controlColor) var(--display-progress),
+            var(--acrylicBackgroundColor) var(--display-progress)
+        );
     }
     
     input[type=range]:focus {
@@ -56,30 +70,28 @@
     
     input[type=range]::-webkit-slider-thumb {
         -webkit-appearance: none;
-        height: 10px;
-        width: 10px;
-        margin-top: -4px;
-        background-color: #fff;
-        border-radius: 50%;
-        border: solid 2px transparent;
+        border-radius: 3px;
+        box-sizing: border-box;
+        height: 6px;
+        width: var(--thumb-width);
+        margin-top: 0px;
+        background-color: var(--controlGray);
+        transition: all 0.1s;
     }
 
     input[type=range]:hover::-webkit-slider-thumb {
-        transform: scale(1.2);
-        border: solid 2px var(--controlColor);
+        background-color: var(--controlWhite);
     }
 
     input[type=range]:active::-webkit-slider-thumb {
-        transform: scale(1.2);
-        border: solid 4px var(--controlColor);
-        background-color: var(--controlColor);
+        transform: scale(1.4);
     }
 
 </style>
 
 
 <input type="range"
-    style="{cssStyle};--progress: {value}%"
+    style="{cssStyle}; --progress: {value}%; --rail-width: {width}px; --thumb-width: {thumbWidth}px; --display-progress: {dispalyWidth}px"
     step="0.001"
     bind:value
     on:mousedown={mouseDown}

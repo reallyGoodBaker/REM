@@ -60,6 +60,7 @@
 
     setContext("layerEvents", layerEvents);
 
+    import { connectNotif } from '../../utils/controller-support/base/index.js'
     import { xboxControllerMouseSupporter } from "../../utils/controller-support/xbox/controllerSupport.js";
     import { init } from "../../utils/wizard/edit-profile/index.js";
     import { WillCreateLayerWidget } from '../../utils/widget/layer.js'
@@ -116,6 +117,7 @@
     onMount(() => {
         networkErrorNotif.inject(layerElement)
         networkRecoverNotif.inject(layerElement)
+        connectNotif.inject(layerElement)
     })
 
 

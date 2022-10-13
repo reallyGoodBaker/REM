@@ -3,6 +3,10 @@ import { EventEmitter } from "./events.js";
 
 const connects = new EventEmitter({captureRejections: true})
 
+import {NotificationWidget} from '../../widget/notification/export.js'
+
+export const connectNotif = new NotificationWidget()
+
 /**
  * @typedef {(con: GameController) => void} GamepadChange
  */
@@ -123,10 +127,24 @@ function arrayCompare(pre, cur, comparator, onHasDifference) {
 function init() {
     window.addEventListener('gamepadconnected', ev => {
         connects.emit('--connect', new GameController(ev.gamepad))
+        connectNotif.setMessage(`控制器 ${ev.gamepad.id} 已连接`)
+        connectNotif.popup({
+            horizontal: 'right',
+            vertical: 'bottom',
+            verticalFrom: 'bottom',
+            horizontalFrom: 'right'
+        })
     })
 
     window.addEventListener('gamepaddisconnected', ev => {
         connects.emit('--disconnect', new GameController(ev.gamepad))
+        connectNotif.setMessage(`控制器 ${ev.gamepad.id} 断开连接`)
+        connectNotif.popup({
+            horizontal: 'right',
+            vertical: 'bottom',
+            verticalFrom: 'bottom',
+            horizontalFrom: 'right'
+        })
     })
 
     function update(handler) {

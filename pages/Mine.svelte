@@ -1,5 +1,5 @@
 <script>
-    import { onDestroy, onMount } from "svelte";
+    import { onDestroy, onMount, tick } from "svelte";
     import Measurable from "./components/Measurable.svelte";
     import ScrollView from "./components/ScrollView2.svelte";
     import Playlist from "./Playlist.svelte";
@@ -53,7 +53,6 @@
 
     async function onClick(name, props) {
         props = await props()
-        console.log(props);
         Pager.openNew(name, Playlist, props);
     }
     
@@ -223,6 +222,20 @@
     }
 
     let scrollv
+    Pager.beforeSwitch(() => {
+        if (scrollv?.prepared()) {
+            const {save} = Pager.getContext()
+            save.offsetRatio = scrollv.getOffsetRatio()
+        }
+    })
+    onMount(() => {
+        const {save} = Pager.getContext()
+        requestIdleCallback(() => scrollv.setOffsetRatio(save.offsetRatio))
+    })
+
+    function imageShow(ev) {
+        ev.target.style.opacity = 1
+    }
 
 </script>
 
@@ -484,7 +497,13 @@
                 on:mouseenter|stopPropagation={dullParent}
                 on:mouseleave|stopPropagation={activeParent}
             >{'\ue615'}</div>
-            <img class="artist" draggable="false" src={artist.picUrl} alt={artist.name} decoding="async">
+            <img
+                class="artist"
+                draggable="false"
+                src={artist.picUrl}
+                on:load={imageShow}
+                alt={artist.name}
+                decoding="async">
             <div class="name title">{artist.name}</div>
             <div class="name">{artist.alias.length? artist.alias[0]: ''}</div>
         </div>
@@ -535,7 +554,7 @@
                 on:mouseenter|stopPropagation={dullParent}
                 on:mouseleave|stopPropagation={activeParent}
             >{'\ue615'}</div>
-            <img class="album" draggable="false" src={al.picUrl} alt={al.name} decoding="async">
+            <img class="album" style="opacity: 0; transition: opacity 1s" draggable="false" src={al.picUrl} alt={al.name} on:load={imageShow} decoding="async">
             <div class="name title" style="width: calc(100% - 16px);">{al.name}</div>
         </div>
     {/each}

@@ -1,15 +1,17 @@
 const {ipcMain} = require('electron')
 const child_process = require('child_process')
 
-async function checkIsOnline() {
+async function checkIsOnline(timeout=3000) {
     return new Promise(res => {
-        child_process.exec('ping www.bing.com', er => {
-            if (er) {
-                return res(false)
-            }
-
-            res(true)
+        const p = child_process.exec('ping pool.ntp.org', er => {
+            res(!er)
+            p.kill(0)
         })
+
+        setTimeout(() => {
+            res(false)
+            p.kill(0)
+        }, timeout);
     })
 }
 
@@ -21,11 +23,7 @@ async function watchNetworkChange() {
 
         if (newState !== online) {
             ipcMain.emit('onlineChange', online = newState)
-            if (online) {
-                ipcMain.emit('online')
-            } else {
-                ipcMain.emit('offline')
-            }
+            ipcMain.emit(`${online? 'on': 'off'}line`)
         }
     }, 5000)
 
