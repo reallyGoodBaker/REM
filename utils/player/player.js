@@ -71,8 +71,20 @@ export class AudioPlayer {
     }
 
     static volume(number) {
-        if(!number) return this.audioElement.volume
-        this.audioElement.volume = number
+        if (typeof number === 'undefined') return this.audioElement.volume
+
+        if (typeof number === 'number') {
+            
+            if (number > 0) {
+                this.audioElement.muted = false
+                this.audioElement.volume = number
+            } else {
+                this.audioElement.muted = true
+            }
+
+            return
+        }
+
     }
     volume(number) {
         return AudioPlayer.volume(number)

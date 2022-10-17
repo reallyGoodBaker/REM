@@ -189,7 +189,9 @@
     }
 
     function setVolume(ev) {
-        globalPlayer.volume(ev.detail/100);
+        const vol = +ev.detail
+        console.log(vol);
+        globalPlayer.volume(vol/100);
     }
 
     let volume;
