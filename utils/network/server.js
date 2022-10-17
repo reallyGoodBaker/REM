@@ -3,15 +3,10 @@ const child_process = require('child_process')
 
 async function checkIsOnline(timeout=3000) {
     return new Promise(res => {
-        const p = child_process.exec('ping pool.ntp.org', er => {
+        const p = child_process.exec('ping www.bing.com', er => {
             res(!er)
             p.kill(0)
         })
-
-        setTimeout(() => {
-            res(false)
-            p.kill(0)
-        }, timeout);
     })
 }
 

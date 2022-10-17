@@ -52,7 +52,6 @@ export class MainPlaylist {
         })
 
         return matched
-
     }
     
     static next() {

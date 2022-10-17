@@ -12,10 +12,9 @@ class NetworkStateWindow extends NotificationWidget {
 
 injectService.add(NetworkStateWindow)
 
-export const networkErrorNotif = new NetworkStateWindow().setMessage('您似乎失去了与服务器的连接')
-export const networkRecoverNotif = new NetworkStateWindow().setMessage('网络已重新连接')
+export const networkChangeNotif = new NetworkStateWindow()
 
 export function initNetworkWatcher() {
-    hooks.on('online', () => networkRecoverNotif.display())
-    hooks.on('offline', () => networkErrorNotif.display())
+    hooks.on('online', () => networkChangeNotif.setMessage('网络已恢复').display())
+    hooks.on('offline', () => networkChangeNotif.setMessage('网络连接出现问题').display())
 }

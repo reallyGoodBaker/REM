@@ -345,21 +345,55 @@
         filter: brightness(64%);
     }
 
+    .avatar-container {
+        position: relative;
+        width: fit-content;
+        height: fit-content;
+    }
+    .avatar-container::after {
+        content: '\e60a';
+        font-family: iconfont;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        color: var(--controlNight);
+        background-color: var(--acrylicBackgroundColor);
+        backdrop-filter: blur(2px);
+        filter: brightness(100%);
+        border-radius: 4px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+    .avatar-container:hover::after {
+        opacity: 1;
+    }
+    .avatar-container:active::after {
+        filter: brightness(60%);
+    }
+
 </style>
 
 
 <div class="column c" bind:this={container}>
 
     <div class="column header edge">
-        <Avatar
-            isUrl={!!content.album}
-            avatar={content.artwork? content.artwork[0].src: 'R'}
-            width={56}
-            height={56}
-            radius={'10%'}
-            bind:ctx
-            on:loaded={setColor}
-        />
+        <div class="avatar-container">
+            <Avatar
+                isUrl={!!content.album}
+                avatar={content.artwork? content.artwork[0].src: 'R'}
+                width={56}
+                height={56}
+                radius={'4px'}
+                bind:ctx
+                on:loaded={setColor}
+            />
+        </div>
         <div class="row txt">
             <div class="title">{content.title || '暂未播放歌曲'}</div>
             <div class="subtitle">{content.artist || ''}</div>
@@ -410,7 +444,7 @@
     </div>
 
 
-    <div class="column  edge" style="flex-direction: row-reverse;">
+    <div class="column edge" style="flex-direction: row-reverse;">
         <Progress
             bind:value={volume}
             on:mousedown={setVolume}

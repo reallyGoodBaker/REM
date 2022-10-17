@@ -15,8 +15,17 @@
 
 <style>
     .btn {
-        margin-right: 8px;
+        margin: 8px 8px 0 0;
         border-color: #888;
+    }
+
+    .container {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .first-child {
+        margin-left: 0;
     }
 
     .selected {
@@ -28,9 +37,9 @@
 
 
 <ListTile {...$$props} breakLine={true}>
-    <div class="column" style="padding-top: 8px;">
+    <div class="Row container">
         {#each dataList as data, i}
-        <div class="btn outlined{selected === i? ' selected':''}" on:click={ev => onClick(ev, i)} on:mousedown={ev=>ev.stopPropagation()}>
+        <div class="btn outlined{i === 0? ' first-child': ''}{selected === i? ' selected':''}" on:click={ev => onClick(ev, i)} on:mousedown={ev=>ev.stopPropagation()}>
             {data.label || data}
         </div>
         {/each}

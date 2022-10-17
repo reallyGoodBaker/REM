@@ -113,10 +113,9 @@
         init(layerElement)
     });
 
-    import { networkErrorNotif, networkRecoverNotif } from "../../utils/network/browser.js"
+    import { networkChangeNotif } from "../../utils/network/browser.js"
     onMount(() => {
-        networkErrorNotif.inject(layerElement)
-        networkRecoverNotif.inject(layerElement)
+        networkChangeNotif.inject(layerElement)
         connectNotif.inject(layerElement)
     })
 

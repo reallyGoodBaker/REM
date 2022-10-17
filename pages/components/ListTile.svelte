@@ -75,7 +75,7 @@
 
     {#if breakLine}
 
-    <div class="row align" {style}>
+    <div class="row align" style="width: {useAvatar? 'calc(100% - 84px)': 'calc(100% - 28px)'};{style}">
         {#if extra}
             <span>{data}</span>
             <span style="font-size: small; color: #888">{extra}</span>

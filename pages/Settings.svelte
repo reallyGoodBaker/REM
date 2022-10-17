@@ -6,7 +6,9 @@ import SelectListTile from './components/SelectListTile.svelte';
 import ToggleListTile from './components/ToggleListTile.svelte';
 import ListTile from './components/ListTile.svelte';
 import Popup from './components/Popup.svelte';
-    import { onMount, tick } from 'svelte';
+import { onDestroy, onMount, tick } from 'svelte';
+import { getAudioDevices } from '../utils/devices/browser/find.js'
+import { setOutputDeviceId, getOutputDeviceId, indexOfOutputDevice } from '../utils/devices/browser/output.js'
 
 
 let settings = store.getSync('sys-settings')
@@ -76,6 +78,27 @@ onMount(async () => {
     scrollv.setOffsetRatio(save.offsetRatio)
 })
 
+let outputSelected = 0, outputDeviceList = []
+async function updateOutputDeviceSelected() {
+    outputDeviceList = [...(await getAudioDevices())]
+    outputSelected = await indexOfOutputDevice(outputDeviceList)
+}
+
+rem.on('audioDeviceChange', updateOutputDeviceSelected)
+
+onDestroy(() => {
+    rem.off('audioDeviceChange', updateOutputDeviceSelected)
+})
+
+async function initOutputSetting() {
+    const devices = await getAudioDevices()
+    outputSelected = await indexOfOutputDevice(devices)
+    return devices
+}
+
+onMount(async() => {
+    outputDeviceList = await initOutputSetting()
+})
 </script>
 
 <style>
@@ -176,6 +199,22 @@ onMount(async () => {
             useAvatar={false}
             isUrl={false}
             on:selected={onSelectCursorMoveSpeedRatio}
+        />
+    </RowList>
+
+
+    <RowList title="输出">
+        <SelectListTile
+            data="设备"
+            extra={'输出设备变化时将会切换到默认设备'}
+            bind:dataList={outputDeviceList}
+            bind:selected={outputSelected}
+            useAvatar={false}
+            isUrl={false}
+            on:selected={async ev => {
+                outputSelected = ev.detail
+                setOutputDeviceId(outputDeviceList[ev.detail].deviceId)
+            }}
         />
     </RowList>
 

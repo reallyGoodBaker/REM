@@ -131,6 +131,7 @@ function dragScrollThumb(ev) {
 }
 
 function wheelChange(ev) {
+    ev.stopPropagation()
     const scrollOffset = Math.max(Math.min(content.scrollTop + ev.deltaY, contentHeight), 0)
     fastScrollTo(scrollOffset/contentHeight)
 }

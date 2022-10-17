@@ -223,8 +223,11 @@
         MainPlaylist.play(0);
     }
 
+    function ignoreCaseIncludes(src, comp) {
+        return src.toLowerCase().includes(comp.toLowerCase())
+    }
+
     async function search(str) {
-        console.log(str);
         if (!str) {
             return []
         }
@@ -234,18 +237,18 @@
 
         for (const data of arrayToSearch) {
             const {name, al, ar} = data
-            if (name.includes(str)) {
+            if (ignoreCaseIncludes(name, str)) {
                 res.push(data)
                 continue
             }
             
-            if ((al.name || '').includes(str)) {
+            if (ignoreCaseIncludes(al.name || '', str)) {
                 res.push(data)
                 continue
             }
 
             for (const artist of ar) {
-                if ((artist.name || '').includes(str)) {
+                if (ignoreCaseIncludes(artist.name || '', str)) {
                     res.push(data)
                     break
                 }

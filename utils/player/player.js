@@ -1,8 +1,13 @@
 import {EventEmitter} from '../events.js'
+import {initAudioDevicesFind} from '../devices/browser/find.js'
+import {initOutputAudio} from '../devices/browser/output.js'
+
+initAudioDevicesFind()
 
 export class AudioPlayer {
 
-    static audioElement = document.createElement('audio')
+    static audioCtx = new AudioContext()
+    static audioElement = new Audio()
     static em = new EventEmitter()
 
     static on(type, handler) {
@@ -55,6 +60,7 @@ export class AudioPlayer {
 
     async loadData(audioData) {
         this.audioData = audioData
+        
         this.load(await audioData.url())
 
         this.onDataLoaded()
@@ -91,6 +97,11 @@ export class AudioPlayer {
 AudioPlayer.audioElement.addEventListener('ended', () => {
     AudioPlayer.em.emit('ended')
 })
+
+const srcNode = AudioPlayer.audioCtx.createMediaElementSource(AudioPlayer.audioElement)
+const destNode = AudioPlayer.audioCtx.createMediaStreamDestination()
+srcNode.connect(destNode)
+initOutputAudio(destNode.stream)
 
 export const globalPlayer = new AudioPlayer()
 
