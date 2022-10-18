@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3113344 */
-  src: url('iconfont.woff2?t=1665569664194') format('woff2'),
-       url('iconfont.woff?t=1665569664194') format('woff'),
-       url('iconfont.ttf?t=1665569664194') format('truetype');
+  src: url('iconfont.woff2?t=1666013157051') format('woff2'),
+       url('iconfont.woff?t=1666013157051') format('woff'),
+       url('iconfont.ttf?t=1666013157051') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-audiospectrum:before {
+  content: "\e936";
 }
 
 .icon-dasuolvetuliebiao:before {

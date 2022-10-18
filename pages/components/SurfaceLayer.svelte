@@ -1,6 +1,7 @@
 <script>
     import { onMount, setContext } from "svelte";
     import { EventEmitter } from "../../utils/events.js";
+    import Popup from './Popup.svelte'
 
     let layer = false;
 
@@ -119,7 +120,10 @@
         connectNotif.inject(layerElement)
     })
 
-
+    import TunnerWindow from './TunnerWindow.svelte'
+    let showTunnerWindow = false
+    rem.on('tunnerOpen', () => showTunnerWindow = true)
+    rem.on('tunnerClose', () => showTunnerWindow = false)
 </script>
 
 <div
@@ -138,6 +142,12 @@
         bind:active={vcActive}
         bind:htmlElement={virtCursor}
     />
+    <Popup
+        bind:showPopupWindow={showTunnerWindow}
+        shadowBlurRadius={24}
+        noLayer={false}>
+        <TunnerWindow/>
+    </Popup>
     <slot />
 </div>
 

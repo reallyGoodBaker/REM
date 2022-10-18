@@ -190,7 +190,6 @@
 
     function setVolume(ev) {
         const vol = +ev.detail
-        console.log(vol);
         globalPlayer.volume(vol/100);
     }
 
@@ -225,7 +224,7 @@
         }
     }
     
-    var currentTimeEle, durationEle;
+    let currentTimeEle, durationEle;
 
     /**
      * @type {HTMLElement[]}
@@ -453,5 +452,10 @@
             on:mousemove={setVolume}
             on:mouseup={saveVolume}
         />
+        <div class="btn big btn-nb"
+            on:click={() => {
+                window.rem.emit('tunnerOpen')
+            }}
+        >{'\ue61b'}</div>
     </div>
 </div>

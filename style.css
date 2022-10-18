@@ -21,7 +21,15 @@ body {
     --controlNight: hsl(var(--controlHue, 210), 80%, 14%);
     --controlWhite: hsl(var(--controlHue, 210), 80%, 98%);
     --controlBackground: hsl(var(--controlHue, 210), 80%, 96%);
-    --controlBlack: hsl(var(--controlHue, 210), 80%, 6%);
+    --controlBlack: hsl(var(--controlHue, 210), 20%, 6%);
+    --controlBlack2: hsl(var(--controlHue, 210), 20%, 2%);
+    --controlBlack4: hsl(var(--controlHue, 210), 20%, 4%);
+    --controlBlack8: hsl(var(--controlHue, 210), 20%, 8%);
+    --controlBlack12: hsl(var(--controlHue, 210), 20%, 12%);
+    --controlBlack16: hsl(var(--controlHue, 210), 20%, 16%);
+    --controlBlack24: hsl(var(--controlHue, 210), 20%, 24%);
+    --controlBlack36: hsl(var(--controlHue, 210), 20%, 36%);
+    --controlBlack52: hsl(var(--controlHue, 210), 20%, 52%);
     --controlGray: hsl(var(--controlHue, 210), 10%, 70%);
 
     --noneAcrylicBackgroundColor: var(--controlBackground);

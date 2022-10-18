@@ -15,6 +15,7 @@
     export let showPopupWindow = false;
     export let cssText = '';
     export let noLayer = false;
+    export let shadowBlurRadius = 8
     export function animate(keyframes, options={}) {
         return windowContainer.animate(keyframes, options);
     }
@@ -42,6 +43,7 @@
 <style>
     .layer {
         -webkit-app-region: no-drag;
+        pointer-events: all;
         position: fixed;
         z-index: 99999;
         left: 0px;
@@ -62,21 +64,23 @@
     }
 
     .container {
+        --blur-radius: 8px;
         background-color: #fff;
         width: fit-content;
         height: fit-content;
         min-width: 200px;
         min-height: 160px;
         border-radius: 8px;
-        box-shadow: 0px 2px 8px rgba(0,0,0,0.4);
+        box-shadow: 0px 2px var(--blur-radius) rgba(0,0,0,0.4);
+        contain: paint;
     }
 
 
 </style>
 
 {#if showPopupWindow && !noLayer}
-<div class="layer row" on:click={handleOnLayerClick} out:fade={{duration: 100}}>
-    <div use:binder class="container" style="{cssText}" on:click|stopPropagation>
+<div class="layer row" on:click|stopPropagation={handleOnLayerClick} out:fade={{duration: 100}}>
+    <div use:binder class="container" style="{cssText}; --blur-radius: {shadowBlurRadius}px" on:click|stopPropagation>
         <slot></slot>
     </div>
 </div>

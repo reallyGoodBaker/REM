@@ -5,7 +5,7 @@ export class AudioData {
 
     urls = {}
 
-    async getPlayUrlAsync(quality='high') {
+    getPlayUrlAsync = async (quality='high') => {
         let br
         
         try {
@@ -29,10 +29,11 @@ export class AudioData {
         const res = this.urls[quality] = await NeteaseApi.getSongUrl(this.data.id, await store.get('cookie'), br)
         let url = res.body.data[0].url
 
-        const media = await server.getMedia(`ne${this.data.id}`)
+
+        const media = await server.getMedia(`ne${this.data.id}`, this.onLoadMetadata)
 
         if (!media) {
-            server.saveToCache(url, `ne${this.data.id}`)
+            server.saveToCache(url, `ne${this.data.id}`, this.onLoadMetadata)
             return url
         }
         
@@ -41,9 +42,11 @@ export class AudioData {
         )
     }
 
+    onLoadMetadata() {}
+
     async url(quality='high') {
         if (this.urls[quality]) return this.urls[quality]
-        return this.getPlayUrlAsync(quality)
+        return await this.getPlayUrlAsync(quality)
     }
 
     title() {

@@ -1,4 +1,5 @@
 const http = require('http')
+const { parseStream } = require('music-metadata')
 const fs = require('fs')
 
 function download(url, onDataTransfer = (chunk, size)=>{}) {
@@ -12,20 +13,19 @@ function download(url, onDataTransfer = (chunk, size)=>{}) {
     })
 }
 
-function saveTo(from, to, onProgressChange = (receved, total) => {}) {
+function saveTo(from, to, onMetadataLoaded) {
     return new Promise((resolve, reject) => {
         http.get(from, res => {
-            const total = res.headers['content-length']
-            let receved = 0
-    
-            res.pipe(fs.createWriteStream(to))
-            res.on('data', chunk => {
-                receved += chunk.length
-                onProgressChange.call(null, receved, total)
-            })
-            res.on('end', () => {
-                resolve()
-            })
+            let stream = fs.createWriteStream(to)
+
+            if (typeof onMetadataLoaded === 'function') {
+                parseStream(res)
+                .then(v => onMetadataLoaded.call(undefined, v))
+                .catch(() => resolve(null))
+            }
+            
+            res.pipe(stream)
+            res.on('end', () => resolve())
             res.on('error', er => reject(er))
         })
     })

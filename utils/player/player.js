@@ -59,10 +59,13 @@ export class AudioPlayer {
     }
 
     async loadData(audioData) {
-        this.audioData = audioData
-        
-        this.load(await audioData.url())
+        audioData.onLoadMetadata = metadata => {
+            AudioPlayer.metadata = metadata
+            rem.emit('metadata', metadata)
+        }
 
+        this.audioData = audioData
+        this.load(await audioData.url())
         this.onDataLoaded()
     }
 
@@ -104,6 +107,10 @@ export class AudioPlayer {
         return AudioPlayer.isPlaying()
     }
 
+    static metadata = {}
+    getMetadata() {
+        return Object.assign({}, AudioPlayer.metadata)
+    }
 }
 
 AudioPlayer.audioElement.addEventListener('ended', () => {
@@ -111,7 +118,7 @@ AudioPlayer.audioElement.addEventListener('ended', () => {
 })
 
 const srcNode = AudioPlayer.audioCtx.createMediaElementSource(AudioPlayer.audioElement)
-const destNode = AudioPlayer.audioCtx.createMediaStreamDestination()
+export const destNode = AudioPlayer.audioCtx.createMediaStreamDestination()
 srcNode.connect(destNode)
 initOutputAudio(destNode.stream)
 

@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const {saveTo} = require('./download')
+const { parseBuffer } = require('music-metadata')
 
 module.exports = function(cache) {
 
@@ -10,16 +11,28 @@ const SaveType = {
     Saved: '2'
 }
 
-async function saveToCache(url, uri) {
-    await saveTo(url, path.resolve(cache, `${uri}.mp3`))
+async function saveToCache(url, uri, callback) {
+    await saveTo(url, path.resolve(cache, `${uri}`), callback)
 }
 
-function getMedia(uri) {
-    const cachePath = path.resolve(cache, `${uri}.mp3`)
+function getMedia(uri, callback) {
+    const cachePath = path.resolve(cache, `${uri}`)
     if (fs.existsSync(cachePath)) {
-        return fs.readFileSync(cachePath)
+        const buf = fs.readFileSync(cachePath)
+        if (callback) {
+            parseBuffer(buf)
+            .then(buf => {
+                callback.call(undefined, buf)
+            })
+            .catch(() => callback.call(undefined, null))
+        }
+        return buf
     }
     return null
+}
+
+async function getMetadata(buffer) {
+    return await parseBuffer(buffer)
 }
 
 function saveToPlaylist(playlist, name) {
@@ -39,7 +52,7 @@ function getPlaylist(name) {
 }
 
 return {
-    saveToCache, getMedia, saveToPlaylist, getPlaylist
+    saveToCache, getMedia, saveToPlaylist, getPlaylist, getMetadata
 }
 
 }
