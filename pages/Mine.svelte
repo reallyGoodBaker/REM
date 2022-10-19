@@ -477,7 +477,7 @@
 </div>
 
 {#if artistSublist.length}
-<div class="Row" row-title="收藏的艺术家" style="--item-height: 200px; --item-width: 200px;">
+<div class="Row" row-title="收藏的艺术家" style="--item-height: 200px; --item-width: 200px; align-self: flex-start;">
     <div class="btn light"
         style="position: absolute; left: 200px; top: 0px; border-radius: 6px;"
         on:click={() => {
@@ -512,7 +512,7 @@
 {/if}
 
 {#if albumSublist.length}
-<div class="Row" row-title="收藏的专辑" style="--item-height: 200px; --item-width: 200px;">
+<div class="Row" row-title="收藏的专辑" style="--item-height: 200px; --item-width: 200px; align-self: flex-start;">
     <div class="btn light"
         style="position: absolute; left: 180px; top: 0px; border-radius: 6px;"
         on:click={() => {

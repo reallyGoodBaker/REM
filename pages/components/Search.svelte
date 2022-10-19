@@ -164,7 +164,7 @@
         noLayer={true}
         on:layerClick={()=>showHot=false}
         showPopupWindow={showHot}
-        cssText={"position: fixed; top: 56px; width: 360px; overflow: hidden; max-height: calc(100vh - 148px); min-height: 0"}>
+        cssText={"position: fixed; top: 56px; width: 360px; overflow: hidden; max-height: calc(100vh - 148px); min-height: 0; background-color: var(--controlWhite);"}>
         {#if suggests}
 
         {#if suggests.songs}

@@ -1,6 +1,7 @@
 import {EventEmitter} from '../events.js'
 import {initAudioDevicesFind} from '../devices/browser/find.js'
 import {initOutputAudio} from '../devices/browser/output.js'
+import {fadeBeforePause, fadeBeforePlay, initProcessor} from './process.js'
 
 initAudioDevicesFind()
 
@@ -17,19 +18,24 @@ export class AudioPlayer {
         AudioPlayer.on(type, handler)
     }
 
-    static play() {
+    static async play() {
         this.em.emit('play')
 
         hooks.send('thumbar:pause')
 
-        return this.audioElement.play()
+        return await Promise.all([
+            this.audioElement.play(),
+            fadeBeforePlay()
+        ])
     }
     play() {
         return AudioPlayer.play()
     }
 
     static pause() {
-        this.audioElement.pause()
+        fadeBeforePause().then(() => {
+            this.audioElement.pause()
+        })
 
         hooks.send('thumbar:play')
 
@@ -119,7 +125,8 @@ AudioPlayer.audioElement.addEventListener('ended', () => {
 
 const srcNode = AudioPlayer.audioCtx.createMediaElementSource(AudioPlayer.audioElement)
 export const destNode = AudioPlayer.audioCtx.createMediaStreamDestination()
-srcNode.connect(destNode)
+
+initProcessor(AudioPlayer.audioCtx, srcNode, destNode)
 initOutputAudio(destNode.stream)
 
 export const globalPlayer = new AudioPlayer()

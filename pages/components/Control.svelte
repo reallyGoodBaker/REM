@@ -7,90 +7,90 @@
     import {MainPlaylist} from '../../utils/player/playlist.js'
 
 
-    let content = {};
+    let content = {}
 
-    let playing = false;
-    let duration = 1;
-    let checker;
+    let playing = false
+    let duration = 1
+    let checker
 
     globalMetadata.addObserver(function(rawMetadata) {
-        this.apply();
-        content = rawMetadata;
+        this.apply()
+        content = rawMetadata
     });
 
     async function setContent(audioData) {
 
-        globalMetadata.title(audioData.title());
-        globalMetadata.album(audioData.album().name);
-        globalMetadata.artist(audioData.artist().reduce((pre, cur) => [...pre, cur.name], []).join(' · '));
+        globalMetadata.title(audioData.title())
+        globalMetadata.album(audioData.album().name)
+        globalMetadata.artist(audioData.artist().reduce((pre, cur) => [...pre, cur.name], []).join(' · '))
         globalMetadata.artwork(0, {
             src: audioData.album().picUrl
-        });
-        globalMetadata.notifyObservers(globalMetadata.getMetadataConfig());
+        })
+        globalMetadata.notifyObservers(globalMetadata.getMetadataConfig())
 
-        store.set('loadedContent', audioData.data);
+        store.set('loadedContent', audioData.data)
     }
 
     window.__getColorInfo = function getColorInfo(imgData, w, x, y) {
-        let o =  4 * (w*(y-1) + x);
-        imgData = imgData.data;
-        let data = imgData.slice(o, o+4);
-        return data;
+        let o =  4 * (w*(y-1) + x)
+        imgData = imgData.data
+        let data = imgData.slice(o, o+4)
+        return data
     }
 
     function rgbtohsl(r,g,b){
-        r=r/255;
-        g=g/255;
-        b=b/255;
+        r=r/255
+        g=g/255
+        b=b/255
 
-        var min=Math.min(r,g,b);
-        var max=Math.max(r,g,b);
-        var l=(min+max)/2;
-        var difference = max-min;
-        var h,s,l;
+        var min=Math.min(r,g,b)
+        var max=Math.max(r,g,b)
+        var l=(min+max)/2
+        var difference = max-min
+        var h,s,l
         if(max==min){
-            h=0;
-            s=0;
+            h=0
+            s=0
         }else{
             s=l>0.5?difference/(2.0-max-min):difference/(max+min);
             switch(max){
-                case r: h=(g-b)/difference+(g < b ? 6 : 0);break;
-                case g: h=2.0+(b-r)/difference;break;
-                case b: h=4.0+(r-g)/difference;break;
+                case r: h=(g-b)/difference+(g < b ? 6 : 0);break
+                case g: h=2.0+(b-r)/difference;break
+                case b: h=4.0+(r-g)/difference;break
             }
-            h=Math.round(h*60);
+            h=Math.round(h*60)
         }
-        s=Math.round(s*100);//转换成百分比的形式
-        l=Math.round(l*100);
-        return [h,s,l];
+        s=Math.round(s*100)//转换成百分比的形式
+        l=Math.round(l*100)
+        return [h,s,l]
     }
 
-    let ctx, container;
+    let ctx, container
     window.__setColor = function __setColor(container, ctx, alpha=1) {
-        if(!ctx) return;
+        if(!ctx) return
         /**
          * @type {CanvasRenderingContext2D}
         */
        let cctx = CanvasCtx;
-       const w = ctx.width, h = ctx.height;
-       Canvas.width = w;
-       Canvas.height = h;
+       const w = ctx.width, h = ctx.height
+       Canvas.width = w
+       Canvas.height = h
 
-       cctx.drawImage(ctx, 0, 0);
-       const imageData = cctx.getImageData(0, 0, w, h);
+       cctx.drawImage(ctx, 0, 0)
+       const imageData = cctx.getImageData(0, 0, w, h)
 
-       const w12 = w/2, h12 = h/2, w14 = w/4, w34 = w12 + w14, h14 = h/4, h34 = h12 + h14;
+       const w12 = w/2, h12 = h/2, w14 = w/4, w34 = w12 + w14, h14 = h/4, h34 = h12 + h14
         let lt = __getColorInfo(imageData, w, w14, h14),
             rt = __getColorInfo(imageData, w, w34, h14),
             c = __getColorInfo(imageData, w, w12, h12),
             lb = __getColorInfo(imageData, w, w14, h34),
-            rb = __getColorInfo(imageData, w, w34, h34);
+            rb = __getColorInfo(imageData, w, w34, h34)
 
         let color = [];
 
         for (let i = 0; i < 4; i++) {
             let aver = (lt[i] + rt[i] + c[i] + lb[i] + rb[i])/5
-            color[i] = ~~aver;
+            color[i] = ~~aver
         }
 
         color = rgbtohsl(...color)
@@ -99,39 +99,38 @@
 
         container.style.setProperty('--color', colorStr)
 
-        return colorStr;
+        return colorStr
         
     }
 
     function setColor() {
-        __setColor(container, ctx);
+        __setColor(container, ctx)
     }
 
     function s(stime) {
-        let s = ~~(stime%60);
+        let s = ~~(stime%60)
         if (s < 10) {
-            s = '0' + s;
+            s = '0' + s
         }
-        return `${~~(stime/60)}:${s}`;
+        return `${~~(stime/60)}:${s}`
     }
 
-    let seekValue = 0;
+    let seekValue = 0
     //==========================================
-    rem.on('setControlsContent', setContent);
+    rem.on('setControlsContent', setContent)
     rem.on('loadedContent', () => {
-        duration = globalPlayer.duration();
-        durationEle.innerText = s(duration);
+        duration = globalPlayer.duration()
+        durationEle.innerText = s(duration)
         if (checker) {
-            seekValue = 0;
-            clearInterval(checker);
+            seekValue = 0
+            clearInterval(checker)
         }
         checker = setInterval(() => {
-            if (isSeeking) return;
+            if (isSeeking) return
 
-            let cur = globalPlayer.seek();
-            seekValue = (cur/duration)*100;
-            currentTimeEle.innerText = s(cur);
-            //console.log(cur, duration);
+            let cur = globalPlayer.seek()
+            seekValue = (cur/duration)*100
+            currentTimeEle.innerText = s(cur)
         }, 500);
     });
 

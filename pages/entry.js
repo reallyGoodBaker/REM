@@ -76,6 +76,7 @@ const store = {
 import { EventEmitter } from '../utils/index.js'
 import { initNetworkWatcher } from '../utils/network/browser.js'
 import { initAudioDevicesFind, watchAudioDeviceChange } from '../utils/devices/browser/find.js'
+import { initProcessorConfig } from '../utils/player/process.js'
 window.store = store;
 window.rem = new EventEmitter({ captureRejections: true })
 window.contextMap = new Map()
@@ -85,6 +86,7 @@ rem.isBeta = true
 initNetworkWatcher()
 initAudioDevicesFind()
 watchAudioDeviceChange()
+initProcessorConfig()
 
 export default new App({
     target: document.body

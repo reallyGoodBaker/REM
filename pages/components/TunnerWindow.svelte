@@ -13,6 +13,8 @@
 
     let metadata = Player.getMetadata()?.format
 
+    let processConfig = store.getSync('process')
+
     let scrollv
 
     onMount(() => {
@@ -26,6 +28,7 @@
 
 <style>
     .outerWindow {
+        contain: paint;
         background-color: var(--controlBackground);
     }
 
@@ -34,7 +37,8 @@
         padding: 0 12px;
         justify-content: space-between;
         height: 48px;
-        background-color: var(--controlBrighter);
+        border-top: solid 1px var(--controlGray);
+        /* background-color: var(--controlBrighter); */
         width: 100%
     }
 
@@ -46,11 +50,13 @@
     }
 
     .link {
+        display: flex;
+        height: fit-content;
+        min-height: 18px;
+        line-height: 18px;
+        align-items: center;
         cursor: pointer;
         text-decoration: none;
-        padding: 4px;
-        border-radius: 4px;
-        transition: all 0.1s;
     }
 
     .link:hover {
@@ -58,72 +64,105 @@
     }
 
     .link:active {
-        background-color: var(--controlGray);
+        background-color: var(--fade);
     }
 
     .pair {
         flex-wrap: nowrap;
-        align-items: flex-start;
+        align-items: center;
     }
     .pair > .label {
+        height: fit-content;
+        min-height: 18px;
         word-break: keep-all;
-        margin-top: 4px;
+        align-self: flex-start;
+    }
+
+    .tunnerPanel {
+        background-color: var(--controlBrighter);
     }
 </style>
 
-<div class="Column outerWindow" style="width: 300px; height: 72vh;">
-<div class="Row" style="height: calc(72vh - 48px); margin-left: 12px;">
-<ScrollView bind:this={scrollv}>
-    <div class="Column" style="padding: 12px 0;">
-    <TunnerTile
-        title='输入'
-        icon={'\ue936'}>
-        {#if metadata}
-        <div>编码 <em>{metadata.codec}</em></div>
-        <div>音轨数 <em>{metadata.numberOfChannels}</em></div>
-        <div>码率 <em>{~~(metadata.bitrate/10)/100} kBps</em></div>
-        {#if metadata.bitsPerSample}
-        <div>位深 <em>{metadata.bitsPerSample} bit</em></div>
-        {/if}
-        <div style="margin-bottom: 8px;">采样率 <em>{metadata.sampleRate/1000} kHz</em></div>
-        <div>解码器 <em>内置 FFmpeg 解码器</em></div>
-        {:else}
-        无
-        {/if}
-    </TunnerTile>
+<div class="Row" style="height: 72vh; width: 72vw;">
 
-    <!-- <TunnerTile
-        title='双二阶滤波器'>
-        略
-    </TunnerTile>
+    <div class="Column outerWindow tunnerPanel" style="width: 300px;">
+        <div class="Row" style="height: 72vh; margin-left: 12px;">
+        <ScrollView bind:this={scrollv}>
+            <div class="Column" style="padding: 12px 0;">
+            <TunnerTile
+                title='输入'
+                icon={'\ue936'}>
+                {#if metadata}
+                <div>编码<em>{metadata.codec}</em></div>
+                <div>音轨数<em>{metadata.numberOfChannels}</em></div>
+                <div>码率<em>{~~(metadata.bitrate/10)/100} kBps</em></div>
+                {#if metadata.bitsPerSample}
+                <div>位深<em>{metadata.bitsPerSample} bit</em></div>
+                {/if}
+                <div style="margin-bottom: 8px;">采样率<em>{metadata.sampleRate/1000} kHz</em></div>
+                <div>解码器<em>内置 FFmpeg 解码器</em></div>
+                {:else}
+                无
+                {/if}
+            </TunnerTile>
 
-    <TunnerTile
-        title='增益'>
-        1.2
-    </TunnerTile> -->
+            <TunnerTile
+                title='处理'>
+                <div>位深<em>Float 32bit</em></div>
+                <div>频率<em>{AudioPlayer.audioCtx.sampleRate/1000} kHz</em></div>
+                <div class="Row pair">
+                    <div class="label">增益</div>
+                    <em><div class="link">{
+                    processConfig.gain.gain > 1? '+': processConfig.gain.gain < 1? '-': ''
+                    }{processConfig.gain.gain.toFixed(1)}</div></em>
+                </div>
 
-    <TunnerTile
-        hideLine={true}
-        title='输出'
-        icon={'\ue61e'}>
-        <div>位深 <em>32bit Float</em></div>
-        <div>频率 <em>{AudioPlayer.audioCtx.sampleRate/1000} kHz</em></div>
-        {#await getDevice() then device}
-        <div class="Row pair">
-            <div class="label">设备</div>
-            <em><div class="link">{device.label}</div></em>
+                <div class="Row pair">
+                    <div class="label">平衡</div>
+                    <em><div class="link">{processConfig.stereoPanner.pan} ({
+                        (1 - processConfig.stereoPanner.pan) / 2
+                    }/{
+                        (processConfig.stereoPanner.pan + 1) / 2
+                    })</div></em>
+                </div>
+
+                <div class="Row pair">
+                    <div class="label">延迟</div>
+                    <em><div class="link">{processConfig.delay.delayTime}s</div></em>
+                </div>
+
+                <div class="Row pair">
+                    <div class="label">淡入淡出</div>
+                    <em><div class="link">{processConfig.fader.fadeIn}s / {processConfig.fader.fadeOut}s</div></em>
+                </div>
+            </TunnerTile>
+
+            <TunnerTile
+                hideLine={true}
+                title='输出'
+                icon={'\ue61e'}>
+                {#await getDevice() then device}
+                <div class="Row pair">
+                    <div class="label">设备</div>
+                    <em><div class="link">{device.label}</div></em>
+                </div>
+                {/await}
+            </TunnerTile>
+            </div>
+        </ScrollView>
         </div>
-        {/await}
-    </TunnerTile>
     </div>
-</ScrollView>
-</div>
 
-<div class="Row btnGroup">
-    <div class="btn big radius px4 light" on:click={() => {
-        window.rem.emit('tunnerClose')
-    }}>关闭</div>
-    <div class="btn big radius px4 accent">应用</div>
-</div>
+    <div class="Column outerWindow" style="height: 100%; width: calc(72vw - 300px);">
+        <div class="Column" style="height: calc(72vh - 48px);">
+
+        </div>
+        <div class="Row btnGroup">
+            <div class="btn big radius px4 text" on:click={() => {
+                window.rem.emit('tunnerClose')
+            }}>关闭</div>
+            <div class="btn big radius px4 light">应用</div>
+        </div>
+    </div>
 
 </div>

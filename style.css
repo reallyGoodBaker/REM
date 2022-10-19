@@ -138,6 +138,15 @@ body {
     color: var(--controlDarker)
 }
 
+.btn.text {
+    background-color: transparent;
+    color: var(--controlDarker)
+}
+
+.btn.text:hover {
+    background-color: var(--fade);
+}
+
 
 
 
