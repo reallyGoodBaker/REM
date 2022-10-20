@@ -446,6 +446,7 @@
 
     <div class="column edge" style="flex-direction: row-reverse;">
         <Progress
+            cssStyle='margin-right: 8px;'
             bind:value={volume}
             on:mousedown={setVolume}
             on:mousemove={setVolume}

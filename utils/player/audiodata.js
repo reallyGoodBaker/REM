@@ -26,14 +26,16 @@ export class AudioData {
         }
 
 
-        const res = this.urls[quality] = await NeteaseApi.getSongUrl(this.data.id, await store.get('cookie'), br)
+        const res = this.urls[quality] = await NeteaseApi.getSongUrlX(this.data.id, await store.get('cookie'))
         let url = res.body.data[0].url
 
+        const type = this.type = res.body.data[0].type
 
-        const media = await server.getMedia(`ne${this.data.id}`, this.onLoadMetadata)
+
+        const media = await server.getMedia(`ne${this.data.id}.${type}`, this.onLoadMetadata)
 
         if (!media) {
-            server.saveToCache(url, `ne${this.data.id}`, this.onLoadMetadata)
+            server.saveToCache(url, `ne${this.data.id}.${type}`, this.onLoadMetadata)
             return url
         }
         

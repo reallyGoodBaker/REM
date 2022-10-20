@@ -12,7 +12,7 @@
   "license": "GPLv2",
   "dependencies": {
     "music-metadata": "^7.12.6",
-    "NeteaseCloudMusicApi": "^4.5.14",
+    "NeteaseCloudMusicApi": "^4.8.2",
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {

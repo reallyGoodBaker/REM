@@ -5,10 +5,9 @@ import RowList from './components/RowList.svelte';
 import SelectListTile from './components/SelectListTile.svelte';
 import ToggleListTile from './components/ToggleListTile.svelte';
 import ListTile from './components/ListTile.svelte';
-import Popup from './components/Popup.svelte';
 import { onDestroy, onMount, tick } from 'svelte';
 import { getAudioDevices } from '../utils/devices/browser/find.js'
-import { setOutputDeviceId, getOutputDeviceId, indexOfOutputDevice } from '../utils/devices/browser/output.js'
+import { setOutputDeviceId, indexOfOutputDevice } from '../utils/devices/browser/output.js'
 
 
 let settings = store.getSync('sys-settings')
@@ -75,7 +74,11 @@ Pager.beforeSwitch(() => {
 onMount(async () => {
     const {save} = Pager.getContext()
     await tick()
-    scrollv.setOffsetRatio(save.offsetRatio)
+    
+    if (save.offsetRatio) {
+        scrollv.setOffsetRatio(save.offsetRatio)
+    }
+    
 })
 
 let outputSelected = 0, outputDeviceList = []

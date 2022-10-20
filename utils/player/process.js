@@ -75,7 +75,7 @@ function saveConfig() {
     store.set('process', processConfig)
 
     if (rem) {
-        rem.emit('processUpdate')
+        rem.emit('processUpdate', processConfig)
     }
 }
 
@@ -86,11 +86,19 @@ export function setDelay(num) {
     saveConfig()
 }
 
+export function getDelay() {
+    return processConfig.delay.delayTime
+}
+
 export function setGain(num) {
     gain.gain.linearRampToValueAtTime(num, audioCtx.currentTime)
     processConfig.gain.gain = num
 
     saveConfig()
+}
+
+export function getGain() {
+    return processConfig.gain.gain
 }
 
 export function setStereoPanner(num) {
@@ -100,9 +108,17 @@ export function setStereoPanner(num) {
     saveConfig()
 }
 
+export function getStereoPan() {
+    return processConfig.stereoPanner.pan
+}
+
 export function setFade(fadeIn=0.2, fadeOut=0.2) {
     processConfig.fader.fadeIn = fadeIn
     processConfig.fader.fadeOut = fadeOut
 
     saveConfig()
+}
+
+export function getFader() {
+    return Object.assign({}, processConfig.fader)
 }

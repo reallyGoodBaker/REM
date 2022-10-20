@@ -7,7 +7,6 @@ export function initOutputAudio(stream) {
 
 let deviceIdUsing = 'default'
 export async function setOutputDeviceId(id) {
-    console.log(deviceIdUsing, id);
     if (!id) return
 
     if (id !== deviceIdUsing) {

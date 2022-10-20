@@ -6,7 +6,7 @@ const {
     getUserPlaylist, getPlaylistDetail, getArtistSublist, getAlbumSublist,
     getAlbumDetail
 } = require('../utils/api/playlist');
-const {getSongDetail, getSongUrl} = require('../utils/api/song');
+const {getSongDetail, getSongUrl, getSongDownload, getSongUrlX} = require('../utils/api/song');
 
 
 module.exports = () => {
@@ -27,6 +27,8 @@ createFuncBinding(logout)
 createFuncBinding(getArtistSublist)
 createFuncBinding(getAlbumSublist)
 createFuncBinding(getAlbumDetail)
+createFuncBinding(getSongDownload)
+createFuncBinding(getSongUrlX)
 
 
 }

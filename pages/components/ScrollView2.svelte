@@ -1,5 +1,5 @@
 <script>
-import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
 
 let outerContainer
     ,meter
@@ -200,7 +200,7 @@ export function scrollTo(pos) {
         top: var(--top);
         height: var(--height);
         min-height: 16px;
-        width: 16px;
+        width: 14px;
         background-color: transparent;
         transition: all 0.12s;
     }

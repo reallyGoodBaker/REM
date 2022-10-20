@@ -11,6 +11,7 @@
     export let fullBorder = false
     export let placeholder = ''
     export let spellcheck = false
+    export let containerStyle = ''
 
     let input
     
@@ -98,7 +99,7 @@
 </style>
 
 
-<div class="{fullBorder?'full-border':'input'}{focused?' focus':''}">
+<div class="{fullBorder?'full-border':'input'}{focused?' focus':''}" style={containerStyle}>
     {#if singleLine}
 
     <input {type} {id}

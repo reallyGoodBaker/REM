@@ -48,7 +48,7 @@ const {
     getUserPlaylist, getPlaylistDetail, getArtistSublist, getAlbumSublist,
     getAlbumDetail,
 } = require('./utils/api/playlist');
-const { getSongDetail, getSongUrl } = require('./utils/api/song');
+const { getSongDetail, getSongUrl, getSongDownload, getSongUrlX } = require('./utils/api/song');
 const { logout } = require('NeteaseCloudMusicApi');
 
 
@@ -61,6 +61,8 @@ new Binder('NeteaseApi')
 .bind('getPlaylistDetail', createFuncBinding(getPlaylistDetail))
 .bind('getSongDetail', createFuncBinding(getSongDetail))
 .bind('getSongUrl', createFuncBinding(getSongUrl))
+.bind('getSongDownload', createFuncBinding(getSongDownload))
+.bind('getSongUrlX', createFuncBinding(getSongUrlX))
 .bind('loginViaQRCode', createFuncBinding(loginViaQRCode))
 .bind('validQRLogin', createFuncBinding(validQRLogin))
 .bind('getUserAccount', createFuncBinding(getUserAccount))
