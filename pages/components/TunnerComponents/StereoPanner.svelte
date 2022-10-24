@@ -24,6 +24,7 @@
 
 <ProgressWithInput
     bind:label
+    comment='左右声道平衡'
     bind:inputValue
     bind:progressValue
     on:inputChange={onInput}

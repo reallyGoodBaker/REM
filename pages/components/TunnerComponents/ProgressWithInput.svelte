@@ -4,6 +4,7 @@
     import { createEventDispatcher } from 'svelte';
 
     export let label = ''
+    export let comment = ''
 
     export let inputValue
     export let progressValue
@@ -29,10 +30,17 @@
         padding: 6px 16px;
         justify-content: space-between;
     }
+
+    .comm {
+        margin: 0;
+        margin-left: 8px;
+        color: var(--controlGray);
+        font-size: small;
+    }
 </style>
 
 <div class="Row c">
-    <div>{label}</div>
+    <div class="Row">{label}<pre class="comm">{comment}</pre></div>
     <div class="Row">
         <Input containerStyle='{style}; margin-right: 8px;' cssText={style} on:change={emitInputChange} bind:value={inputValue}/>
         <Progress on:mousemove={emitProgressChange} on:mouseup={emitProgressChange} bind:value={progressValue}/>

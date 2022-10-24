@@ -70,7 +70,8 @@ export class AudioPlayer {
             rem.emit('metadata', metadata)
         }
 
-        this.audioData = audioData
+        AudioPlayer.audioData = audioData
+    
         this.load(await audioData.url())
         this.onDataLoaded()
     }
@@ -100,7 +101,7 @@ export class AudioPlayer {
     }
 
     static duration() {
-        return this.audioElement.duration
+        return this.audioElement.duration || (this.audioData?.data.dt / 1000) || 0
     }
     duration() {
         return AudioPlayer.duration()
@@ -122,6 +123,10 @@ export class AudioPlayer {
 AudioPlayer.audioElement.addEventListener('ended', () => {
     AudioPlayer.em.emit('ended')
 })
+
+AudioPlayer.audioElement.onloadedmetadata = () => {
+    rem.emit('setControlsContent', AudioPlayer.audioData)
+}
 
 const srcNode = AudioPlayer.audioCtx.createMediaElementSource(AudioPlayer.audioElement)
 export const destNode = AudioPlayer.audioCtx.createMediaStreamDestination()

@@ -13,6 +13,7 @@ export function searchStrArr(raw, search) {
 export class MainPlaylist {
     static listData = []
     static getAudioData(index=this.current) {
+        store.set('listElementPlaying', index)
         return new AudioData(this.listData[index])
     }
 
@@ -104,10 +105,18 @@ export class MainPlaylist {
         this.playByAudioData(ad)
     }
 
-    static play(index) {
+    static play(index=this.current) {
         this.current = index
         const ad = this.getAudioData(index)
         this.playByAudioData(ad)
+    }
+
+    static async load(index) {
+        this.current = index
+        const ad = this.getAudioData(index)
+        await globalPlayer.loadData(ad)
+        rem.emit('loadedContent')
+        rem.emit('setControlsContent', ad)
     }
 
     static playByAudioData(ad) {

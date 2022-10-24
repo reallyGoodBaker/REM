@@ -22,13 +22,12 @@
 
         globalMetadata.title(audioData.title())
         globalMetadata.album(audioData.album().name)
-        globalMetadata.artist(audioData.artist().reduce((pre, cur) => [...pre, cur.name], []).join(' · '))
+        globalMetadata.artist(audioData.artist().reduce((pre, cur) => [...pre, cur.name], []).join('; '))
         globalMetadata.artwork(0, {
             src: audioData.album().picUrl
         })
         globalMetadata.notifyObservers(globalMetadata.getMetadataConfig())
 
-        store.set('loadedContent', audioData.data)
     }
 
     window.__getColorInfo = function getColorInfo(imgData, w, x, y) {
@@ -135,61 +134,60 @@
     });
 
     rem.on('playerReady', async p => {
-        p.on('play', () => {
-            playing = true;
-        });
-        p.on('pause', () => playing = false);
-        p.on('ended', () => MainPlaylist.playNext());
+        p.on('play', () => playing = true)
+        p.on('pause', () => playing = false)
+        p.on('ended', () => MainPlaylist.playNext())
 
-        let c = await store.get('loadedContent');
-        if (c) {
-            c = new AudioData(c);
-            setContent(c);
-            globalPlayer.loadData(c);
+        let listPlaying = await store.get('listPlaying'),
+            playIndex = await store.get('listElementPlaying')
+
+        if (listPlaying && typeof playIndex === 'number') {
+            MainPlaylist.loadList(listPlaying)
+            MainPlaylist.load(playIndex)
         }
 
     });
 
     function onClick() {
-        if(!globalPlayer.load()) return;
+        if(!globalPlayer.load()) return
 
         if (playing) {
-            return globalPlayer.pause();
+            return globalPlayer.pause()
         }
 
-        return globalPlayer.play();
+        return globalPlayer.play()
     }
 
     window.addEventListener('keypress', ev => {
         if (ev.key === ' ') {
-            onClick();
+            onClick()
         }
     })
 
     function playPrev() {
-        MainPlaylist.playPrev();
+        MainPlaylist.playPrev()
     }
 
     function playNext() {
-        MainPlaylist.playNext();
+        MainPlaylist.playNext()
     }
     
-    let singleLoop = false;
-    let randomPlay = false;
+    let singleLoop = false
+    let randomPlay = false
 
     function setPlayType() {
         if (singleLoop) {
-            return MainPlaylist.mode = 1;
+            return MainPlaylist.mode = 1
         }
         if (randomPlay) {
-            return MainPlaylist.mode = 2;
+            return MainPlaylist.mode = 2
         }
-        MainPlaylist.mode = 0;
+        MainPlaylist.mode = 0
     }
 
     function setVolume(ev) {
         const vol = +ev.detail
-        globalPlayer.volume(vol/100);
+        globalPlayer.volume(vol/100)
     }
 
     let volume;
@@ -202,33 +200,33 @@
     })()
 
     function saveVolume() {
-        store.set('volume', volume);
+        store.set('volume', volume)
     }
 
-    var isSeeking = false;
+    var isSeeking = false
     function startSeeking() {
-        isSeeking = true;
+        isSeeking = true
     }
 
     function endSeek(ev) {
-        isSeeking = false;
+        isSeeking = false
         try {
-            globalPlayer.seek((ev.detail/100)*duration);
+            globalPlayer.seek((ev.detail/100)*duration)
         } catch (e) {}
     }
 
     function seekMove(ev) {
         if (isSeeking) {
-            currentTimeEle.innerText = s((ev.detail/100)*duration);
+            currentTimeEle.innerText = s((ev.detail/100)*duration)
         }
     }
     
-    let currentTimeEle, durationEle;
+    let currentTimeEle, durationEle
 
     /**
      * @type {HTMLElement[]}
      */
-    var btns = new Array(5);
+    var btns = new Array(5)
 
 </script>
 

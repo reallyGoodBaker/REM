@@ -24,6 +24,7 @@
 
 <ProgressWithInput
     bind:label
+    comment={'调整音量增幅\n请谨慎使用以保护听力'}
     bind:inputValue
     bind:progressValue
     on:inputChange={onInput}
