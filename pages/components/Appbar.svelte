@@ -111,10 +111,14 @@
         border-radius: 8px;
     }
 
+    .rev {
+        flex-direction: row-reverse;
+    }
+
 </style>
 
 <div class="column container {reverse? 'left': 'right'}">
-    <div class="column btn-group appbtns">
+    <div class="column btn-group appbtns{reverse? ' rev': ''}">
         <div class="column clk" on:click={min}>&#xe698;</div>
         <div class="column clk small" style="margin: 0 4px;" on:click={toggleMax}>
             {fullScreen ? "\ue891" : "\ue88f"}
