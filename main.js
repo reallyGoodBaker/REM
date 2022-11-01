@@ -11,7 +11,8 @@ function mkdir(paths) {
     }
 }
 
-const AppRoot = path.resolve(app.getPath('documents'), 'rem')
+const AppRoot = path.resolve(app.getPath('appData'), 'rem')
+console.log(AppRoot);
 
 function pathResolve(name) {
     return path.resolve(AppRoot, name)
@@ -19,9 +20,9 @@ function pathResolve(name) {
 
 const paths = [
     AppRoot,
-    pathResolve('data'),
-    pathResolve('cache'),
-    pathResolve('download'),
+    pathResolve('Data'),
+    pathResolve('AppCache'),
+    pathResolve('Download'),
 ]
 
 mkdir(paths)
