@@ -16,11 +16,20 @@ const appLock = app.requestSingleInstanceLock()
 if (!appLock) app.exit()
 
 
+function getFitWidth(w) {
+    if (process.platform === 'win32') {
+        return screen.screenToDipPoint({ x: w, y: 0 }).x
+    }
+
+    return w
+}
+
+
 function buildWindow() {
 
     const displayBounds = screen.getPrimaryDisplay().bounds
 
-    const width = screen.screenToDipPoint({ x: 1360, y: 0 }).x,
+    const width = getFitWidth(1360),
         height = ~~(displayBounds.height * 0.8)
 
     let browserWindow = new BrowserWindow({
@@ -55,7 +64,9 @@ function buildWindow() {
     })
 
     ipcMain.once('win:show-main', () => {
-        setThumbarButtons(browserWindow)
+        if (process.platform === 'win32') {
+            setThumbarButtons(browserWindow)
+        }
     })
 
     initMainWin(browserWindow)

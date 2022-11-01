@@ -38,21 +38,23 @@
         z-index: 9999;
         position: fixed;
         top: 0;
-        width: fit-content;
+        width: calc(50vw - 152px);
         height: 54px;
         align-items: center;
+        -webkit-app-region: drag;
     }
 
     .container.right {
         right: 0;
+        justify-content: flex-end;
     }
 
     .container.left {
         left: 0;
+        justify-content: flex-start;
     }
 
     .clk {
-        -webkit-app-region: no-drag;
         font-family: iconfont;
         font-size: 14px;
         width: 32px;
@@ -78,6 +80,7 @@
     }
 
     .btn-group {
+        -webkit-app-region: no-drag;
         margin-top: 8px;
         align-self: flex-start;
     }

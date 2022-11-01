@@ -128,28 +128,28 @@
 </style>
 
 <div class="column" style="margin-left: 48px; -webkit-app-region: no-drag;">
-<div class="column search">
-    <span class="iconfont icon-search avatar menu" on:click={search}></span>
-    
-    <input type="text" class="input" placeholder="搜索歌曲和歌手"
-        bind:value
-        on:change={search}
-        on:focus={getHot}
-        on:blur={()=>setTimeout(()=>showHot=false)}
-        on:input={getSuggest}>
+    <div class="column search">
+        <span class="iconfont icon-search avatar menu" on:click={search}></span>
+        
+        <input type="text" class="input" placeholder="搜索歌曲和歌手"
+            bind:value
+            on:change={search}
+            on:focus={getHot}
+            on:blur={()=>setTimeout(()=>showHot=false)}
+            on:input={getSuggest}>
 
-    <div class="avatar-container">
-        <Avatar
-            on:click={show}
-            size={'big'}
-            isUrl={avatarUrl}
-            avatar={avatarUrl || '\ue6bb'}
-            width={32}
-            height={32}
-        />
+        <div class="avatar-container">
+            <Avatar
+                on:click={show}
+                size={'big'}
+                isUrl={avatarUrl}
+                avatar={avatarUrl || '\ue6bb'}
+                width={32}
+                height={32}
+            />
+        </div>
     </div>
 
-</div>
     <Popup
         on:layerClick={hide}
         on:animIn={animIn}
