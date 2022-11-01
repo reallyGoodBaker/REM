@@ -129,14 +129,13 @@ AudioPlayer.audioElement.onloadedmetadata = () => {
 }
 
 const srcNode = AudioPlayer.audioCtx.createMediaElementSource(AudioPlayer.audioElement)
-export const destNode = AudioPlayer.audioCtx.createMediaStreamDestination()
+const destNode = AudioPlayer.audioCtx.createMediaStreamDestination()
 
 initProcessor(AudioPlayer.audioCtx, srcNode, destNode)
 initOutputAudio(destNode.stream)
 
-export const globalPlayer = new AudioPlayer()
-
-window.Player = globalPlayer
+const globalPlayer = new AudioPlayer()
+window.globalPlayer = globalPlayer
 
 navigator.mediaSession.setActionHandler('play', () => globalPlayer.play())
 navigator.mediaSession.setActionHandler('pause', () => globalPlayer.pause())

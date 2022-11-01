@@ -1,5 +1,4 @@
 import {AudioData} from './audiodata.js'
-import {globalPlayer} from './player.js'
 
 /**
  * @param {string[]} raw 

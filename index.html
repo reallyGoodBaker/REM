@@ -20,11 +20,11 @@
             overflow: hidden;
         }
     </style>
+    <script src="./bundle/bundle.js"></script>
     <script type="module">
         window.Canvas = document.createElement('canvas');
         window.CanvasCtx = Canvas.getContext('2d');
-        rem.emit('playerReady', Player);
+        rem.emit('playerReady', globalPlayer);
     </script>
-    <script src="./bundle/bundle.js"></script>
 </body>
 </html>

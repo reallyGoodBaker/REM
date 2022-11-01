@@ -3,7 +3,6 @@
     import {AudioData} from '../../utils/player/audiodata.js'
     import Progress from "./Progress.svelte";
     import {globalMetadata} from '../../utils/player/metadata.js'
-    import {globalPlayer} from '../../utils/player/player.js'
     import {MainPlaylist} from '../../utils/player/playlist.js'
 
 

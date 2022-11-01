@@ -16,7 +16,7 @@
         return devices[await indexOfOutputDevice(devices)]
     }
 
-    let metadata = Player.getMetadata()?.format
+    let metadata = globalPlayer.getMetadata()?.format
 
     let processConfig = store.getSync('process')
 
