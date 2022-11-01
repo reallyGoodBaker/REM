@@ -12,7 +12,6 @@ function mkdir(paths) {
 }
 
 const AppRoot = path.resolve(app.getPath('appData'), 'rem')
-console.log(AppRoot);
 
 function pathResolve(name) {
     return path.resolve(AppRoot, name)

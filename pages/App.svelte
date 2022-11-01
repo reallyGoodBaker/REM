@@ -258,6 +258,12 @@ function changePos(x,y) {
 })()
 
 
+rem.on('useAcrylic', bool => {
+    document.body.style.setProperty(
+        '--dynamicControlLight',
+        bool? 'var(--acrylicBackgroundColor)': 'var(--controlBrighter)'
+    )
+})
 
 //==================================================================
 

@@ -115,6 +115,10 @@ function initMainWin(browserWindow) {
         return remStore.rm(k)
     })
 
+    ipcMain.handle('isMac', () => {
+        return process.platform === 'darwin'
+    })
+
     ipcMain.on('store:getSync', (ev, k) => {
         ev.returnValue = remStore.get(k)
     })

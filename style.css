@@ -37,6 +37,8 @@ body {
     --fade: rgba(0, 0, 0, 0.3);
     --fadeDark: rgba(0, 0, 0, 0.5);
 
+    --dynamicControlLight: var(var(--controlBrighter));
+
     background-color: var(--controlWhite);
     color: var(--controlBlack);
 }

@@ -2,7 +2,7 @@
     export let marginHorizon = '10px';
     export let marginVertical = '6px';
     export let radius = '8px';
-    export let color = 'rgba(255,255,255,0.4)';
+    export let color = 'var(--dynamicControlLight)';
     export let title = '';
 </script>
 
@@ -14,7 +14,6 @@
 
     .tile {
         height: fit-content;
-        border: solid 1px var(--controlGray);
         overflow: hidden;
         box-sizing: border-box;
     }

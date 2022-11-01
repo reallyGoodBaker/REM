@@ -318,7 +318,7 @@
 
     .header {
         --color: var(--controlBrighter);
-        background: linear-gradient(to bottom, transparent 180px, var(--color) 292px, var(--color));
+        background: linear-gradient(to bottom, transparent 180px, var(--color) 292px, var(--color) 400px);
         width: 292px;
         height: calc(100% - 24px);
         justify-content: flex-start;

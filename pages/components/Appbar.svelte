@@ -31,6 +31,13 @@
     hooks.on("win:unmax", () => {
         fullScreen = false;
     });
+
+    let reverse = false
+    hooks.invoke('isMac').then(v => {
+        if (v) {
+            reverse = true
+        }
+    })
 </script>
 
 <style>
@@ -59,7 +66,6 @@
         font-size: 14px;
         width: 32px;
         height: 32px;
-        /* margin-right: 4px; */
         border-radius: 8px;
         cursor: pointer;
         background-color: transparent;
@@ -107,7 +113,7 @@
 
 </style>
 
-<div class="column container right">
+<div class="column container {reverse? 'left': 'right'}">
     <div class="column btn-group appbtns">
         <div class="column clk" on:click={min}>&#xe698;</div>
         <div class="column clk small" style="margin: 0 4px;" on:click={toggleMax}>
@@ -117,6 +123,6 @@
     </div>
 </div>
 
-<div class="column container left">
+<div class="column container {reverse? 'right': 'left'}">
     <div class="title{window.rem.isBeta ? ' debug' : ''}">REM</div>
 </div>
