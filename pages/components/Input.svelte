@@ -108,6 +108,7 @@
         on:input={onInput}
         on:blur={onBlur}
         bind:this={input}
+        {spellcheck}
         {value}
         style={cssText}
         {placeholder}>
@@ -120,10 +121,10 @@
         on:input={onInput}
         on:blur={onBlur}
         bind:this={input}
+        {spellcheck}
         {value} {maxLength}
         style={cssText}
         {placeholder}
-        {spellcheck}
     ></textarea>
         
     {/if}

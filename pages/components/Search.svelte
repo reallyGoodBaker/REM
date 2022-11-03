@@ -132,6 +132,7 @@
         <span class="iconfont icon-search avatar menu" on:click={search}></span>
         
         <input type="text" class="input" placeholder="搜索歌曲和歌手"
+            spellcheck="false"
             bind:value
             on:change={search}
             on:focus={getHot}

@@ -140,6 +140,10 @@ body {
     color: var(--controlDarker)
 }
 
+.light.dynamic {
+    background-color: var(--dynamicControlLight);
+}
+
 .btn.text {
     background-color: transparent;
     color: var(--controlDarker)

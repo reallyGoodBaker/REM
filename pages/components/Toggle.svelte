@@ -24,6 +24,7 @@
         height: 10px;
         border: solid 2px #aaa;
         border-radius: 7px;
+        cursor: pointer;
         transition: background-color 0.2s;
     }
 

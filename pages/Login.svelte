@@ -68,7 +68,9 @@
 
     async function saveAccount() {
         const res = await NeteaseApi.getUserAccount(await store.get('cookie'));
-        store.set('profile', res.body.data.profile);
+        const p = res.body.data.profile
+        store.set('profile', p)
+        rem.emit('logined', p)
         performClick();
     }
 

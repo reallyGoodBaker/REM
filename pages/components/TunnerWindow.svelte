@@ -10,6 +10,9 @@
     import Delay from './TunnerComponents/Delay.svelte'
     import StereoPanner from './TunnerComponents/StereoPanner.svelte'
     import Fader from './TunnerComponents/Fader.svelte'
+    import Equalizer from './TunnerComponents/Equalizer.svelte'
+    import ToggleListTile from './ToggleListTile.svelte'
+    import {setEqEnable} from '../../utils/player/process.js'
 
     async function getDevice() {
         const devices = await getAudioDevices()
@@ -41,6 +44,96 @@
         rem.off('metadata', updateMetadata)
         rem.off('processUpdate', updateProcessConf)
     })
+
+
+    let eqCanvas
+        ,eqCtx
+        ,eqW
+        ,eqH
+        ,computed
+    
+    onMount(() => {
+        eqCtx = eqCanvas.getContext('2d')
+        eqH = eqCanvas.height
+        eqW = eqCanvas.width
+        computed = getComputedStyle(document.body)
+        eqCtx.translate(0.5, 0.5);
+        renderEq()
+
+        rem.on('eqChange', () => renderEq())
+    })
+
+    function curveCtx() {
+        eqCtx.strokeStyle = computed.getPropertyValue('--controlDark')
+        eqCtx.lineWidth = 2
+        eqCtx.lineCap = "round"
+        eqCtx.lineJoin = "round"
+    }
+
+    function commentCtx() {
+        eqCtx.strokeStyle = computed.getPropertyValue('--controlGray')
+        eqCtx.lineWidth = 1
+        eqCtx.lineCap = "miter"
+        eqCtx.lineJoin = "round"
+    }
+
+    function renderEq() {
+        if (!processConfig || !eqCtx) {
+            return
+        }
+
+        const eq = processConfig.eq
+
+        let curveY = 0, curveY2 = 0
+
+        eqCtx.clearRect(-1, -1, eqW + 1, eqH + 1)
+        commentCtx()
+        eqCtx.beginPath()
+        eqCtx.moveTo(0, 41)
+        eqCtx.lineTo(180, 41)
+        eqCtx.stroke()
+        eqCtx.closePath()
+
+        eqCtx.beginPath()
+        curveCtx()
+        if (!processConfig.eq.enable) {
+            eqCtx.strokeStyle = computed.getPropertyValue('--controlBlack')
+        }
+        curveY = 41 - eq[31]*2
+        eqCtx.moveTo(0, curveY)
+        curveY2 = 41 - eq[62]*2
+        eqCtx.bezierCurveTo(10, curveY, 10, curveY2, 20, curveY2)
+        curveY = curveY2
+        curveY2 = 41 - eq[125]*2
+        eqCtx.bezierCurveTo(30, curveY, 30, curveY2, 40, curveY2)
+        curveY = curveY2
+        curveY2 = 41 - eq[250]*2
+        eqCtx.bezierCurveTo(50, curveY, 50, curveY2, 60, curveY2)
+        curveY = curveY2
+        curveY2 = 41 - eq[500]*2
+        eqCtx.bezierCurveTo(70, curveY, 70, curveY2, 80, curveY2)
+        curveY = curveY2
+        curveY2 = 41 - eq[1000]*2
+        eqCtx.bezierCurveTo(90, curveY, 90, curveY2, 100, curveY2)
+        curveY = curveY2
+        curveY2 = 41 - eq[2000]*2
+        eqCtx.bezierCurveTo(110, curveY, 110, curveY2, 120, curveY2)
+        curveY = curveY2
+        curveY2 = 41 - eq[4000]*2
+        eqCtx.bezierCurveTo(130, curveY, 130, curveY2, 140, curveY2)
+        curveY = curveY2
+        curveY2 = 41 - eq[8000]*2
+        eqCtx.bezierCurveTo(150, curveY, 150, curveY2, 160, curveY2)
+        curveY = curveY2
+        curveY2 = 41 - eq[16000]*2
+        eqCtx.bezierCurveTo(170, curveY, 170, curveY2, 180, curveY2)
+        eqCtx.stroke()
+        eqCtx.closePath()
+    }
+
+    function onEqEnableChange({detail}) {
+        setEqEnable(detail)
+    }
 </script>
 
 
@@ -100,12 +193,23 @@
         background-color: var(--controlBrighter);
     }
 
+    .tunnerCard.marginBottom {
+        margin-bottom: 24px;
+    }
+
     .bottomGroup {
         box-sizing: border-box;
         height: 46px;
         width: 100%;
         justify-content: flex-end;
         border-top: solid 1px var(--controlGray);
+    }
+
+    #eqCanvas {
+        height: 73px;
+        width: 200px;
+        border: solid 1px var(--controlGray);
+        border-radius: 8px;
     }
 
 </style>
@@ -122,7 +226,9 @@
                 {#if metadata}
                 <div>编码<em>{metadata.codec}</em></div>
                 <div>音轨数<em>{metadata.numberOfChannels}</em></div>
+                {#if metadata.bitrate > 0}
                 <div>码率<em>{~~(metadata.bitrate/10)/100} kBps</em></div>
+                {/if}
                 {#if metadata.bitsPerSample}
                 <div>位深<em>{metadata.bitsPerSample} bit</em></div>
                 {/if}
@@ -162,6 +268,11 @@
                     <div class="label">淡入淡出</div>
                     <em><div class="link">{processConfig.fader.fadeIn}s / {processConfig.fader.fadeOut}s</div></em>
                 </div>
+
+                <div class="Column pair">
+                    <div class="label" style="margin-top: 8px;">均衡器 {!processConfig.eq.enable? '(已禁用)': ''}</div>
+                    <canvas style="align-self: flex-start;" bind:this={eqCanvas} id="eqCanvas" width="180" height="82"></canvas>
+                </div>
             </TunnerTile>
 
             <TunnerTile
@@ -184,9 +295,8 @@
     </div>
 
     <div class="Column outerWindow" style="height: 100%; width: calc(72vw - 300px);">
-        <div class="Column" style="height: calc(72vh - 48px); width: 100%;">
+        <div class="Column" style="height: calc(72vh - 48px); width: 100%; position: relative;">
             <ScrollView bind:this={scrollContent}>
-                <!-- <div style="height: 52px;"></div> -->
                 
                 <div class="tunnerCard">
                     <Gain/>
@@ -196,6 +306,19 @@
 
                 <div class="tunnerCard">
                     <Fader/>
+                </div>
+
+                <div class="tunnerCard marginBottom">
+                    <ToggleListTile
+                        clickable={false}
+                        data="开启均衡器"
+                        useAvatar={false}
+                        bind:checked={processConfig.eq.enable}
+                        on:toggle={onEqEnableChange}
+                    />
+                    <div class="Row">
+                        <Equalizer bind:enable={processConfig.eq.enable}/>
+                    </div>
                 </div>
 
             </ScrollView>

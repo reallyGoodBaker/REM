@@ -20,16 +20,15 @@ const head = (txt, lvl=1) => {
     return h2
 }
 
-export function init(ele) {
-    const profile = store.getSync('profile')
-    const avatar = new AvatarWidget({url: profile.avatarUrl}),
+export function init(ele, profile) {
+    const avatar = new AvatarWidget({url: profile?.avatarUrl}),
         inputNickname = new InputWidget(),
         header = head('修改你的头像与昵称', 2)
     
     header.style.marginTop = '40px'
     avatar.style.marginTop = '20px'
     inputNickname.style.marginTop = '60px'
-    inputNickname.input.value = profile.nickname
+    inputNickname.input.value = profile?.nickname || ''
 
     const page1 = col(),
         page2 = col()

@@ -108,11 +108,16 @@
             }
         );
 
-    onMount(() => {
+    onMount(async () => {
         xboxControllerMouseSupporter.init(virtProxy)
         WillCreateLayerWidget.injectLayer(layerElement)
-        init(layerElement)
-    });
+        const profile = await store.get('profile')
+        if (profile) {
+            init(layerElement, profile)
+        } else {
+            rem.on('logined', p => init(layerElement, p))
+        }
+    })
 
     import { networkChangeNotif } from "../../utils/network/browser.js"
     onMount(() => {

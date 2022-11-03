@@ -223,7 +223,7 @@ export function scrollTo(pos) {
         height: 100%;
         width: 6px;
         border-radius: 4px;
-        background-color: #bbb;
+        background-color: rgba(0, 0, 0, 0.2);
         transition: all 0.12s;
     }
 
