@@ -1,7 +1,7 @@
 {
   "name": "rem",
-  "version": "0.1.5",
-  "description": "Kiwifruit",
+  "version": "0.1.6",
+  "description": "Lemon",
   "main": "main.js",
   "scripts": {
     "build": "rollup -c",
