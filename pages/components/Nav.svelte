@@ -1,9 +1,21 @@
 <script>
 
+    const s = (...args) => langMapping.s(...args)
+
     export let tabs = [
-        '我的',
-        '发现'
+        'mine',
+        'explorer'
     ];
+
+    function fresh() {
+        requestIdleCallback(() => {
+            const _tabs = tabs.slice()
+            tabs = _tabs
+        })
+    }
+
+
+    rem.on('langChange', fresh)
 
     export let selected = 0;
 
@@ -90,16 +102,16 @@
 <div class="column c">
     {#each tabs as tab, i}
         {#if i === selected}
-            {#if tab === '我的' || tab === '发现'}
-                <div class="tab selected tab-text" on:click={() => onClick(i)}>{tab}</div>
+            {#if tab === 'mine' || tab === 'explorer'}
+                <div class="tab selected tab-text" on:click={() => onClick(i)}>{s(tab)}</div>
             {:else}
                 <div class="tab selected column" style="padding-right: 2px;" on:click={() => onClick(i)}>
-                    <span class="tab-text">{tab}</span>
+                    <span class="tab-text">{s(tab) || tab}</span>
                     <div class="column cross" on:click={delTab}>⨯</div>
                 </div>
             {/if}
         {:else}
-            <div class="tab tab-text" on:click={() => onClick(i)}>{tab}</div>
+            <div class="tab tab-text" on:click={() => onClick(i)}>{s(tab) || tab}</div>
         {/if}
     {/each}
 </div>

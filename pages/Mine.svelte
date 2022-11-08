@@ -1,9 +1,10 @@
 <script>
-    import { onDestroy, onMount, tick } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import Measurable from "./components/Measurable.svelte";
     import ScrollView from "./components/ScrollView2.svelte";
     import Playlist from "./Playlist.svelte";
 
+    const s = (str, ...args) => langMapping.s(str, ...args)
 
     export let playlists = [];
 
@@ -433,9 +434,9 @@
 <ScrollView bind:this={scrollv}>
 <div class="row">
 
-<div class="collection{!collectionFolded?' unfold':''}" data-title="我的歌单" bind:this={container}>
+<div class="collection{!collectionFolded?' unfold':''}" data-title="{s('my_playist')}" bind:this={container}>
     <img class="collection-bgc" src={desktopUrl} alt="" bind:this={imgBgc}>
-    <div title="展开" class="toggle{!collectionFolded?' unfold':''}" on:click={changeHeight}>▼</div>
+    <div title="{s('unfold')}" class="toggle{!collectionFolded?' unfold':''}" on:click={changeHeight}>▼</div>
     
     <Measurable bind:this={meter} cssStyle="width: 100%">
     <div class="column card-container">
@@ -448,7 +449,7 @@
                     header: {
                         imgUrl: list.coverImgUrl,
                         title: list.name,
-                        subtitle: `由${list.creator.nickname}创建`,
+                        subtitle: s('created_by', list.creator.nickname),
                         playCount: list.playCount,
                         trackCount: list.trackCount,
                     },
@@ -479,7 +480,7 @@
 </div>
 
 {#if artistSublist.length}
-<div class="Row" row-title="收藏的艺术家" style="--item-height: 200px; --item-width: 200px; align-self: flex-start;">
+<div class="Row" row-title="{s('favorite_artists')}" style="--item-height: 200px; --item-width: 200px; align-self: flex-start;">
     <div class="btn light dynamic"
         style="position: absolute; left: 200px; top: 0px; border-radius: 6px;"
         on:click={() => {
@@ -491,7 +492,11 @@
                 renderArtistSublist()
             }
         }}
-    >{pageStore.showAllArtists?'收起':'查看'}全部 {artistSublist.count} 位艺术家</div>
+    >{s(
+        'all_artists',
+        pageStore.showAllArtists? s('collapse'): s('expand'),
+        artistSublist.count
+    )}</div>
     {#each artistSublist as artist, i}
         <div class="Column artist-c active">
             <div class="btn light FAB"
@@ -514,9 +519,9 @@
 {/if}
 
 {#if albumSublist.length}
-<div class="Row" row-title="收藏的专辑" style="--item-height: 200px; --item-width: 200px; align-self: flex-start;">
+<div class="Row" row-title="{s('favorite_albums')}" style="--item-height: 200px; --item-width: 200px; align-self: flex-start;">
     <div class="btn light dynamic"
-        style="position: absolute; left: 180px; top: 0px; border-radius: 6px;"
+        style="position: absolute; left: 200px; top: 0px; border-radius: 6px;"
         on:click={() => {
             if (!pageStore.showAllAlbums) {
                 renderAlbumSublist()
@@ -526,7 +531,11 @@
                 pageStore.showAllAlbums = false
             }
         }}
-    >{pageStore.showAllAlbums?'收起':'查看'}全部 {albumSublist.count} 张专辑</div>
+    >{s(
+        'all_albums',
+        pageStore.showAllAlbums? s('collapse'): s('expand'),
+        albumSublist.count
+    )}</div>
     {#each albumSublist as al, i}
         <div class="Column artist-c al active"
             on:click={() => {

@@ -1,95 +1,192 @@
-class Linked {
-    static map = new Map();
-    HEAD = {
-        prev: null,
-        next: null
-    };
-    END = this.HEAD;
-    count = 0;
-    append(listener, rawListener) {
-        const prev = this.END;
-        const cur = {
-            prev, listener, rawListener, next: null,
-        };
-        cur.prev = prev;
-        cur.listener = listener;
-        cur.rawListener = rawListener;
-        cur.next = null;
-        prev.next = cur;
-        this.END = cur;
-        Linked.map.set(rawListener || listener, cur);
-        this.count++;
-        return this;
+class WillNull {
+    val;
+    static NullErr = Error('Null values that may cause errors.');
+    constructor(val) {
+        this.val = val;
     }
-    prepend(listener, rawListener) {
-        const prev = this.HEAD;
-        const next = prev.next;
-        const cur = {
-            prev, listener, rawListener, next
-        };
-        prev.next = cur;
-        if (next) {
-            next.prev = cur;
-        }
-        Linked.map.set(rawListener || listener, cur);
-        this.count++;
-        return this;
+    setValue(val) {
+        this.val = val;
     }
-    delete(rawListener) {
-        let map = Linked.map, cur = map.get(rawListener);
-        if (!cur) {
-            return;
-        }
-        let pre = cur.prev;
-        pre.next = cur.next;
-        if (cur.next) {
-            cur.next.prev = pre;
-        }
-        map.delete(rawListener);
-        this.count--;
-        requestIdleCallback(() => {
-            cur.prev = null;
-            cur.next = null;
-        });
-        return this;
+    isNull() {
+        return this.val === null;
     }
-    deleteAll() {
-        let node = this.HEAD;
-        while (node = node.next) {
-            node.prev = null;
-            node.next = null;
-            Linked.map.delete(node.rawListener || node.listener);
+    expect(message) {
+        if (this.val !== null) {
+            return this.val;
         }
-        this.HEAD.next = null;
-        this.count = 0;
-        return this;
+        throw Error(`${message}`);
     }
-    [Symbol.iterator]() {
-        let ptr = this.HEAD;
-        return {
-            next() {
-                if (ptr.next) {
-                    ptr = ptr.next;
-                }
-                else {
-                    return {
-                        value: ptr,
-                        done: true,
-                    };
-                }
-                return {
-                    value: ptr,
-                    done: false
-                };
-            }
-        };
+    unwrap() {
+        if (this.val !== null) {
+            return this.val;
+        }
+        throw WillNull.NullErr;
     }
 }
-class EventEmitter {
-    /**@private*/
-    _events = {};
+function Maybe(val) {
+    return new WillNull(val);
+}
+function Null() {
+    return new WillNull(null);
+}
+class Linked {
+    prev = Null();
+    next = Null();
+    raw = Null();
+    handler = Null();
+    connect(linked) {
+        linked.next.setValue(this.next.expect('Do not operate Linked alone'));
+        this.next.expect('Do not operate Linked alone')
+            .prev.setValue(linked);
+        this.next.setValue(linked);
+        linked.prev.setValue(this);
+        return linked;
+    }
+    disconnect() {
+        const prevErr = 'get prev fail at disconnect';
+        const nextErr = 'get next fail at disconnect';
+        this.prev.expect(prevErr)
+            .next
+            .setValue(this.next.expect(nextErr));
+        this.next.expect(nextErr)
+            .prev.setValue(this.prev.expect(prevErr));
+        this.prev.setValue(null);
+        this.next.setValue(null);
+        return this;
+    }
+    record(listener, raw) {
+        this.handler.setValue(listener);
+        if (raw) {
+            this.raw.setValue(raw);
+        }
+    }
+}
+class IndexedLinked {
+    thisArg;
+    rawRecord = new Map();
+    record = new Map();
+    Entry = new Linked();
+    End = new Linked();
+    _pointer = this.Entry;
+    constructor(thisArg = () => ({})) {
+        this.thisArg = thisArg;
+        this.Entry.next.setValue(this.End);
+        this.End.prev.setValue(this.Entry);
+    }
+    size() {
+        return this.record.size;
+    }
+    _recordNode(k, v) {
+        if (this.record.has(k)) {
+            return false;
+        }
+        this.record.set(k, v);
+        return true;
+    }
+    _recordRawNode(k, v) {
+        if (this.rawRecord.has(k)) {
+            return false;
+        }
+        this.rawRecord.set(k, v);
+        this._recordNode(v.handler.unwrap(), v);
+        return true;
+    }
+    _creator(listener) {
+        let node = new Linked();
+        node.record(listener);
+        return node;
+    }
+    _onceCreator(listener) {
+        let node = new Linked();
+        let self = this;
+        const wrapper = (...args) => {
+            try {
+                node.raw.expect('The function used to wrap is empty')
+                    .apply(self.thisArg(), args);
+            }
+            finally {
+                self.deleteNode(node);
+            }
+        };
+        node.record(wrapper, listener);
+        return node;
+    }
+    put(listener) {
+        const node = this._creator(listener);
+        if (this._recordNode(listener, node)) {
+            this._pointer.connect(node);
+            this._pointer = node;
+        }
+    }
+    prepend(listener) {
+        const node = this._creator(listener);
+        if (this._recordNode(listener, node)) {
+            this.Entry.connect(node);
+        }
+    }
+    once(listener) {
+        const node = this._onceCreator(listener);
+        try {
+            if (this._recordRawNode(node.raw.unwrap(), node)) {
+                this._pointer.connect(node);
+                this._pointer = node;
+            }
+        }
+        finally { }
+    }
+    prependOnce(listener) {
+        const node = this._onceCreator(listener);
+        try {
+            if (this._recordRawNode(node.raw.unwrap(), node)) {
+                this.Entry.connect(node);
+            }
+        }
+        finally { }
+    }
+    deleteNode(node) {
+        try {
+            if (this._pointer === node) {
+                this._pointer = node.prev.unwrap();
+            }
+            if (!node.raw.isNull()) {
+                this.rawRecord.delete(node.raw.unwrap());
+            }
+            this.record.delete(node.handler.unwrap());
+            node.disconnect();
+            return true;
+        }
+        catch (_) {
+            return false;
+        }
+    }
+    delete(listener) {
+        if (this.rawRecord.has(listener)) {
+            const linked = Maybe(this.rawRecord.get(listener) || null).expect("Don't modify Linekd outside of IndexedLinked");
+            this.deleteNode(linked);
+            return true;
+        }
+        if (this.record.has(listener)) {
+            const linked = Maybe(this.record.get(listener) || null)
+                .expect("Don't modify Linekd outside of IndexedLinked");
+            this.deleteNode(linked);
+            return true;
+        }
+        return false;
+    }
+    free() {
+        let toDel = this.Entry.next.expect('Free error');
+        while (toDel !== this.End) {
+            const toDelNext = toDel.next.expect('Free error');
+            this.deleteNode(toDel);
+            toDel = toDelNext;
+        }
+        this._pointer = this.Entry;
+    }
+}
+export class EventEmitter {
     maxListeners = -1;
-    thisArg = undefined;
+    thisArg = {};
+    _events = {};
     captureRejections = false;
     setMaxListeners(size) {
         this.maxListeners = size;
@@ -98,26 +195,37 @@ class EventEmitter {
     getMaxListeners() {
         return this.maxListeners;
     }
-    /**@private*/
-    _addListener(type, handler, prepend = false) {
-        let ev;
-        if (!~this.maxListeners && this.listenerCount(type) === this.maxListeners) {
-            const err = RangeError(`Exceeded maximum capacity(${this.maxListeners}).`);
-            if (this.listenerCount('error')) {
-                this._emitError(err);
+    _thisGetter = () => this.thisArg;
+    _getEventLinked(type) {
+        let linked;
+        if (!(linked = this._events[type])) {
+            linked = this._events[type] = new IndexedLinked(this._thisGetter);
+        }
+        return linked;
+    }
+    _canAddNew(size) {
+        return this.maxListeners !== -1 && size === this.maxListeners;
+    }
+    _addListener(type, handler, prepend = false, once = false) {
+        const linked = this._getEventLinked(type);
+        if (this._canAddNew(linked.size())) {
+            this._emitError(RangeError('Listeners is full and cannot join a new listener, please use setMaxListeners to resize'));
+            return;
+        }
+        if (prepend) {
+            if (once) {
+                linked.prependOnce(handler);
             }
             else {
-                throw err;
+                linked.prepend(handler);
             }
+            return;
         }
-        if (!this._events[type])
-            this._events[type] = new Linked();
-        ev = this._events[type];
-        if (prepend) {
-            ev.prepend(handler);
+        if (once) {
+            linked.once(handler);
         }
         else {
-            ev.append(handler);
+            linked.put(handler);
         }
     }
     addListener(type, handler) {
@@ -132,162 +240,106 @@ class EventEmitter {
         this._addListener(type, handler, true);
         return this;
     }
-    /**@private*/
-    _removeListener(type, handler) {
-        let ev;
-        if (ev = this._events[type]) {
-            ev.delete(handler);
-            if (!ev.count) {
-                delete this._events[type];
-            }
-        }
-    }
     removeListener(type, handler) {
-        this._removeListener(type, handler);
+        const eventLinked = this._getEventLinked(type);
+        eventLinked.delete(handler);
         return this;
     }
     off(type, handler) {
-        this._removeListener(type, handler);
+        const eventLinked = this._getEventLinked(type);
+        eventLinked.delete(handler);
         return this;
     }
     removeAllListeners(type) {
-        let ev;
-        if (ev = this._events[type]) {
-            ev.deleteAll();
-            delete this._events[type];
-        }
+        this._getEventLinked(type).free();
     }
-    /**@private*/
-    _emit(type, thisArg, args) {
-        let ev;
-        if (ev = this._events[type], !ev) {
-            return;
-        }
-        try {
-            let captureRejections = this.captureRejections, node = ev.HEAD;
-            while (node = node.next) {
-                const returnVal = node.listener.apply(thisArg, args);
-                if (captureRejections && returnVal instanceof Promise) {
-                    returnVal.catch((err) => {
-                        if (this.listenerCount('error')) {
-                            this._emitError(err);
-                        }
-                        else {
-                            throw err;
-                        }
-                    });
+    _emit(type, nullContext = false, ...args) {
+        const l = this._getEventLinked(type);
+        const ctx = this.thisArg;
+        this.thisArg = nullContext
+            ? undefined
+            : ctx;
+        let cur = l.Entry.next.expect('EventEmitter$_emit');
+        while (cur !== l.End) {
+            const nextNode = cur.next.expect('EventEmitter$_emit');
+            try {
+                const returned = cur.handler.unwrap().apply(this.thisArg, args);
+                if (this.captureRejections && returned instanceof Promise) {
+                    returned.catch(reason => this._emitError(reason));
                 }
             }
-        }
-        catch (err) {
-            if (this.listenerCount('error')) {
-                this._emitError(err);
+            catch (err) {
+                if (type === 'error') {
+                    throw err;
+                }
+                else {
+                    this._emitError(err);
+                }
             }
-            else {
+            cur = nextNode;
+        }
+        this.thisArg = ctx;
+    }
+    _emitError(err) {
+        const size = this.listenerCount('error');
+        if (size > 0) {
+            try {
+                this._emit('error', true, err);
+            }
+            catch (err) {
                 throw err;
             }
+            return;
         }
-    }
-    /**@private*/
-    _emitError(err) {
-        this._emit('error', undefined, [err]);
+        throw err;
     }
     emit(type, ...args) {
-        this._emit(type, this.thisArg, args);
+        this._emit(type, false, ...args);
     }
     emitNone(type, ...args) {
-        this._emit(type, undefined, args);
-    }
-    bind(thisArg) {
-        this.thisArg = thisArg;
-        return this;
-    }
-    /**@private*/
-    _onceWrapper(type, handler) {
-        return (...args) => {
-            this._removeListener(type, handler);
-            const val = handler.apply(this.thisArg, args);
-            return val;
-        };
-    }
-    /**@private*/
-    _once(type, handler, prepend = false) {
-        if (!~this.maxListeners && this.listenerCount(type) === this.maxListeners) {
-            const err = RangeError(`Exceeded maximum capacity(${this.maxListeners}).`);
-            if (this.listenerCount('error')) {
-                this._emitError(err);
-            }
-            else {
-                throw err;
-            }
-        }
-        const listener = this._onceWrapper(type, handler);
-        let ev;
-        if (!this._events[type])
-            this._events[type] = new Linked();
-        ev = this._events[type];
-        if (prepend) {
-            ev.prepend(listener, handler);
-        }
-        else {
-            ev.append(listener, handler);
-        }
+        this._emit(type, true, ...args);
     }
     once(type, handler) {
-        this._once(type, handler);
+        this._addListener(type, handler, false, true);
         return this;
     }
     prependOnceListener(type, handler) {
-        this._once(type, handler, true);
+        this._addListener(type, handler, true, true);
         return this;
     }
     listenerCount(type) {
-        let ev;
-        if (ev = this._events[type], !ev) {
-            return 0;
-        }
-        return ev.count;
+        return this._getEventLinked(type).size();
     }
     listeners(type) {
-        let ev;
-        let res = [];
-        if (ev = this._events[type], !ev) {
-            return res;
+        const ev = this._getEventLinked(type);
+        const listeners = [];
+        let cur = ev.Entry.next.unwrap();
+        while (cur !== ev.End) {
+            listeners.push(cur.handler.unwrap());
         }
-        let node = ev.HEAD;
-        while (node = node.next) {
-            res.push(node.listener);
-        }
-        return res;
+        return listeners;
     }
     rawListeners(type) {
-        let ev;
-        let res = [];
-        if (ev = this._events[type], !ev) {
-            return res;
-        }
-        let node = ev.HEAD;
-        while (node = node.next) {
-            if (node.rawListener) {
-                res.push(node.rawListener);
+        const ev = this._getEventLinked(type);
+        const listeners = [];
+        let cur = ev.Entry.next.unwrap();
+        while (cur !== ev.End) {
+            try {
+                listeners.push(cur.raw.unwrap());
+            }
+            catch (_) {
+                listeners.push(cur.handler.unwrap());
             }
         }
-        return res;
+        return listeners;
     }
     eventNames() {
-        return Object.getOwnPropertyNames(this._events);
+        return Reflect.ownKeys(this._events);
     }
     constructor(opt) {
         if (opt) {
-            const { thisArg, captureRejections } = opt;
-            if (typeof thisArg !== 'undefined') {
-                this.thisArg = thisArg;
-            }
-            if (captureRejections) {
-                this.captureRejections = true;
-            }
+            this.captureRejections = opt.captureRejections || false;
+            this.thisArg = opt.thisArg || {};
         }
     }
 }
-export default EventEmitter;
-export { EventEmitter };

@@ -21,7 +21,7 @@
 
 <div class="container">
     {#if title}
-    <div style="color: var(--controlDark); font-weight: bold; margin-bottom: 12px; margin-left: calc(14px + {marginHorizon})">{title}</div>
+    <div style="color: var(--controlDark); font-weight: bold; margin-bottom: 6px; margin-left: calc(14px + {marginHorizon})">{title}</div>
     {/if}
     <div class="tile" style="border-radius: {radius}; background-color: {color}; margin: {marginVertical} {marginHorizon}">
         <slot/>

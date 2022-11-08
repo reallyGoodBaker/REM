@@ -9,6 +9,7 @@ import Login from './Login.svelte'
 import SurfaceLayer from './components/SurfaceLayer.svelte';
 import Search from './components/Search.svelte'
 
+const s = (str, ...args) => langMapping.s(str, ...args)
 
 let MinePage = Mine
 if(store.getSync('profile')) {
@@ -23,8 +24,8 @@ let selections = [
 ]
 
 let tabs = [
-    '我的',
-    '发现',
+    'mine',
+    'explorer',
 ]
 
 let __pager
@@ -33,8 +34,8 @@ window.Pager = (() => {
     let Props = [{}, {}],
         history = [0],
         saves = new Map()
-            .set('我的', {})
-            .set('发现', {}),
+            .set(tabs[0], {})
+            .set(tabs[1], {}),
         beforeSwitchHandlers = []
 
 

@@ -39,6 +39,8 @@ body {
 
     --dynamicControlLight: var(var(--controlBrighter));
 
+    --controlBackgroundAcrylic: hsla(var(--controlHue, 210), 80%, 96%, 0.7);
+
     background-color: var(--controlWhite);
     color: var(--controlBlack);
 }

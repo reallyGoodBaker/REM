@@ -8,6 +8,10 @@
     const emit = createEventDispatcher();
 
     function onClick(ev, i) {
+        if (selected === i) {
+            return
+        }
+
         emit('selected', i);
         selected = i;
     }

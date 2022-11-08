@@ -2,6 +2,7 @@ import {EventEmitter} from '../events.js'
 import {initAudioDevicesFind} from '../devices/browser/find.js'
 import {initOutputAudio} from '../devices/browser/output.js'
 import {fadeBeforePause, fadeBeforePlay, initProcessor} from './process.js'
+import { initAncProcessor } from './anc.js'
 
 initAudioDevicesFind()
 
@@ -132,6 +133,7 @@ const srcNode = AudioPlayer.audioCtx.createMediaElementSource(AudioPlayer.audioE
 const destNode = AudioPlayer.audioCtx.createMediaStreamDestination()
 
 initProcessor(AudioPlayer.audioCtx, srcNode, destNode)
+initAncProcessor(AudioPlayer.audioCtx, destNode)
 initOutputAudio(destNode.stream)
 
 const globalPlayer = new AudioPlayer()
