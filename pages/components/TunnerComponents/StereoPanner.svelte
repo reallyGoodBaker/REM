@@ -1,8 +1,9 @@
 <script>
     import ProgressWithInput from './ProgressWithInput.svelte'
     import {setStereoPanner, getStereoPan} from '../../../utils/player/process.js'
+    import { onMount } from 'svelte'
 
-    let label = '平衡'
+    const s = f => langMapping.s(f)
     
     let inputValue = getStereoPan().toFixed(2), progressValue = (+inputValue + 1) * 50
 
@@ -23,8 +24,7 @@
 </script>
 
 <ProgressWithInput
-    bind:label
-    comment='左右声道平衡'
+    label={s('stereo_pan')}
     bind:inputValue
     bind:progressValue
     on:inputChange={onInput}

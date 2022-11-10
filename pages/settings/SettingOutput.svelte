@@ -5,6 +5,8 @@
     import { setOutputDeviceId, indexOfOutputDevice } from '../../utils/devices/browser/output.js'
     import { onDestroy, onMount } from "svelte";
     import ToggleListTile from '../components/ToggleListTile.svelte'
+
+    import { rem } from '../../utils/rem.js'
     import {enableAnc} from '../../utils/player/anc.js'
 
     $: lang = window.langMapping
@@ -51,7 +53,7 @@
             setOutputDeviceId(outputDeviceList[ev.detail].deviceId)
         }}
     />
-    {#if window.rem.isBeta}
+    {#if rem.isBeta}
     <ToggleListTile
         data={lang.s('anc')}
         extra={lang.s('anc_extra')}

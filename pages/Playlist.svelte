@@ -5,6 +5,8 @@
     import SplitList from "./components/SplitList.svelte";
     import Input from "./components/Input.svelte";
 
+    import { rem } from '../utils/rem.js'
+
 
     export let header = null;
 

@@ -1,9 +1,14 @@
 <script>
-    import Avatar from "./Avatar.svelte";
-    import {AudioData} from '../../utils/player/audiodata.js'
-    import Progress from "./Progress.svelte";
+    import Avatar from "./Avatar.svelte"
+    import Progress from "./Progress.svelte"
     import {globalMetadata} from '../../utils/player/metadata.js'
     import {MainPlaylist} from '../../utils/player/playlist.js'
+    import { rem } from '../../utils/rem.js'
+
+    let l = langMapping.getMapping()
+    rem.on('langChange', lang => {
+        l = lang.getMapping()
+    })
 
 
     let content = {}
@@ -132,10 +137,18 @@
         }, 500);
     });
 
-    rem.on('playerReady', async p => {
+    let volume;
+    async function restoreVolume() {
+        globalPlayer.volume((volume = await store.get('volume') || 50)/100)
+    }
+
+    rem.once('playerReady', async () => {
+        const p = globalPlayer
         p.on('play', () => playing = true)
         p.on('pause', () => playing = false)
         p.on('ended', () => MainPlaylist.playNext())
+
+        await restoreVolume()
 
         let listPlaying = await store.get('listPlaying'),
             playIndex = await store.get('listElementPlaying')
@@ -145,7 +158,8 @@
             MainPlaylist.load(playIndex)
         }
 
-    });
+        rem.emit('controlsReady')
+    })
 
     function onClick() {
         if(!globalPlayer.load()) return
@@ -189,14 +203,6 @@
         globalPlayer.volume(vol/100)
     }
 
-    let volume;
-    (async() => {
-        if (volume = await store.get('volume') || 50) {
-            rem.once('playerReady', () => {
-                globalPlayer.volume(volume/100)
-            })
-        }
-    })()
 
     function saveVolume() {
         store.set('volume', volume)
@@ -392,7 +398,7 @@
             />
         </div>
         <div class="row txt">
-            <div class="title">{content.title || '暂未播放歌曲'}</div>
+            <div class="title">{content.title || l['no_song_playing']}</div>
             <div class="subtitle">{content.artist || ''}</div>
         </div>
     </div>
@@ -451,7 +457,7 @@
         />
         <div class="btn big btn-nb"
             on:click={() => {
-                window.rem.emit('tunnerOpen')
+                rem.emit('tunnerOpen')
             }}
         >{'\ue61b'}</div>
     </div>

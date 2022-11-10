@@ -2,8 +2,11 @@ import {WizardContainer} from '../wizard.js'
 import {AvatarWidget} from '../../widget/avatar.js'
 import {ScrollWidget} from '../../widget/scroll.js'
 import {InputWidget} from '../../widget/input.js'
+import {rem} from '../../rem.js'
 
 export const defaultWizard = new WizardContainer()
+
+let cb
 
 const col = () => {
     let scroll = new ScrollWidget()
@@ -44,6 +47,11 @@ export function init(ele, profile) {
 
     defaultWizard.inject(ele)
     defaultWizard.addPage(page1, page2)
+
+    rem.on('langChange', l => {
+        header.innerText = l.s('edit_avatar_username')
+        header2.innerText = l.s('edit_desc')
+    })
 
     return defaultWizard
 }

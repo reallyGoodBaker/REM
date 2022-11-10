@@ -3,6 +3,8 @@
     import {anim} from '../utils/anims.js';
     import { onMount } from "svelte";
 
+    import { rem } from '../utils/rem.js'
+
     let pages = [
         // {
         //     component: Blank,

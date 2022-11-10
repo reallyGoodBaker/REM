@@ -4,6 +4,8 @@
 import {gamepads, XboxKeys} from '../base/index.js'
 import {mouseEventSimulator} from '../../event-simulate/mouseEventService.js'
 
+import {rem} from '../../rem.js'
+
 
 class XboxControllerSupporter {
 

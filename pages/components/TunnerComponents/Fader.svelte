@@ -2,6 +2,8 @@
     import ProgressWithInput from './ProgressWithInput.svelte'
     import {setFade, getFader} from '../../../utils/player/process.js'
 
+    const s = f => langMapping.s(f)
+
     let fader = getFader()
 
     function setFader(fader) {
@@ -45,14 +47,14 @@
 
 <!-- <div style="margin-bottom: 12px; margin-left: 16px;">淡入淡出设定</div> -->
 <ProgressWithInput
-    label='淡入'
+    label={s('fade_in')}
     bind:inputValue={fadeInInputValue}
     bind:progressValue={fadeInProgressValue}
     on:inputChange={onFadeInInput}
     on:progressChange={onFadeInProgress}
 />
 <ProgressWithInput
-    label='淡出'
+    label={s('fade_out')}
     bind:inputValue={fadeOutInputValue}
     bind:progressValue={fadeOutProgressValue}
     on:inputChange={onFadeOutInput}

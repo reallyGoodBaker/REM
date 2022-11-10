@@ -353,7 +353,9 @@
         width: 140px;
         height: 140px;
         border-radius: 50%;
-        border: solid 2px var(--controlGray);
+        padding: 1px;
+        border: solid 1px var(--controlGray);
+        background-color: var(--controlGray);
     }
 
     .artist-c {
@@ -403,7 +405,9 @@
         width: 140px;
         height: 140px;
         border-radius: 8px;
-        border: solid 2px var(--controlGray);
+        padding: 1px;
+        border: solid 1px var(--controlGray);
+        background-color: var(--controlGray);
     }
 
     .artist-c.al {

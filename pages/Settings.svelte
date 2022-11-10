@@ -10,6 +10,8 @@ import SettingStick from './settings/SettingStick.svelte'
 import SettingOutput from './settings/SettingOutput.svelte'
 import SettingLang from './settings/SettingLang.svelte'
 
+import { rem } from '../utils/rem.js'
+
 let scrollv
 Pager.beforeSwitch(() => {
     if (scrollv?.prepared()) {

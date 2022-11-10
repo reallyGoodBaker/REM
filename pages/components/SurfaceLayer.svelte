@@ -2,6 +2,8 @@
     import { onMount, setContext } from "svelte";
     import { EventEmitter } from "../../utils/events.js";
     import Popup from './Popup.svelte'
+    
+    import { rem } from '../../utils/rem.js'
 
     let layer = false;
 

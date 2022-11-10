@@ -3,6 +3,8 @@
     import SelectListTile from "../components/SelectListTile.svelte"
     import ToggleListTile from "../components/ToggleListTile.svelte"
 
+    import { rem } from '../../utils/rem.js'
+
     const lang = s => langMapping.s(s)
 
     let {colors, selected, useAcrylic} = store.getSync('AppSettings/theme') || {

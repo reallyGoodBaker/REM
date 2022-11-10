@@ -78,10 +78,10 @@ import { initNetworkWatcher } from '../utils/network/browser.js'
 import { initAudioDevicesFind, watchAudioDeviceChange } from '../utils/devices/browser/find.js'
 import { initProcessorConfig } from '../utils/player/process.js'
 import { Lang } from '../utils/lang/lang.js'
+import { rem } from '../utils/rem.js'
 
 window.langMapping = new Lang(store.getSync('AppSettings/lang')?.selected || 'zh_cn')
 window.store = store;
-window.rem = new EventEmitter({ captureRejections: true })
 window.contextMap = new Map()
 
 rem.isBeta = true
@@ -94,3 +94,8 @@ initProcessorConfig()
 export default new App({
     target: document.body
 })
+
+window.Canvas = document.createElement('canvas')
+window.CanvasCtx = Canvas.getContext('2d')
+
+rem.emit('playerReady')

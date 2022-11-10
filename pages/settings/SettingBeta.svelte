@@ -3,6 +3,8 @@
     import RowList from "../components/RowList.svelte"
     import ToggleListTile from "../components/ToggleListTile.svelte"
 
+    import { rem } from '../../utils/rem.js'
+
     $: lang = window.langMapping
 
     let betaFeatures = store.getSync('AppSettings/beta_features') || {
@@ -28,7 +30,7 @@
 
 </script>
 
-{#if window.rem.isBeta}
+{#if rem.isBeta}
 <RowList title="{lang.s('test_features')}">
     <ToggleListTile
         data={lang.s('dev_tools')}

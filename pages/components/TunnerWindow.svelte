@@ -14,9 +14,17 @@
     import ToggleListTile from './ToggleListTile.svelte'
     import {setEqEnable} from '../../utils/player/process.js'
 
+    import { rem } from '../../utils/rem.js'
+
+    const s = f => langMapping.s(f)
+
     async function getDevice() {
         const devices = await getAudioDevices()
         return devices[await indexOfOutputDevice(devices)]
+    }
+
+    function closeTunner() {
+        rem.emit('tunnerClose')
     }
 
     let metadata = globalPlayer.getMetadata()?.format
@@ -221,37 +229,37 @@
         <ScrollView bind:this={scrollv}>
             <div class="Column" style="padding: 12px 0;">
             <TunnerTile
-                title='输入'
+                title={s('input')}
                 icon={'\ue936'}>
                 {#if metadata}
-                <div>编码<em>{metadata.codec}</em></div>
-                <div>音轨数<em>{metadata.numberOfChannels}</em></div>
+                <div>{s('codec')}<em>{metadata.codec}</em></div>
+                <div>{s('num_of_tracks')}<em>{metadata.numberOfChannels}</em></div>
                 {#if metadata.bitrate > 0}
-                <div>码率<em>{~~(metadata.bitrate/10)/100} kBps</em></div>
+                <div>{s('bitrate')}<em>{~~(metadata.bitrate/10)/100} kBps</em></div>
                 {/if}
                 {#if metadata.bitsPerSample}
-                <div>位深<em>{metadata.bitsPerSample} bit</em></div>
+                <div>{s('bit_length')}<em>{metadata.bitsPerSample} bit</em></div>
                 {/if}
-                <div style="margin-bottom: 8px;">采样率<em>{metadata.sampleRate/1000} kHz</em></div>
-                <div>解码器<em>内置 FFmpeg 解码器</em></div>
+                <div style="margin-bottom: 8px;">{s('sample_rate')}<em>{metadata.sampleRate/1000} kHz</em></div>
+                <div>{s('decoder')}<em>{`${s('builtin')} FFmpeg ${s('decoder')}`}</em></div>
                 {:else}
-                无
+                {s('none')}
                 {/if}
             </TunnerTile>
 
             <TunnerTile
-                title='处理'>
-                <div>位深<em>Float 32bit</em></div>
-                <div>频率<em>{AudioPlayer.audioCtx.sampleRate/1000} kHz</em></div>
+                title={s('processing')}>
+                <div>{s('bit_length')}<em>Float 32bit</em></div>
+                <div>{s('frequency')}<em>{AudioPlayer.audioCtx.sampleRate/1000} kHz</em></div>
                 <div class="Row pair">
-                    <div class="label">增益</div>
+                    <div class="label">{s('gain')}</div>
                     <em><div class="link">{
                     processConfig.gain.gain > 1? '+': processConfig.gain.gain < 1? '-': ''
                     }{processConfig.gain.gain.toFixed(2)}</div></em>
                 </div>
 
                 <div class="Row pair">
-                    <div class="label">平衡</div>
+                    <div class="label">{s('stereo_pan')}</div>
                     <em><div class="link">{processConfig.stereoPanner.pan.toFixed(2)} ({
                         ((1 - processConfig.stereoPanner.pan) / 2).toFixed(2)
                     }/{
@@ -260,31 +268,31 @@
                 </div>
 
                 <div class="Row pair">
-                    <div class="label">延迟</div>
+                    <div class="label">{s('delay')}</div>
                     <em><div class="link">{processConfig.delay.delayTime}s</div></em>
                 </div>
 
                 <div class="Row pair">
-                    <div class="label">淡入淡出</div>
+                    <div class="label">{s('fade_in_and_out')}</div>
                     <em><div class="link">{processConfig.fader.fadeIn}s / {processConfig.fader.fadeOut}s</div></em>
                 </div>
 
                 <div class="Column pair">
-                    <div class="label" style="margin-top: 8px;">均衡器 {!processConfig.eq.enable? '(已禁用)': ''}</div>
+                    <div class="label" style="margin-top: 8px;">{s('equalizer')}{!processConfig.eq.enable? `  (${s('disabled')})`: ''}</div>
                     <canvas style="align-self: flex-start;" bind:this={eqCanvas} id="eqCanvas" width="180" height="82"></canvas>
                 </div>
             </TunnerTile>
 
             <TunnerTile
                 hideLine={true}
-                title='输出'
+                title={s('output')}
                 icon={'\ue61e'}>
                 {#await getDevice() then device}
                 <div class="Row pair">
-                    <div class="label">设备</div>
+                    <div class="label">{s('device')}</div>
                     <em><div class="link" on:click={() => {
-                        window.rem.emit('tunnerClose')
-                        window.Pager.openNew('设置', Settings)
+                        rem.emit('tunnerClose')
+                        window.Pager.openNew('settings', Settings)
                     }}>{device.label}</div></em>
                 </div>
                 {/await}
@@ -311,7 +319,7 @@
                 <div class="tunnerCard marginBottom">
                     <ToggleListTile
                         clickable={false}
-                        data="开启均衡器"
+                        data={s('enable_eq')}
                         useAvatar={false}
                         bind:checked={processConfig.eq.enable}
                         on:toggle={onEqEnableChange}
@@ -324,9 +332,7 @@
             </ScrollView>
         </div>
         <div class="Row bottomGroup" style="padding: 0 12px;">
-            <div class="btn big radius px4 accent" on:click={() => {
-                window.rem.emit('tunnerClose')
-            }}>完成</div>
+            <div class="btn big radius px4 accent" on:click={closeTunner}>{s('done')}</div>
         </div>
     </div>
 

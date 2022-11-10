@@ -1,10 +1,17 @@
 <script>
+    import { rem } from '../../utils/rem.js'
 
-    const s = (...args) => langMapping.s(...args)
+    const s = (f, ...args) => {
+        if (f.startsWith('$')) {
+            return langMapping.s(f.slice(1), ...args)
+        }
+
+        return f
+    }
 
     export let tabs = [
-        'mine',
-        'explorer'
+        '$mine',
+        '$explorer'
     ];
 
     function fresh() {
@@ -102,16 +109,16 @@
 <div class="column c">
     {#each tabs as tab, i}
         {#if i === selected}
-            {#if tab === 'mine' || tab === 'explorer'}
+            {#if tab === '$mine' || tab === '$explorer'}
                 <div class="tab selected tab-text" on:click={() => onClick(i)}>{s(tab)}</div>
             {:else}
                 <div class="tab selected column" style="padding-right: 2px;" on:click={() => onClick(i)}>
-                    <span class="tab-text">{s(tab) || tab}</span>
+                    <span class="tab-text">{s(tab)}</span>
                     <div class="column cross" on:click={delTab}>⨯</div>
                 </div>
             {/if}
         {:else}
-            <div class="tab tab-text" on:click={() => onClick(i)}>{s(tab) || tab}</div>
+            <div class="tab tab-text" on:click={() => onClick(i)}>{s(tab)}</div>
         {/if}
     {/each}
 </div>

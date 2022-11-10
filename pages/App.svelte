@@ -9,7 +9,7 @@ import Login from './Login.svelte'
 import SurfaceLayer from './components/SurfaceLayer.svelte';
 import Search from './components/Search.svelte'
 
-const s = (str, ...args) => langMapping.s(str, ...args)
+import { rem } from '../utils/rem.js'
 
 let MinePage = Mine
 if(store.getSync('profile')) {
@@ -24,8 +24,8 @@ let selections = [
 ]
 
 let tabs = [
-    'mine',
-    'explorer',
+    '$mine',
+    '$explorer',
 ]
 
 let __pager
@@ -215,7 +215,7 @@ function getScreenSize() {
 }
 
 rem.on('__openMinePage', () => {
-    window.Pager.openNew('我的', Mine, {}, true)
+    window.Pager.openNew('$mine', Mine, {}, true)
 })
 
 window.__changeBgPos = changePos

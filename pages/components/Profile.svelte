@@ -6,8 +6,10 @@
     import Settings from "../Settings.svelte";
     import {defaultWizard} from '../../utils/wizard/edit-profile/index.js'
 
-
     let close = getContext('close');
+    const s = (f, ...args) => {
+        return langMapping.s(f, ...args) || f
+    }
 
     export let user;
 
@@ -36,7 +38,7 @@
         store.rm('token');
         user = {
             avatarUrl: '',
-            name: '未登录',
+            name: 'not_login',
         }
         isLogedin = !!user.avatarUrl;
     }
@@ -50,7 +52,7 @@
 
     function showSettings() {
         close();
-        Pager.openNew('设置', Settings, {});
+        Pager.openNew('$settings', Settings, {});
     }
 
 
@@ -94,14 +96,14 @@
         <ListTile
             isUrl={user.avatarUrl}
             avatar={user.avatarUrl || '\ue6bb'}
-            data={user.name}
+            data={s(user.name)}
             width={28}
             height={28}
             clickable={false}/>
 
         {#if isLogedin}
         <div style="padding-left: 56px; margin: 8px 0px;">
-            <div class="btn outlined" on:click={showEditProfile}> {"\ue66b  修改个人信息"} </div>
+            <div class="btn outlined" on:click={showEditProfile}> {"\ue66b  " + s('edit_profile')} </div>
         </div>
         {/if}
 
@@ -113,7 +115,7 @@
             isUrl={false}
             size={'small'}
             avatar={'\ue68f'}
-            data={'注销'}
+            data={s('logout')}
             on:click={logOut}/>
         {:else}
         <ListTile
@@ -121,7 +123,7 @@
             style={"font-size: small"}
             size={'small'}
             avatar={'\ue610'}
-            data={'登陆'}
+            data={s('login')}
             on:click={show}/>
         {/if}
 
@@ -134,13 +136,13 @@
             style={"font-size: small"}
             size={'small'}
             avatar={'\ue6aa'}
-            data={'设置'}/>
+            data={s('settings')}/>
         <ListTile
             isUrl={false}
             style={"font-size: small"}
             size={'small'}
             avatar={'\ue666'}
-            data={'下载管理'}/>
+            data={s('download_manager')}/>
     </div>
 
     <footer class="column">

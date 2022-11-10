@@ -46,5 +46,9 @@ export class Lang {
         )
     }
 
+    getMapping = () => {
+        return Lang.langs[this.lang]
+    }
+
     s = this.parse
 }

@@ -1,6 +1,6 @@
 import {injectService} from '../widget/base.js'
 import {PopWindowWidget} from '../widget/popwin.js'
-import {ScrollWidget} from '../widget/scroll.js'
+import {rem} from '../rem.js'
 
 function button(text) {
     const btn = document.createElement('div')
@@ -14,6 +14,8 @@ export class WizardContainer extends PopWindowWidget {
     /**@private*/ _pageIndex = 0
     /**@private*/ _pages = []
 
+    localeParser
+
     get pageIndex() {
         return this._pageIndex
     }
@@ -25,13 +27,13 @@ export class WizardContainer extends PopWindowWidget {
 
         if (!v) {
             this.setButtonsDisplay(1|4)
-            this.next.innerText = '下一步'
+            this.next.innerText = this.localeParser('next_step')
         } else if(v === this._pages.length - 1) {
             this.setButtonsDisplay(1|2|4)
-            this.next.innerText = '完成'
+            this.next.innerText = this.localeParser('done')
         } else {
             this.setButtonsDisplay(1|2|4)
-            this.next.innerText = '下一步'
+            this.next.innerText = this.localeParser('next_step')
         }
 
         this._changePage(this._pageIndex, v)
@@ -132,6 +134,13 @@ export class WizardContainer extends PopWindowWidget {
         cancel.addEventListener('click', () => this.hide())
 
         this.setButtonsDisplay(1|4)
+
+        rem.on('langChange', l => {
+            const s = this.localeParser = (...args) => l.s(...args)
+            next.innerText = s('next_step')
+            prev.innerText = s('prev_step')
+            cancel.innerText = s('cancel')
+        })
     }
 
     onFinishWizard() {}

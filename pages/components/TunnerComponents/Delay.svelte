@@ -2,7 +2,7 @@
     import ProgressWithInput from './ProgressWithInput.svelte'
     import {setDelay, getDelay} from '../../../utils/player/process.js'
 
-    let label = '延迟'
+    const s = f => langMapping.s(f)
     
     let inputValue = getDelay().toFixed(3), progressValue = inputValue * 200
 
@@ -23,7 +23,7 @@
 </script>
 
 <ProgressWithInput
-    bind:label
+    label={s('delay')}
     bind:inputValue
     bind:progressValue
     on:inputChange={onInput}

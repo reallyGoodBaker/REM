@@ -2,7 +2,8 @@ import {EventEmitter} from '../events.js'
 import {initAudioDevicesFind} from '../devices/browser/find.js'
 import {initOutputAudio} from '../devices/browser/output.js'
 import {fadeBeforePause, fadeBeforePlay, initProcessor} from './process.js'
-import { initAncProcessor } from './anc.js'
+import {initAncProcessor} from './anc.js'
+import {rem} from '../rem.js'
 
 initAudioDevicesFind()
 

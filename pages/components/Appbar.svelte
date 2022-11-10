@@ -1,4 +1,6 @@
 <script>
+    import { rem } from '../../utils/rem.js'
+
     let fullScreen = false;
 
     function min() {
@@ -128,5 +130,5 @@
 </div>
 
 <div class="column container {reverse? 'right': 'left'}">
-    <div class="title{window.rem.isBeta ? ' debug' : ''}">REM</div>
+    <div class="title{rem.isBeta ? ' debug' : ''}">REM</div>
 </div>

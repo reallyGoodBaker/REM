@@ -4,7 +4,17 @@
     import Avatar from "./Avatar.svelte";
     import ListTile from './ListTile.svelte';
 
+    import { rem } from '../../utils/rem.js'
+
     let showPopup = false
+
+    let l = langMapping.getMapping()
+
+    const updateLang = lang => {
+        l = lang.getMapping()
+    }
+
+    rem.on('langChange', updateLang)
 
     const show = () => showPopup = true;
     const hide = async () => {
@@ -22,7 +32,7 @@
     let profile = store.getSync('profile')
     let user = {
         avatarUrl: '',
-        name: '未登录',
+        name: 'not_login',
     };
     export let avatarUrl = profile? profile.avatarUrl: '';
 
@@ -131,7 +141,7 @@
     <div class="column search">
         <span class="iconfont icon-search avatar menu" on:click={search}></span>
         
-        <input type="text" class="input" placeholder="搜索歌曲和歌手"
+        <input type="text" class="input" placeholder={l['search']}
             spellcheck="false"
             bind:value
             on:change={search}
@@ -169,7 +179,7 @@
         {#if suggests}
 
         {#if suggests.songs}
-            <div class="title">歌曲</div>
+            <div class="title">{l['songs']}</div>
             {#each suggests.songs as el}
                 <ListTile
                     size={"small"}
@@ -182,7 +192,7 @@
 
         {#if suggests.artists}
             <div class="divider"></div>
-            <div class="title">艺术家</div>
+            <div class="title">{l['artists']}</div>
             {#each suggests.artists as el}
                 <ListTile
                     size={"small"}
@@ -197,7 +207,7 @@
 
         {#if suggests.albums}
             <div class="divider"></div>
-            <div class="title">专辑</div>
+            <div class="title">{l['albums']}</div>
             {#each suggests.albums as el}
                 <ListTile
                     size={"small"}
@@ -210,7 +220,7 @@
 
         {#if suggests.playlists}
             <div class="divider"></div>
-            <div class="title">歌单</div>
+            <div class="title">{l['playlists']}</div>
             {#each suggests.playlists as el}
                 <ListTile
                     size={"small"}

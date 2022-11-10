@@ -1,5 +1,6 @@
 <script>
 import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
+import { rem } from '../../utils/rem.js'
 
 let outerContainer
     ,meter

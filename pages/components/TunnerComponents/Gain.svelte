@@ -2,7 +2,7 @@
     import ProgressWithInput from './ProgressWithInput.svelte'
     import {setGain, getGain} from '../../../utils/player/process.js'
 
-    let label = '增益'
+    const s = f => langMapping.s(f)
     
     let inputValue = getGain().toFixed(2), progressValue = (inputValue/2) * 100
 
@@ -23,8 +23,7 @@
 </script>
 
 <ProgressWithInput
-    bind:label
-    comment={'调整音量增幅\n请谨慎使用以保护听力'}
+    label={s('gain')}
     bind:inputValue
     bind:progressValue
     on:inputChange={onInput}

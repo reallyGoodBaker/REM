@@ -2,6 +2,10 @@
     import {getContext} from 'svelte';
     import RippleLayer from './components/RippleLayer.svelte';
 
+    import { rem } from '../utils/rem.js'
+
+    const s = (f, ...args) => langMapping.s(f, ...args) || f
+
     const performClick = getContext('close') || (() => {
         rem.emit('__openMinePage');
         rem.emit('__updateLoginAvatar');
@@ -24,12 +28,12 @@
         saveAccount()
     }
 
-    let loginTypeEnum = ['手机', '二维码'];
+    let loginTypeEnum = ['phone_number', 'qr_code'];
     let loginType = 0;
     let img;
 
 
-    let qrimg = '', message = '等待扫描';
+    let qrimg = '', message = 'wait_scanning';
     async function getQRLoginInfo() {
         const qrData = await NeteaseApi.loginViaQRCode();
         const key = qrData[0];
@@ -128,23 +132,23 @@
 </style>
 
 <div class="row c">
-    <h3>{loginTypeEnum[loginType]}登录 <span class="span" on:click={() => {
+    <h3>{s('login_type', s(loginTypeEnum[loginType]))} <span class="span" on:click={() => {
         loginType = loginType? 0: 1;
         loginType && getQRLoginInfo();
-    }}>使用{loginTypeEnum[loginType? 0: 1]}</span></h3>
+    }}>{s('switch_to')}{s(loginTypeEnum[loginType? 0: 1])}</span></h3>
     {#if !loginType}
-        <input type="text" class="{error&&'error'}" bind:value={phone} placeholder="电话">
-        <input type="password" class="{error&&'error'}" bind:value={passwd} placeholder="密码">
+        <input type="text" class="{error&&'error'}" bind:value={phone} placeholder={s('phone_number')}>
+        <input type="password" class="{error&&'error'}" bind:value={passwd} placeholder={s('password')}>
         <div style="padding: 24px 0px 12px 0px;">
             <RippleLayer
                 rippleColor={'#000'}
                 cssStyle={'border-radius: 8px;'}
             >
-                <div on:click={doLogin} class="column submit">登陆</div>
+                <div on:click={doLogin} class="column submit">{s('login')}</div>
             </RippleLayer>
         </div>
     {:else if qrimg}
         <img bind:this={img} src={qrimg} width={228} height={228} draggable="false" alt=" " style="border-radius: 24px;">
-        <h5>{message}</h5>
+        <h5>{s(message)}</h5>
     {/if}
 </div>

@@ -1,6 +1,7 @@
 <script>
     import { onDestroy, onMount } from "svelte";
     import { setEq, getEq } from '../../../utils/player/process.js'
+    import {rem} from '../../../utils/rem.js'
 
     export let f = 31
     export let label = f
