@@ -4,6 +4,7 @@
   "description": "Mango",
   "main": "main.js",
   "scripts": {
+    "build-app": "electron-builder",
     "build": "rollup -c",
     "start": "rollup -c && electron --trace-deprecation .",
     "postinstall": "electron-builder install-app-deps"
