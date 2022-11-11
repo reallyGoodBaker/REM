@@ -518,16 +518,12 @@
                 on:mouseenter|stopPropagation={dullParent}
                 on:mouseleave|stopPropagation={activeParent}
             >{'\ue615'}</div>
-            {#await getImgSrc(artist.picUrl)}
-                <!-- <div class="artist"></div> -->
-            {:then url} 
             <img
                 class="artist"
                 draggable="false"
-                src={url}
+                src={artist.picUrl}
                 on:load={imageShow}
                 alt={artist.name}/>
-            {/await}
             <div class="name title">{artist.name}</div>
             <div class="name">{artist.alias.length? artist.alias[0]: ''}</div>
         </div>
