@@ -92,7 +92,7 @@ async function scrollup(offset) {
 function fastScrollTo(ratio) {
     ratio = Math.min(Math.max(0, ratio), 1)
     content.scrollTo({
-        top: ratio * (contentHeight || 0)
+        top: ratio * (contentHeight || 0),
     })
     updateScrollPosition()
 }
@@ -201,7 +201,7 @@ export function scrollTo(pos) {
         top: var(--top);
         height: var(--height);
         min-height: 16px;
-        width: 14px;
+        width: 16px;
         background-color: transparent;
         transition: all 0.12s;
     }
@@ -213,18 +213,17 @@ export function scrollTo(pos) {
         top: var(--top);
         height: var(--height);
         width: 100%;
-        transition: height 0.2s;
+        transition: height 0.2s, top 0.04s;
     }
 
     .thumb::before {
         content: '';
         position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
+        right: 2px;
         height: 100%;
-        width: 6px;
+        width: 4px;
         border-radius: 4px;
-        background-color: rgba(0, 0, 0, 0.2);
+        background-color: var(--fade);
         transition: all 0.12s;
     }
 
@@ -234,6 +233,9 @@ export function scrollTo(pos) {
 
     .track.hover {
         background-color: var(--acrylicBackgroundColor);
+    }
+    .track.hover > .thumb {
+        transition: height 0.2s;
     }
     .track.hover > .thumb::before {
         width: 12px;

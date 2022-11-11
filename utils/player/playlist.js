@@ -1,5 +1,5 @@
 import {AudioData} from './audiodata.js'
-import {rem} from '../rem.js'
+import {LifeCycle, rem} from '../rem.js'
 
 /**
  * @param {string[]} raw 
@@ -130,7 +130,9 @@ export class MainPlaylist {
     }
 }
 
-navigator.mediaSession.setActionHandler('nexttrack', () => MainPlaylist.playNext())
-navigator.mediaSession.setActionHandler('previoustrack', () => MainPlaylist.playPrev())
-hooks.on('player:previous', () => MainPlaylist.playPrev())
-hooks.on('player:next', () => MainPlaylist.playNext())
+LifeCycle.when('runtimeReady').then(() => {
+    navigator.mediaSession.setActionHandler('nexttrack', () => MainPlaylist.playNext())
+    navigator.mediaSession.setActionHandler('previoustrack', () => MainPlaylist.playPrev())
+    hooks.on('player:previous', () => MainPlaylist.playPrev())
+    hooks.on('player:next', () => MainPlaylist.playNext())
+})

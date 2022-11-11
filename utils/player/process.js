@@ -1,4 +1,4 @@
-import {rem} from '../rem.js'
+import {LifeCycle, rem} from '../rem.js'
 
 let processConfig
 
@@ -135,6 +135,7 @@ export function setEqEnable(bool=true) {
  * @param {AudioDestinationNode} destNode 
  */
 export function initProcessor(ctx, srcNode, destNode) {
+
     audioCtx = ctx
     delay = ctx.createDelay()
     gain = ctx.createGain()
@@ -149,9 +150,11 @@ export function initProcessor(ctx, srcNode, destNode) {
     fader.connect(destNode)
 
     setEqEnable()
+
+    initProcessorConfig()
 }
 
-export function initProcessorConfig() {
+function initProcessorConfig() {
 
     if (!(processConfig = store.getSync('process'))) {
         processConfig = {

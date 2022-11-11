@@ -97,4 +97,8 @@ export default {
     prev_step: '上一步',
     cancel: '取消',
 
+    disconnected: '网络连接出现问题',
+    reconnected: '网络已恢复',
+
+    
 }

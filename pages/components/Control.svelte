@@ -3,7 +3,7 @@
     import Progress from "./Progress.svelte"
     import {globalMetadata} from '../../utils/player/metadata.js'
     import {MainPlaylist} from '../../utils/player/playlist.js'
-    import { rem } from '../../utils/rem.js'
+    import { rem, LifeCycle } from '../../utils/rem.js'
 
     let l = langMapping.getMapping()
     rem.on('langChange', lang => {
@@ -142,7 +142,15 @@
         globalPlayer.volume((volume = await store.get('volume') || 50)/100)
     }
 
-    rem.once('playerReady', async () => {
+    let playerReady = false
+        ,detailReady = false
+
+    rem.on('setControlsContent', () => {
+        if (!detailReady) {
+            detailReady = true
+        }
+    })
+    LifeCycle.when('playerReady').then(async () => {
         const p = globalPlayer
         p.on('play', () => playing = true)
         p.on('pause', () => playing = false)
@@ -158,7 +166,7 @@
             MainPlaylist.load(playIndex)
         }
 
-        rem.emit('controlsReady')
+        playerReady = true
     })
 
     function onClick() {
@@ -384,8 +392,10 @@
 
 
 <div class="column c" bind:this={container}>
+    {#if playerReady}
 
     <div class="column header edge">
+        {#if detailReady}
         <div class="avatar-container">
             <Avatar
                 isUrl={!!content.album}
@@ -401,6 +411,7 @@
             <div class="title">{content.title || l['no_song_playing']}</div>
             <div class="subtitle">{content.artist || ''}</div>
         </div>
+        {/if}
     </div>
     
 
@@ -461,4 +472,6 @@
             }}
         >{'\ue61b'}</div>
     </div>
+
+    {/if}
 </div>

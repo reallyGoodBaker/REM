@@ -72,13 +72,10 @@ const store = {
     }
 }
 
-
-import { EventEmitter } from '../utils/index.js'
 import { initNetworkWatcher } from '../utils/network/browser.js'
 import { initAudioDevicesFind, watchAudioDeviceChange } from '../utils/devices/browser/find.js'
-import { initProcessorConfig } from '../utils/player/process.js'
 import { Lang } from '../utils/lang/lang.js'
-import { rem } from '../utils/rem.js'
+import { rem, LifeCycle } from '../utils/rem.js'
 
 window.langMapping = new Lang(store.getSync('AppSettings/lang')?.selected || 'zh_cn')
 window.store = store;
@@ -89,13 +86,16 @@ rem.isBeta = true
 initNetworkWatcher()
 initAudioDevicesFind()
 watchAudioDeviceChange()
-initProcessorConfig()
+
+window.Canvas = document.createElement('canvas')
+window.CanvasCtx = Canvas.getContext('2d')
 
 export default new App({
     target: document.body
 })
 
-window.Canvas = document.createElement('canvas')
-window.CanvasCtx = Canvas.getContext('2d')
+async function initApp() {
+    LifeCycle.start()
+}
 
-rem.emit('playerReady')
+initApp()

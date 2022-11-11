@@ -1,5 +1,5 @@
 export * from './maps.js'
-import { EventEmitter } from "./events.js";
+import { EventEmitter } from "../../events.js";
 
 const connects = new EventEmitter({captureRejections: true})
 

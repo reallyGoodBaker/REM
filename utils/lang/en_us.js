@@ -97,5 +97,7 @@ export default {
     prev_step: 'Prev',
     cancel: 'Cancel',
 
+    disconnected: 'There is a problem with the network connection',
+    reconnected: 'The network has been reconnected',
 
 }

@@ -3,7 +3,7 @@ import {initAudioDevicesFind} from '../devices/browser/find.js'
 import {initOutputAudio} from '../devices/browser/output.js'
 import {fadeBeforePause, fadeBeforePlay, initProcessor} from './process.js'
 import {initAncProcessor} from './anc.js'
-import {rem} from '../rem.js'
+import {LifeCycle, rem} from '../rem.js'
 
 initAudioDevicesFind()
 
@@ -122,25 +122,28 @@ export class AudioPlayer {
     }
 }
 
-AudioPlayer.audioElement.addEventListener('ended', () => {
-    AudioPlayer.em.emit('ended')
+
+LifeCycle.when('runtimeReady').then(() => {
+    const srcNode = AudioPlayer.audioCtx.createMediaElementSource(AudioPlayer.audioElement)
+    const destNode = AudioPlayer.audioCtx.createMediaStreamDestination()
+
+    AudioPlayer.audioElement.addEventListener('ended', () => {
+        AudioPlayer.em.emit('ended')
+    })
+    
+    AudioPlayer.audioElement.onloadedmetadata = () => {
+        rem.emit('setControlsContent', AudioPlayer.audioData)
+    }
+
+    const globalPlayer = new AudioPlayer()
+    window.globalPlayer = globalPlayer
+
+    initProcessor(AudioPlayer.audioCtx, srcNode, destNode)
+    initAncProcessor(AudioPlayer.audioCtx, destNode)
+    initOutputAudio(destNode.stream)
+
+    navigator.mediaSession.setActionHandler('play', () => globalPlayer.play())
+    navigator.mediaSession.setActionHandler('pause', () => globalPlayer.pause())
+    hooks.on('player:play', () => globalPlayer.play())
+    hooks.on('player:pause', () => globalPlayer.pause())
 })
-
-AudioPlayer.audioElement.onloadedmetadata = () => {
-    rem.emit('setControlsContent', AudioPlayer.audioData)
-}
-
-const srcNode = AudioPlayer.audioCtx.createMediaElementSource(AudioPlayer.audioElement)
-const destNode = AudioPlayer.audioCtx.createMediaStreamDestination()
-
-initProcessor(AudioPlayer.audioCtx, srcNode, destNode)
-initAncProcessor(AudioPlayer.audioCtx, destNode)
-initOutputAudio(destNode.stream)
-
-const globalPlayer = new AudioPlayer()
-window.globalPlayer = globalPlayer
-
-navigator.mediaSession.setActionHandler('play', () => globalPlayer.play())
-navigator.mediaSession.setActionHandler('pause', () => globalPlayer.pause())
-hooks.on('player:play', () => globalPlayer.play())
-hooks.on('player:pause', () => globalPlayer.pause())
