@@ -235,7 +235,16 @@
     })
 
     function imageShow(ev) {
-        ev.target.style.opacity = 1
+        const ele = ev.target
+        requestIdleCallback(() => {
+            ele.animate([
+                {opacity: 0},
+                {opacity: 1}
+            ], {
+                duration: 500,
+                fill: 'forwards'
+            })
+        })
     }
 
 </script>
@@ -421,6 +430,7 @@
         right: 16px;
         top: 108px;
         visibility: hidden;
+        z-index: 99;
     }
 
     .artist-c:hover > .FAB {
@@ -439,7 +449,7 @@
 <div class="row">
 
 <div class="collection{!collectionFolded?' unfold':''}" data-title="{s('my_playist')}" bind:this={container}>
-    <img class="collection-bgc" src={desktopUrl} alt="" bind:this={imgBgc}>
+    <img class="collection-bgc" src={desktopUrl} alt="" bind:this={imgBgc}/>
     <div title="{s('unfold')}" class="toggle{!collectionFolded?' unfold':''}" on:click={changeHeight}>▼</div>
     
     <Measurable bind:this={meter} cssStyle="width: 100%">
@@ -513,8 +523,7 @@
                 draggable="false"
                 src={artist.picUrl}
                 on:load={imageShow}
-                alt={artist.name}
-                decoding="async">
+                alt={artist.name}/>
             <div class="name title">{artist.name}</div>
             <div class="name">{artist.alias.length? artist.alias[0]: ''}</div>
         </div>
@@ -569,7 +578,7 @@
                 on:mouseenter|stopPropagation={dullParent}
                 on:mouseleave|stopPropagation={activeParent}
             >{'\ue615'}</div>
-            <img class="album" style="opacity: 0; transition: opacity 1s" draggable="false" src={al.picUrl} alt={al.name} on:load={imageShow} decoding="async">
+            <img class="album" style="opacity: 0; transition: opacity 1s" draggable="false" src={al.picUrl} alt={al.name} on:load={imageShow}/>
             <div class="name title" style="width: calc(100% - 16px);">{al.name}</div>
         </div>
     {/each}
