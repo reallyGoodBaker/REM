@@ -1,5 +1,6 @@
 <script>
     import { createEventDispatcher } from "svelte";
+    import { getImgSrc } from '../../utils/stores/img.js'
     const emit = createEventDispatcher();
 
     function handleClick(ev) {
@@ -54,13 +55,20 @@
 
 <div class="column{clickable?' clkable':''}" on:click={handleClick} style="width: fit-content; heigth: fit-content; overflow: hidden; border-radius: {radius};{cssText}">
 {#if isUrl}
+    {#await getImgSrc(avatar)}
+        <div
+            class="avatar"
+            style="background-color: var(--controlGray); width: {width}px; height: {height}px"
+        ></div>
+    {:then url} 
     <img on:load={handleOnLoaded}
         bind:this={ctx}
-        src={avatar}
+        src={url}
         class="avatar"
-        alt="avatar size-{size? size: 'normal'}"
+        alt="avatar"
         draggable="false" 
         {width} {height}>
+    {/await}
 {:else}
     <span class="avatar iconfont size-{size? size: 'normal'}">{avatar}</span>
 {/if}

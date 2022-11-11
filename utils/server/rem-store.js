@@ -31,6 +31,21 @@ module.exports = class RemStore {
         }
     }
 
+    getRaw(k) {
+        if (stores.has(k)) {
+            return stores.get(k)
+        }
+        
+        try {
+            let data = fs.readFileSync(appDataJoin(k))
+            stores.set(k, data)
+            return data
+        } catch (err) {
+            // console.error(err)
+            return null
+        }
+    }
+
     set(k, v) {
         try {
             const splitArr = k.split('/')
@@ -46,11 +61,15 @@ module.exports = class RemStore {
                 }
             }
 
+            if (v instanceof ArrayBuffer) {
+                v = Buffer.from(v)
+            }
+
             fs.writeFileSync(appDataJoin(k), v)
             stores.set(k, v)
             return true
         } catch (err) {
-            // console.error(err)
+            // console.log(err);
             return false
         }
     }

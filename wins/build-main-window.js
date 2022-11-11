@@ -107,6 +107,10 @@ function initMainWin(browserWindow) {
         return remStore.get(name)
     })
 
+    ipcMain.handle('store:getRaw', (_, name) => {
+        return remStore.getRaw(name)
+    })
+
     ipcMain.handle('store:set', (_, k, v) => {
         return remStore.set(k, v)
     })
