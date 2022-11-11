@@ -3,6 +3,7 @@
     import Measurable from "./components/Measurable.svelte";
     import ScrollView from "./components/ScrollView2.svelte";
     import Playlist from "./Playlist.svelte";
+    import { getImgSrc } from '../utils/stores/img.js'
 
     const s = (str, ...args) => langMapping.s(str, ...args)
 
@@ -20,12 +21,12 @@
         }
 
         if(data && new Date().getTime() - data.timeStamp < 57600000) {
-            return (desktopUrl = data.url);
+            return (desktopUrl = await getImgSrc(data.url));
         }
 
         data = await server.fetchJson('https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1');
         const url = 'https://www.bing.com' + data.images[0].url;
-        desktopUrl = url;
+        desktopUrl = await getImgSrc(url);
 
         store.set('dailyDesktop', {
             timeStamp: new Date().getTime(), url
@@ -58,11 +59,11 @@
     }
     
 
-    export function getDetailX(id) {
-        let data = store.getSync('playlist'+id);
+    export async function getDetailX(id) {
+        let data = await store.get('playlist'+id);
         if (data) return data;
 
-        return getDetailXAsync(id)
+        return await getDetailXAsync(id)
     }
 
     async function getDetailXAsync(id) {
@@ -207,15 +208,13 @@
     }
 
 
-    function getAlbumDetail(id) {
+    async function getAlbumDetail(id) {
 
-        let al = store.getSync('al' + id)
+        let al = await store.get('al' + id)
+ 
         if (!al) {
-            return new Promise(async res => {
-                al = (await NeteaseApi.getAlbumDetail(id, await store.get('cookie'))).body.songs
-                store.set('al'+id, al)
-                res(al)
-            })
+            al = (await NeteaseApi.getAlbumDetail(id, await store.get('cookie'))).body.songs
+            store.set('al'+id, al)
         }
 
         return al
@@ -449,6 +448,7 @@
 <div class="row">
 
 <div class="collection{!collectionFolded?' unfold':''}" data-title="{s('my_playist')}" bind:this={container}>
+
     <img class="collection-bgc" src={desktopUrl} alt="" bind:this={imgBgc}/>
     <div title="{s('unfold')}" class="toggle{!collectionFolded?' unfold':''}" on:click={changeHeight}>▼</div>
     
@@ -518,12 +518,16 @@
                 on:mouseenter|stopPropagation={dullParent}
                 on:mouseleave|stopPropagation={activeParent}
             >{'\ue615'}</div>
+            {#await getImgSrc(artist.picUrl)}
+                <!-- <div class="artist"></div> -->
+            {:then url} 
             <img
                 class="artist"
                 draggable="false"
-                src={artist.picUrl}
+                src={url}
                 on:load={imageShow}
                 alt={artist.name}/>
+            {/await}
             <div class="name title">{artist.name}</div>
             <div class="name">{artist.alias.length? artist.alias[0]: ''}</div>
         </div>
@@ -563,7 +567,7 @@
                             playCount: al.playCount,
                             trackCount: al.size,
                         },
-                        listData: getAlbumDetail(id),
+                        listData: await getAlbumDetail(id),
                         sortBy: await window.store.get('playlist/sortBy'),
                         forwards: await window.store.get('playlist/forwards'),
                         onTabDestroy() {
