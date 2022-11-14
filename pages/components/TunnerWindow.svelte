@@ -269,12 +269,12 @@
 
                 <div class="Row pair">
                     <div class="label">{s('delay')}</div>
-                    <em><div class="link">{processConfig.delay.delayTime}s</div></em>
+                    <em><div class="link">{(processConfig.delay.delayTime).toFixed(2)}s</div></em>
                 </div>
 
                 <div class="Row pair">
                     <div class="label">{s('fade_in_and_out')}</div>
-                    <em><div class="link">{processConfig.fader.fadeIn}s / {processConfig.fader.fadeOut}s</div></em>
+                    <em><div class="link">{(processConfig.fader.fadeIn).toFixed(2)}s / {(processConfig.fader.fadeOut).toFixed(2)}s</div></em>
                 </div>
 
                 <div class="Column pair">

@@ -1,10 +1,10 @@
 const { ipcRenderer, screen } = require('electron');
-const Binder = require('./utils/jsBinder');
-const { createFuncBinding } = require('./utils/api/funcBinder');
+const Binder = require('../../utils/jsBinder');
+const { createFuncBinding } = require('../../utils/api/funcBinder');
 const fs = require('fs')
 
 
-const { fetchJson } = require('./utils/server/fetch')
+const { fetchJson } = require('../../utils/server/fetch')
 const [
     _, AppData, AppCache
 ] = fs.readFileSync('./Path').toString().split('\n')
@@ -15,7 +15,7 @@ const {
     saveToPlaylist,
     getPlaylist,
     getMetadata,
-} = require('./utils/server/media-cache')(AppCache)
+} = require('../../utils/server/media-cache')(AppCache)
 
 
 new Binder('server')
@@ -36,19 +36,19 @@ new Binder('hooks')
     rm: (...args) => ipcRenderer.removeListener.apply(ipcRenderer, args),
 })
 
-const { getWallpaper } = require('./utils/Win11Wallpaper');
+const { getWallpaper } = require('../../utils/Win11Wallpaper');
 new Binder('wallpaper').bind('getWallpaper', getWallpaper);
 
 
 
-const { login, loginViaQRCode, validQRLogin, getUserAccount } = require('./utils/api/login');
-const { Search, suggest } = require('./utils/api/search');
-const { checkIn } = require('./utils/api/dailySignin');
+const { login, loginViaQRCode, validQRLogin, getUserAccount } = require('../../utils/api/login');
+const { Search, suggest } = require('../../utils/api/search');
+const { checkIn } = require('../../utils/api/dailySignin');
 const {
     getUserPlaylist, getPlaylistDetail, getArtistSublist, getAlbumSublist,
     getAlbumDetail,
-} = require('./utils/api/playlist');
-const { getSongDetail, getSongUrl, getSongDownload, getSongUrlX } = require('./utils/api/song');
+} = require('../../utils/api/playlist');
+const { getSongDetail, getSongUrl, getSongDownload, getSongUrlX } = require('../../utils/api/song');
 const { logout } = require('NeteaseCloudMusicApi');
 
 

@@ -2,10 +2,10 @@ const {
     BrowserWindow, ipcMain, app, nativeImage, screen, Menu
 } = require('electron')
 const path = require('path')
-const RemStore = require('../utils/server/rem-store')
+const RemStore = require('../../utils/server/rem-store')
 const remStore = new RemStore()
 
-const { watchNetworkChange } = require('../utils/network/server')
+const { watchNetworkChange } = require('../../utils/network/server')
 
 
 Menu.setApplicationMenu(null)
@@ -43,12 +43,12 @@ function buildWindow() {
         minHeight: height,
 
         webPreferences: {
-            preload: path.resolve(__dirname, '../preload.js'),
+            preload: path.resolve(__dirname, './preload.js'),
         }
     });
 
 
-    browserWindow.loadFile(path.resolve(__dirname, '../index.html'))
+    browserWindow.loadFile(path.resolve(__dirname, './index.html'))
     // browserWindow.webContents.openDevTools()
 
     browserWindow.on('closed', () => {
@@ -164,10 +164,10 @@ function activeAppBarBtns(browserWindow) {
 
 function setThumbarButtons(win) {
 
-    const playIcon = nativeImage.createFromPath(path.resolve(__dirname, 'icons/play.png')),
-        pauseIcon = nativeImage.createFromPath(path.resolve(__dirname, 'icons/pause.png')),
-        preIcon = nativeImage.createFromPath(path.resolve(__dirname, 'icons/previous.png')),
-        nextIcon = nativeImage.createFromPath(path.resolve(__dirname, 'icons/next.png'))
+    const playIcon = nativeImage.createFromPath(path.resolve(__dirname, '../icons/play.png')),
+        pauseIcon = nativeImage.createFromPath(path.resolve(__dirname, '../icons/pause.png')),
+        preIcon = nativeImage.createFromPath(path.resolve(__dirname, '../icons/previous.png')),
+        nextIcon = nativeImage.createFromPath(path.resolve(__dirname, '../icons/next.png'))
 
     const preBtn = {
         icon: preIcon,

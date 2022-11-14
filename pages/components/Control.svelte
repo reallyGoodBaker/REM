@@ -4,7 +4,8 @@
     import ProgressInset from "./ProgressInset.svelte"
     import {globalMetadata} from '../../utils/player/metadata.js'
     import {MainPlaylist} from '../../utils/player/playlist.js'
-    import { rem, LifeCycle } from '../../utils/rem.js'
+    import {rem, LifeCycle} from '../../utils/rem.js'
+    import {vsync} from '../../utils/core/vsync.js'
 
     let l = langMapping.getMapping()
     rem.on('langChange', lang => {
@@ -121,21 +122,22 @@
 
     let seekValue = 0
     //==========================================
+    const _progressUpdate = () => {
+        if (isSeeking) return
+
+        let cur = globalPlayer.seek()
+        seekValue = (cur/duration)*100
+        currentTimeEle.innerText = s(cur)
+    }
     rem.on('setControlsContent', setContent)
     rem.on('loadedContent', () => {
         duration = globalPlayer.duration()
         durationEle.innerText = s(duration)
         if (checker) {
             seekValue = 0
-            clearInterval(checker)
+            checker.cancel()
         }
-        checker = setInterval(() => {
-            if (isSeeking) return
-
-            let cur = globalPlayer.seek()
-            seekValue = (cur/duration)*100
-            currentTimeEle.innerText = s(cur)
-        }, 500);
+        checker = vsync(_progressUpdate)
     });
 
     let volume;

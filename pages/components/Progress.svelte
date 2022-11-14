@@ -80,7 +80,7 @@
     }
 
     input[type=range]:hover::-webkit-slider-thumb {
-        background-color: var(--controlWhite);
+        background-color: var(--controlDark);
     }
 
     input[type=range]:active::-webkit-slider-thumb {

@@ -7,7 +7,7 @@ class NotificationContent extends ViewImplementor {
     msg = null
 
     constructor(container) {
-        super('./utils/widget/notification/view.html')
+        super('../../utils/widget/notification/view.html')
         this.outerContainer = container
     }
 

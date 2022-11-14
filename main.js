@@ -35,7 +35,7 @@ app.on('window-all-closed', function () {
 })
 
 
-const buildMainWindow = require('./wins/build-main-window')
+const buildMainWindow = require('./wins/main/buildWindow')
 app.on('ready', () => {
     setTimeout(() => {
         buildMainWindow()
@@ -46,4 +46,4 @@ app.on('ready', () => {
 
 
 
-require('./wins/binding')()
+require('./wins/main/binding')()
