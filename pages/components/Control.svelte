@@ -1,6 +1,7 @@
 <script>
     import Avatar from "./Avatar.svelte"
     import Progress from "./Progress.svelte"
+    import ProgressInset from "./ProgressInset.svelte"
     import {globalMetadata} from '../../utils/player/metadata.js'
     import {MainPlaylist} from '../../utils/player/playlist.js'
     import { rem, LifeCycle } from '../../utils/rem.js'
@@ -446,7 +447,7 @@
 
         <div class="column" style="width: 100%;">
             <span class="time" bind:this={currentTimeEle}>0:00</span>
-            <Progress
+            <ProgressInset
                 width={200}
                 bind:value={seekValue}
                 on:mousedown={startSeeking}
@@ -459,7 +460,7 @@
 
 
     <div class="column edge" style="flex-direction: row-reverse;">
-        <Progress
+        <ProgressInset
             cssStyle='margin-right: 8px;'
             bind:value={volume}
             on:mousedown={setVolume}

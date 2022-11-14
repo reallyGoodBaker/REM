@@ -4,9 +4,7 @@
     export let value;
     export let cssStyle = '';
     export let width = 100
-    export let thumbWidth = 12
-
-    $: dispalyWidth = ((width - thumbWidth) * value / (width * 100)) * width + thumbWidth / 2
+    export let thumbWidth = 10
 
     let emit = createEventDispatcher();
 
@@ -44,10 +42,15 @@
         --display-progress: 50%;
         background-color: transparent;
         width: var(--rail-width);
-        height: 10px;
+        height: 12px;
         display: block;
         -webkit-appearance: none;
-        border-radius: 10px;
+        transform: scale(1);
+        transition: transform 0.1s ease-in-out;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track:active {
+        background-color: var(--acrylicBackgroundColor);
     }
 
     input[type=range]::-webkit-slider-thumb {
@@ -55,13 +58,11 @@
     }
     
     input[type=range]::-webkit-slider-runnable-track {
-        border-radius: 3px;
-        height: 6px;
-        background: linear-gradient(
-            90deg,
-            var(--controlBright) var(--display-progress),
-            var(--acrylicBackgroundColor) var(--display-progress)
-        );
+        padding: calc(1px + 1px / var(--scale)) 2px;
+        border-radius: 4px;
+        height: 8px;
+        background-color: var(--acrylicTransparent);
+        transition: all 0.2s ease-in-out;
     }
     
     input[type=range]:focus {
@@ -72,10 +73,9 @@
         -webkit-appearance: none;
         border-radius: 3px;
         box-sizing: border-box;
-        height: 6px;
+        height: calc(6px - 2px / var(--scale));
         width: var(--thumb-width);
-        margin-top: 0px;
-        background-color: var(--controlColor);
+        background-color: var(--acrylicBackgroundColor);
         transition: all 0.1s;
     }
 
@@ -83,15 +83,11 @@
         background-color: var(--controlWhite);
     }
 
-    input[type=range]:active::-webkit-slider-thumb {
-        transform: scale(1.4);
-    }
-
 </style>
 
 
 <input type="range"
-    style="{cssStyle}; --progress: {value}%; --rail-width: {width}px; --thumb-width: {thumbWidth}px; --display-progress: {dispalyWidth}px;"
+    style="{cssStyle}; --progress: {value}%; --rail-width: {width}px; --thumb-width: {thumbWidth}px; --scale: {window.devicePixelRatio};"
     step="0.001"
     bind:value
     on:mousedown={mouseDown}

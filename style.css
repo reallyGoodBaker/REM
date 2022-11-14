@@ -32,6 +32,10 @@ body {
     --controlBlack52: hsl(var(--controlHue, 210), 20%, 52%);
     --controlGray: hsl(var(--controlHue, 210), 10%, 70%);
 
+    --controlColorAcrylic: hsla(var(--controlHue, 210), 80%, 70%, 0.5);
+    --controlGrayAcrylic: hsla(var(--controlHue, 210), 10%, 70%, 0.5);
+    --controlBlackAcrylic: hsla(var(--controlHue, 210), 20%, 52%, 0.4);
+
     --noneAcrylicBackgroundColor: var(--controlBackground);
 
     --fade: rgba(0, 0, 0, 0.3);
@@ -43,6 +47,8 @@ body {
 
     background-color: var(--controlWhite);
     color: var(--controlBlack);
+
+    --acrylicTransparent: hsla(var(--controlHue, 210), 80%, 96%, 0.3);
 }
 
 .column {

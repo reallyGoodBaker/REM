@@ -89,6 +89,8 @@ async function scrollup(offset) {
     updateScrollPosition()
 }
 
+let fastScrolling = false
+
 function fastScrollTo(ratio) {
     ratio = Math.min(Math.max(0, ratio), 1)
     content.scrollTo({
@@ -133,6 +135,12 @@ function dragScrollThumb(ev) {
 
 function wheelChange(ev) {
     ev.stopPropagation()
+    const shouldFastScroll = Math.abs(ev.deltaY) > 125
+
+    if (shouldFastScroll !== fastScrolling) {
+        fastScrolling = shouldFastScroll
+    }
+
     const scrollOffset = Math.max(Math.min(content.scrollTop + ev.deltaY, contentHeight), 0)
     fastScrollTo(scrollOffset/contentHeight)
 }
@@ -213,7 +221,7 @@ export function scrollTo(pos) {
         top: var(--top);
         height: var(--height);
         width: 100%;
-        transition: height 0.2s, top 0.04s;
+        transition: height 0.2s, top 0.1s;
     }
 
     .thumb::before {
@@ -222,7 +230,7 @@ export function scrollTo(pos) {
         right: 2px;
         height: 100%;
         width: 4px;
-        border-radius: 4px;
+        border-radius: 6px;
         background-color: var(--fade);
         transition: all 0.12s;
     }
@@ -249,6 +257,10 @@ export function scrollTo(pos) {
         height: fit-content; 
     }
 
+    .fast-scrolling > .thumb {
+        transition: height 0.2s;
+    }
+
 
 </style>
 
@@ -261,7 +273,7 @@ export function scrollTo(pos) {
         </div>
     </div>
 
-    <div class="track {isHoverScrollTrack? 'hover': ''} {hideTrack? 'hide': ''}" bind:this={scrollTrack}>
+    <div class="track {fastScrolling? 'fast-scrolling': ''} {isHoverScrollTrack? 'hover': ''} {hideTrack? 'hide': ''}" bind:this={scrollTrack}>
         <div bind:this={scrollThumb}
             class="thumb" 
             style="--height: {thumbHeight}px; --top: {thumbTop}px; min-height: {minThumbHeight}px"

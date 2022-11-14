@@ -1,6 +1,7 @@
 <script>
     import SplitTile from "./SplitTile.svelte";
     import {afterUpdate, createEventDispatcher, onMount} from 'svelte';
+    import LoadingCircle from './LoadingCircle.svelte'
 
     let emit = createEventDispatcher();
 
@@ -29,8 +30,7 @@
 
 </script>
 
-
-
+{#if listData.length}
 {#each listData as data, i}
 <SplitTile
     data={[
@@ -47,3 +47,16 @@
     focus={~focus && focus}
 />
 {/each}
+{:else}
+<div class="Column" style="width: 100%; margin-top: 20px">
+    <LoadingCircle
+        strokeStyle={window.getComputedStyle(
+            document.body
+        ).getPropertyValue('--controlDark')}
+        size={20}
+        lineWidth={3}
+        transformationDelay={300}
+        transformDuration={300}/>
+</div>
+{/if}
+

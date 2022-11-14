@@ -292,7 +292,7 @@
                     <div class="label">{s('device')}</div>
                     <em><div class="link" on:click={() => {
                         rem.emit('tunnerClose')
-                        window.Pager.openNew('settings', Settings)
+                        window.Pager.openNew('$settings', Settings)
                     }}>{device.label}</div></em>
                 </div>
                 {/await}

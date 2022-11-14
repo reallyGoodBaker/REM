@@ -14,7 +14,7 @@ export class WizardContainer extends PopWindowWidget {
     /**@private*/ _pageIndex = 0
     /**@private*/ _pages = []
 
-    localeParser
+    localeParser = t => t
 
     get pageIndex() {
         return this._pageIndex
@@ -49,13 +49,19 @@ export class WizardContainer extends PopWindowWidget {
         this.content.children[0].animate([
             {transform: 'translateX(0)', opacity: 1},
             {transform: `translateX(${direction * 25}%)`, opacity: 0},
-        ], 100).onfinish = () => {
+        ], {
+            duration: 100,
+            easing: 'ease-in-out'
+        }).onfinish = () => {
             this.content.children[0].remove()
             this.content.appendChild(this._pages[to])
             this._pages[to].animate([
                 {transform: `translateX(${direction * -25}%)`, opacity: 0},
                 {transform: `translateX(0)`, opacity: 1},
-            ], 100)
+            ], {
+                duration: 100,
+                easing: 'ease-in-out'
+            })
         }
 
 

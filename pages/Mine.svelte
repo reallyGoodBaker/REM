@@ -477,7 +477,11 @@
             });
             
         }}>
-            <div class="avatar" style="background-image: url({list.coverImgUrl});"></div>
+            {#await getImgSrc(list.coverImgUrl)}
+            <div class="avatar" style="background-color: var(--controlGray);"></div>
+            {:then url} 
+            <div class="avatar" style="background-image: url({url});"></div>
+            {/await}
             <div class="btn light FAB"
                 on:click|stopPropagation={() => {fastPlay(list.id)}}
                 on:mouseenter|stopPropagation={dullParent}
@@ -563,7 +567,7 @@
                             playCount: al.playCount,
                             trackCount: al.size,
                         },
-                        listData: await getAlbumDetail(id),
+                        listData: getAlbumDetail(id),
                         sortBy: await window.store.get('playlist/sortBy'),
                         forwards: await window.store.get('playlist/forwards'),
                         onTabDestroy() {

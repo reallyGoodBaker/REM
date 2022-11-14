@@ -6,8 +6,6 @@ import {rem} from '../../rem.js'
 
 export const defaultWizard = new WizardContainer()
 
-let cb
-
 const col = () => {
     let scroll = new ScrollWidget()
     scroll.classList.add('Column')
