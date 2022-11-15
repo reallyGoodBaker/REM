@@ -1,5 +1,6 @@
 const {
-    BrowserWindow, ipcMain, app, nativeImage, screen, Menu
+    BrowserWindow, ipcMain, app, nativeImage, screen,
+    Menu,
 } = require('electron')
 const path = require('path')
 const RemStore = require('../../utils/server/rem-store')
@@ -78,6 +79,9 @@ function buildWindow() {
 
 }
 
+/**
+ * @param {BrowserWindow} browserWindow 
+ */
 function initMainWin(browserWindow) {
     browserWindow.on('maximize', () => {
         browserWindow.webContents.send('win:max')
@@ -126,6 +130,7 @@ function initMainWin(browserWindow) {
     ipcMain.on('store:getSync', (ev, k) => {
         ev.returnValue = remStore.get(k)
     })
+
 }
 
 /**
