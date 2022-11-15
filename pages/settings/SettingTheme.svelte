@@ -9,7 +9,7 @@
 
     let {colors, selected, useAcrylic} = store.getSync('AppSettings/theme') || {
         colors: [2, 39, 148, 210, 270, 292, 322],
-        selected: 2,
+        selected: 3,
         useAcrylic: false
     }
 

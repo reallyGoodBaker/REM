@@ -193,12 +193,10 @@ function setThumbarButtons(win) {
         pauseBtns = [preBtn, pauseBtn, nextBtn]
 
     function onPlayBtn() {
-        setPause()
         win.webContents.send('player:play')
     }
 
     function onPauseBtn() {
-        setPlay()
         win.webContents.send('player:pause')
     }
 

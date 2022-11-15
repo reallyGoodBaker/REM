@@ -56,6 +56,10 @@ export class MainPlaylist {
     }
     
     static next() {
+        if (!this.listData.length) {
+            return
+        }
+
         let c = this.current, len = this.listData.length
 
         switch (this.mode) {
@@ -75,6 +79,10 @@ export class MainPlaylist {
     }
 
     static prev() {
+        if (!this.listData.length) {
+            return
+        }
+        
         let c = this.current, len = this.listData.length
 
         switch (this.mode) {

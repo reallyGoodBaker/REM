@@ -21,27 +21,24 @@ export class AudioPlayer {
     }
 
     static async play() {
+        await this.audioElement.play(),
+        hooks.send('thumbar:pause')
         this.em.emit('play')
 
-        hooks.send('thumbar:pause')
-
-        return await Promise.all([
-            this.audioElement.play(),
-            fadeBeforePlay()
-        ])
+        await fadeBeforePlay()
     }
     play() {
         return AudioPlayer.play()
     }
 
-    static pause() {
-        fadeBeforePause().then(() => {
-            this.audioElement.pause()
-        })
+    static async pause() {
+        if (this.load()) {
+            hooks.send('thumbar:play')
+            this.em.emit('pause')
+        }
 
-        hooks.send('thumbar:play')
-
-        this.em.emit('pause')
+        await fadeBeforePause()
+        this.audioElement.pause()
     }
     pause() {
         AudioPlayer.pause()
