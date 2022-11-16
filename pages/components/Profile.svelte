@@ -5,6 +5,7 @@
     import {getContext} from 'svelte';
     import Settings from "../Settings.svelte";
     import {defaultWizard} from '../../utils/wizard/edit-profile/index.js'
+    import {store} from '../../utils/stores/base.js'
 
     let close = getContext('close');
     const s = (f, ...args) => {

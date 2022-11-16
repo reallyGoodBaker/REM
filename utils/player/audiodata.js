@@ -1,3 +1,5 @@
+import {store} from '../stores/base.js'
+
 export class AudioData {
     constructor(data) {
         this.data = data

@@ -1,7 +1,7 @@
 <script>
     import {getContext} from 'svelte';
     import RippleLayer from './components/RippleLayer.svelte';
-
+    import {store} from '../utils/stores/base.js'
     import { rem } from '../utils/rem.js'
 
     const s = (f, ...args) => langMapping.s(f, ...args) || f

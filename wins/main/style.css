@@ -34,7 +34,7 @@ body {
 
     --controlColorAcrylic: hsla(var(--controlHue, 210), 80%, 70%, 0.5);
     --controlGrayAcrylic: hsla(var(--controlHue, 210), 10%, 70%, 0.5);
-    --controlBlackAcrylic: hsla(var(--controlHue, 210), 20%, 52%, 0.4);
+    --controlBlackAcrylic: hsla(var(--controlHue, 210), 20%, 52%, 0.5);
 
     --noneAcrylicBackgroundColor: var(--controlBackground);
 

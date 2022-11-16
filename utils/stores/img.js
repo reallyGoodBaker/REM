@@ -1,4 +1,5 @@
 import { LifeCycle } from "../rem";
+import {store} from './base.js'
 
 let storeLoaded = false
 
@@ -32,7 +33,6 @@ export async function getImgSrc(url) {
     }
 
     let data = await getImg(url)
-    // console.log(data);
 
     if (typeof data === 'string') {
         saveImg(url)
@@ -40,4 +40,39 @@ export async function getImgSrc(url) {
     }
 
     return URL.createObjectURL(new Blob([data]))
+}
+
+export class ImageStore {
+    last = []
+    onloads = []
+    tasks = []
+
+    registerOnload(url) {
+        return new Promise(res => {
+            this.onloads.push(() => res(url))
+        })
+    }
+
+    /**
+     * @param {string} url 
+     * @returns {Promise<string>}
+     */
+    getUri(url) {
+        if (this.last.includes(url)) {
+            return this.tasks[this.last.indexOf(url)]
+        }
+
+        this.last.push(url)
+        const returnVal = this.registerOnload(url)
+        this.tasks.push(returnVal)
+
+        requestIdleCallback(this.handleLastUrls)
+
+        return returnVal
+    }
+
+    handleLastUrls() {
+
+
+    }
 }

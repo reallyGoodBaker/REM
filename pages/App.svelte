@@ -8,7 +8,7 @@ import Appbar from './components/Appbar.svelte'
 import Login from './Login.svelte'
 import SurfaceLayer from './components/SurfaceLayer.svelte';
 import Search from './components/Search.svelte'
-
+import {store} from '../utils/stores/base.js'
 import { rem } from '../utils/rem.js'
 
 let MinePage = Mine
@@ -267,9 +267,10 @@ rem.on('useAcrylic', bool => {
 })
 
 //==================================================================
+import {getColor} from '../utils/style/imageBasicColor.js'
 
 rem.on('playerReady', () => {
-    __setColor(document.body, wpEle, 1)
+    document.body.style.setProperty('--color', getColor(wpEle, 1))
     requestIdleCallback(() => {
         hooks.send('win:show-main')
     })

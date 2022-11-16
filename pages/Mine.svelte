@@ -4,6 +4,9 @@
     import ScrollView from "./components/ScrollView2.svelte";
     import Playlist from "./Playlist.svelte";
     import { getImgSrc } from '../utils/stores/img.js'
+    import {store} from '../utils/stores/base.js'
+    import {getColor} from '../utils/style/imageBasicColor.js'
+    import Image from "./components/Image.svelte";
 
     const s = (str, ...args) => langMapping.s(str, ...args)
 
@@ -16,7 +19,7 @@
         let data = await store.get('dailyDesktop');
 
         imgBgc.onload = () => {
-            __setColor(container, imgBgc, 1);
+            container.style.setProperty('--color', getColor(imgBgc, 1))
             container.style.setProperty('--start', 220 + 'px')
         }
 
@@ -233,19 +236,6 @@
         requestIdleCallback(() => scrollv.setOffsetRatio(save.offsetRatio))
     })
 
-    function imageShow(ev) {
-        const ele = ev.target
-        requestIdleCallback(() => {
-            ele.animate([
-                {opacity: 0},
-                {opacity: 1}
-            ], {
-                duration: 500,
-                fill: 'forwards'
-            })
-        })
-    }
-
 </script>
 
 
@@ -356,16 +346,6 @@
         transform: translateY(-2px);
     }
 
-    .artist {
-        box-sizing: border-box;
-        width: 140px;
-        height: 140px;
-        border-radius: 50%;
-        padding: 1px;
-        border: solid 1px var(--controlGray);
-        background-color: var(--controlGray);
-    }
-
     .artist-c {
         justify-content: center;
         width: 160px;
@@ -408,16 +388,6 @@
         visibility: visible;
     }
 
-    .album {
-        box-sizing: border-box;
-        width: 140px;
-        height: 140px;
-        border-radius: 8px;
-        padding: 1px;
-        border: solid 1px var(--controlGray);
-        background-color: var(--controlGray);
-    }
-
     .artist-c.al {
         height: 220px;
         justify-content: flex-start;
@@ -449,7 +419,9 @@
 
 <div class="collection{!collectionFolded?' unfold':''}" data-title="{s('my_playist')}" bind:this={container}>
 
-    <img class="collection-bgc" src={desktopUrl} alt="" bind:this={imgBgc}/>
+    <img
+        class="collection-bgc"
+        src={desktopUrl} alt="" bind:this={imgBgc}/>
     <div title="{s('unfold')}" class="toggle{!collectionFolded?' unfold':''}" on:click={changeHeight}>▼</div>
     
     <Measurable bind:this={meter} cssStyle="width: 100%">
@@ -468,8 +440,8 @@
                         trackCount: list.trackCount,
                     },
                     listData: getDetailX(id),
-                    sortBy: await window.store.get('playlist/sortBy'),
-                    forwards: await window.store.get('playlist/forwards'),
+                    sortBy: await store.get('playlist/sortBy'),
+                    forwards: await store.get('playlist/forwards'),
                     onTabDestroy() {
                         clearPlaylist(id)
                     },
@@ -480,7 +452,8 @@
             {#await getImgSrc(list.coverImgUrl)}
             <div class="avatar" style="background-color: var(--controlGray);"></div>
             {:then url} 
-            <div class="avatar" style="background-image: url({url});"></div>
+            <Image width={160} height={160} radius={'4px'} src={url} borderWidth={'0px'}/>
+            <!-- <div class="avatar" style="background-image: url({url});"></div> -->
             {/await}
             <div class="btn light FAB"
                 on:click|stopPropagation={() => {fastPlay(list.id)}}
@@ -522,11 +495,11 @@
                 on:mouseenter|stopPropagation={dullParent}
                 on:mouseleave|stopPropagation={activeParent}
             >{'\ue615'}</div>
-            <img
-                class="artist"
-                draggable="false"
+            <Image
+                width={140}
+                height={140}
+                radius={'50%'}
                 src={artist.picUrl}
-                on:load={imageShow}
                 alt={artist.name}/>
             <div class="name title">{artist.name}</div>
             <div class="name">{artist.alias.length? artist.alias[0]: ''}</div>
@@ -568,8 +541,8 @@
                             trackCount: al.size,
                         },
                         listData: getAlbumDetail(id),
-                        sortBy: await window.store.get('playlist/sortBy'),
-                        forwards: await window.store.get('playlist/forwards'),
+                        sortBy: await store.get('playlist/sortBy'),
+                        forwards: await store.get('playlist/forwards'),
                         onTabDestroy() {
                             clearAlbum(id)
                         },
@@ -582,7 +555,11 @@
                 on:mouseenter|stopPropagation={dullParent}
                 on:mouseleave|stopPropagation={activeParent}
             >{'\ue615'}</div>
-            <img class="album" style="opacity: 0; transition: opacity 1s" draggable="false" src={al.picUrl} alt={al.name} on:load={imageShow}/>
+            <Image
+                width={140}
+                height={140}
+                radius={'8px'}
+                src={al.picUrl} alt={al.name}/>
             <div class="name title" style="width: calc(100% - 16px);">{al.name}</div>
         </div>
     {/each}

@@ -2,7 +2,8 @@
     import RowList from "../components/RowList.svelte"
     import SelectListTile from "../components/SelectListTile.svelte"
     import ListTile from "../components/ListTile.svelte"
-
+    import {store} from '../../utils/stores/base.js'
+    
     $: lang = window.langMapping
 
     let {qualities, selected} = store.getSync('AppSettings/cache') || {

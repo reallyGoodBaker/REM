@@ -13,7 +13,7 @@
     import Equalizer from './TunnerComponents/Equalizer.svelte'
     import ToggleListTile from './ToggleListTile.svelte'
     import {setEqEnable} from '../../utils/player/process.js'
-
+    import {store} from '../../utils/stores/base.js'
     import { rem } from '../../utils/rem.js'
 
     const s = f => langMapping.s(f)
@@ -226,7 +226,7 @@
 
     <div class="Column outerWindow tunnerPanel" style="width: 300px;">
         <div class="Row" style="height: 72vh; margin-left: 12px;">
-        <ScrollView bind:this={scrollv}>
+        <ScrollView bind:this={scrollv} hoverToShow={true}>
             <div class="Column" style="padding: 12px 0;">
             <TunnerTile
                 title={s('input')}
@@ -304,7 +304,7 @@
 
     <div class="Column outerWindow" style="height: 100%; width: calc(72vw - 300px);">
         <div class="Column" style="height: calc(72vh - 48px); width: 100%; position: relative;">
-            <ScrollView bind:this={scrollContent}>
+            <ScrollView bind:this={scrollContent} hoverToShow={true}>
                 
                 <div class="tunnerCard">
                     <Gain/>

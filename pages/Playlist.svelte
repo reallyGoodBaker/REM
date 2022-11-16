@@ -4,7 +4,7 @@
     import ScrollView from "./components/ScrollView2.svelte";
     import SplitList from "./components/SplitList.svelte";
     import Input from "./components/Input.svelte";
-
+    import {store} from '../utils/stores/base.js'
     import { rem } from '../utils/rem.js'
 
 

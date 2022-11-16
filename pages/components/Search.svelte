@@ -3,7 +3,7 @@
     import Profile from "./Profile.svelte";
     import Avatar from "./Avatar.svelte";
     import ListTile from './ListTile.svelte';
-
+    import {store} from '../../utils/stores/base.js'
     import { rem } from '../../utils/rem.js'
 
     let showPopup = false

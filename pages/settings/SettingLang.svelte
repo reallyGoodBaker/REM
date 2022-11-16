@@ -1,7 +1,7 @@
 <script>
     import RowList from "../components/RowList.svelte"
     import SelectListTile from "../components/SelectListTile.svelte"
-
+    import {store} from '../../utils/stores/base.js'
     import {Lang} from '../../utils/lang/lang.js'
     import { rem } from '../../utils/rem.js'
 

@@ -1,5 +1,6 @@
 import {defaultWizard} from '../wizard.js'
 import {AvatarWidget} from '../../widget/avatar.js'
+import {store} from '../../stores/base.js'
 
 export function init() {
     let profile = store.getSync('profile'),

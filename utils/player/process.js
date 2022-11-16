@@ -1,4 +1,5 @@
 import {LifeCycle, rem} from '../rem.js'
+import {store} from '../stores/base.js'
 
 let processConfig
 

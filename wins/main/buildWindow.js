@@ -131,6 +131,10 @@ function initMainWin(browserWindow) {
         ev.returnValue = remStore.get(k)
     })
 
+    browserWindow.on('focus', () => {
+        browserWindow.webContents.send('win:focus')
+    })
+
 }
 
 /**

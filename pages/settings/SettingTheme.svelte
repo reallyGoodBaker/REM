@@ -2,7 +2,7 @@
     import RowList from "../components/RowList.svelte"
     import SelectListTile from "../components/SelectListTile.svelte"
     import ToggleListTile from "../components/ToggleListTile.svelte"
-
+    import {store} from '../../utils/stores/base.js'
     import { rem } from '../../utils/rem.js'
 
     const lang = s => langMapping.s(s)

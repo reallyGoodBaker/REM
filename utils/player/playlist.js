@@ -1,5 +1,6 @@
 import {AudioData} from './audiodata.js'
 import {LifeCycle, rem} from '../rem.js'
+import {store} from '../stores/base.js'
 
 /**
  * @param {string[]} raw 

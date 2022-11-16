@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import RowList from "../components/RowList.svelte"
     import ToggleListTile from "../components/ToggleListTile.svelte"
-
+    import {store} from '../../utils/stores/base.js'
     import { rem } from '../../utils/rem.js'
 
     $: lang = window.langMapping

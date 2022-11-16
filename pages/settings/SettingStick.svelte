@@ -1,6 +1,7 @@
 <script>
     import RowList from "../components/RowList.svelte"
     import SelectListTile from "../components/SelectListTile.svelte"
+    import {store} from '../../utils/stores/base.js'
 
     function lang(key) {
         return langMapping.s(key)

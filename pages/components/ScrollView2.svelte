@@ -1,6 +1,8 @@
 <script>
 import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
 import { rem } from '../../utils/rem.js'
+import { store } from '../../utils/stores/base.js'
+import {vsync} from '../../utils/core/vsync.js'
 
 let outerContainer
     ,meter
@@ -9,6 +11,7 @@ let outerContainer
     ,scrollThumb
 
 export let minThumbHeight = 12
+export let hoverToShow = false
 
 let thumbHeight = 0
     ,hideTrack = false
@@ -34,6 +37,10 @@ function updateValues() {
 }
 
 function updateScrollPosition() {
+    if (!content) {
+        return
+    }
+
     if (thumbHeight !== minThumbHeight) {
         thumbTop = content.scrollTop/contentHeight * trackHeight
     } else {
@@ -43,7 +50,6 @@ function updateScrollPosition() {
 
 export function update() {
     updateValues()
-    updateScrollPosition()
     emit('afterUpdated')
 }
 
@@ -73,7 +79,7 @@ onDestroy(() => {
 function controllerScrollTo(offset) {
     offset = Math.min(Math.max(thumbHeight/2, offset), trackHeight - thumbHeight/2)
     updateScrollPosition()
-    fastScrollTo((offset - thumbHeight/2)/(trackHeight - thumbHeight))
+    fastScrollTo((offset - thumbHeight/2)/(trackHeight - thumbHeight) * contentHeight)
 }
 
 let thumbTop = 0
@@ -85,18 +91,17 @@ async function scrollup(offset) {
     const stickSpeedRatio = await store.get('stickScrollSpeedRatio')
     let ratio = !stickSpeedRatio? 0.6: stickSpeedRatio[stickSpeedRatio[0] + 1].value
     const scrollOffset = content.scrollTop + offset * ratio
-    fastScrollTo(scrollOffset/contentHeight)
+    fastScrollTo(scrollOffset)
     updateScrollPosition()
 }
 
 let fastScrolling = false
 
-function fastScrollTo(ratio) {
-    ratio = Math.min(Math.max(0, ratio), 1)
+function fastScrollTo(top) {
+    top = Math.min(Math.max(0, top), contentHeight)
     content.scrollTo({
-        top: ratio * (contentHeight || 0),
+        top,
     })
-    updateScrollPosition()
 }
 
 let _mouseThumbOffset = 0
@@ -106,7 +111,7 @@ function onClickScrollTrack(ev) {
     _draggingMode = true
     let offset = ev.offsetY
     offset = ev.pageY - trackOffsetPage
-    fastScrollTo((offset - thumbHeight/2)/trackHeight)
+    fastScrollTo((offset - thumbHeight/2)/trackHeight * contentHeight)
     _mouseThumbOffset = ev.offsetY - thumbTop
 }
 
@@ -129,31 +134,20 @@ function dragScrollThumb(ev) {
     if (!_draggingMode) {
         return
     }
-    const scrollOffset = ev.pageY - trackOffsetPage - _mouseThumbOffset
-    fastScrollTo(scrollOffset/trackHeight)
-}
-
-function wheelChange(ev) {
-    ev.stopPropagation()
-    const shouldFastScroll = Math.abs(ev.deltaY) > 125
-
-    if (shouldFastScroll !== fastScrolling) {
-        fastScrolling = shouldFastScroll
-    }
-
-    const scrollOffset = Math.max(Math.min(content.scrollTop + ev.deltaY, contentHeight), 0)
-    fastScrollTo(scrollOffset/contentHeight)
+    const scrollOffset = (ev.pageY - trackOffsetPage - _mouseThumbOffset) / trackHeight * contentHeight
+    fastScrollTo(scrollOffset)
 }
 
 const emit = createEventDispatcher()
 
+let updater
 onMount(() => {
     window.addEventListener('resize', update)
     scrollTrack.addEventListener('mousedown', onClickScrollTrack)
     scrollThumb.addEventListener('mousedown', pressScrollThumb)
     document.addEventListener('mouseup', releaseScrollThumb)
     document.addEventListener('mousemove', dragScrollThumb)
-    outerContainer.addEventListener('wheel', wheelChange, {passive: true})
+    updater = vsync(updateScrollPosition)
 })
 
 onDestroy(() => {
@@ -162,7 +156,7 @@ onDestroy(() => {
     scrollThumb.removeEventListener('mousedown', pressScrollThumb)
     document.removeEventListener('mouseup', releaseScrollThumb)
     document.removeEventListener('mousemove', dragScrollThumb)
-    outerContainer.removeEventListener('wheel', wheelChange)
+    updater.cancel()
 })
 
 export function prepared() {
@@ -197,7 +191,11 @@ export function scrollTo(pos) {
         position: relative;
         width: 100%;
         height: 100%;
-        overflow: hidden;
+        overflow: auto;
+    }
+
+    .restrict-container::-webkit-scrollbar {
+        width: 0;
     }
 
     .track {
@@ -214,6 +212,16 @@ export function scrollTo(pos) {
         transition: all 0.12s;
     }
 
+    .track.needHover {
+        opacity: 0;
+        transition: opacity 3s ease-in;
+    }
+
+    .out-container:hover > .track.needHover {
+        opacity: 1;
+        transition: opacity 0.2s;
+    }
+
     .thumb {
         --top: 0;
         --height: 0;
@@ -221,7 +229,7 @@ export function scrollTo(pos) {
         top: var(--top);
         height: var(--height);
         width: 100%;
-        transition: height 0.2s, top 0.1s;
+        transition: height 0.2s;
     }
 
     .thumb::before {
@@ -241,9 +249,6 @@ export function scrollTo(pos) {
 
     .track.hover {
         background-color: var(--acrylicBackgroundColor);
-    }
-    .track.hover > .thumb {
-        transition: height 0.2s;
     }
     .track.hover > .thumb::before {
         width: 12px;
@@ -273,7 +278,7 @@ export function scrollTo(pos) {
         </div>
     </div>
 
-    <div class="track {fastScrolling? 'fast-scrolling': ''} {isHoverScrollTrack? 'hover': ''} {hideTrack? 'hide': ''}" bind:this={scrollTrack}>
+    <div class="track {hoverToShow? 'needHover': ''} {fastScrolling? 'fast-scrolling': ''} {isHoverScrollTrack? 'hover': ''} {hideTrack? 'hide': ''}" bind:this={scrollTrack}>
         <div bind:this={scrollThumb}
             class="thumb" 
             style="--height: {thumbHeight}px; --top: {thumbTop}px; min-height: {minThumbHeight}px"
