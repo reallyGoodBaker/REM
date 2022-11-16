@@ -1,5 +1,6 @@
 <script>
     import { onDestroy, onMount } from 'svelte';
+    import { rem } from '../../utils/rem.js';
     import { getImgSrc, imageDecodeQueue } from '../../utils/stores/img.js'
 
     export const alt = ''
@@ -31,25 +32,25 @@
     async function loadImage() {
         img.src = await getImgSrc(src)
 
-        // await img.decode()
         await imageDecodeQueue.decode(img)
-        container.appendChild(img)
-        await fadeInImage()
+        if (container) {
+            container.appendChild(img)
+            await fadeInImage()
+        }
     }
 
-    async function refreshImage() {
+    const refreshImage = async () => {
         img.remove()
-
         await loadImage()
     }
 
     onMount(async () => {
         await loadImage()
-        hooks.on('win:focus', refreshImage)
+        rem.on('win:focus', refreshImage)
     })
 
-    onDestroy(() => {
-        hooks.off('win:focus', refreshImage)
+    Pager.beforeSwitch(() => {
+        rem.off('win:focus', refreshImage)
     })
 
 </script>

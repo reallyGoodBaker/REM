@@ -25,6 +25,8 @@ export default new App({
 
 async function initApp() {
     LifeCycle.start()
+
+    hooks.on('win:focus', () => rem.emit('win:focus'))
 }
 
 initApp()

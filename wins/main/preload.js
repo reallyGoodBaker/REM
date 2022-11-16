@@ -35,6 +35,7 @@ new Binder('hooks')
     once: (...args) => ipcRenderer.once.apply(ipcRenderer, args),
     off: (...args) => ipcRenderer.removeListener.apply(ipcRenderer, args),
     rm: (...args) => ipcRenderer.removeListener.apply(ipcRenderer, args),
+    rmAll: (type) => ipcRenderer.removeAllListeners.call(ipcRenderer, type),
     zoom: (ratio) => webFrame.setZoomFactor(ratio),
 })
 ipcRenderer.setMaxListeners(Infinity)
