@@ -76,3 +76,42 @@ export class ImageStore {
 
     }
 }
+
+export class ImageDecodeQueue {
+    _queue = []
+    _callbacks = []
+    size
+
+    constructor(size=4) {
+        this.size = size
+        requestIdleCallback(this.handleOnce)
+    }
+
+    add(img) {
+        this._queue.push(img)
+    }
+
+    handleOnce = async () => {
+        const imgs = await this._decodeQueue()
+        const callbacks = this._callbacks.splice(0, this.size)
+
+        imgs.forEach((img, i) => {
+            callbacks[i].call(null, img)
+        })
+
+        requestIdleCallback(this.handleOnce)
+    }
+
+    async _decodeQueue() {
+        return await Promise.all(this._queue.splice(0, this.size).map(img => img.decode()))
+    }
+
+    decode(img) {
+        this.add(img)
+        return new Promise(res => {
+            this._callbacks.push(el => res(el))
+        })
+    }
+}
+
+export const imageDecodeQueue = new ImageDecodeQueue()

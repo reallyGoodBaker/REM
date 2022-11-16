@@ -1,6 +1,6 @@
 <script>
     import { onDestroy, onMount } from 'svelte';
-    import { getImgSrc } from '../../utils/stores/img.js'
+    import { getImgSrc, imageDecodeQueue } from '../../utils/stores/img.js'
 
     export const alt = ''
     export let src = ''
@@ -16,12 +16,25 @@
     const img = new Image(width, height)
     img.draggable = false
     img.alt = alt
+    img.style.opacity = 1
+
+    function fadeInImage() {
+        return new Promise(res => {
+            img.animate([
+                {opacity: 0},
+                {opacity: 1}
+            ], {duration: 200, fill: 'forwards'})
+            .onfinish = () => res()
+        })
+    }
 
     async function loadImage() {
         img.src = await getImgSrc(src)
 
-        await img.decode()
+        // await img.decode()
+        await imageDecodeQueue.decode(img)
         container.appendChild(img)
+        await fadeInImage()
     }
 
     async function refreshImage() {
@@ -49,5 +62,5 @@
 
 <div
     class="Column c" bind:this={container}
-    style="background-color: {skeletonColor}; width: {width}; height: {height}; border-radius: {radius}; border: solid {borderWidth} {borderColor};"
+    style="background-color: {skeletonColor}; width: {width}px; height: {height}px; border-radius: {radius}; border: solid {borderWidth} {borderColor};"
 ></div>
