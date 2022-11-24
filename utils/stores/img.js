@@ -27,9 +27,15 @@ export async function getImg(url) {
     return store.getRaw(`ThumbNails/${uri}`)
 }
 
+const imgUriCache = new Map()
 export async function getImgSrc(url) {
     if (!storeLoaded) {
         return url
+    }
+
+    let _cache
+    if (_cache = imgUriCache.get(url)) {
+        return _cache
     }
 
     let data = await getImg(url)
@@ -39,7 +45,10 @@ export async function getImgSrc(url) {
         return data
     }
 
-    return URL.createObjectURL(new Blob([data]))
+    const val =  URL.createObjectURL(new Blob([data]))
+    imgUriCache.set(url, val)
+
+    return val
 }
 
 export class ImageStore {

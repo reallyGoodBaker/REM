@@ -70,10 +70,7 @@ window.Pager = (() => {
         beforeSwitchHandlers = []
 
         history[index] = tabs[selected]
-        // __pager.display({
-        //     component: selections[index],
-        //     props
-        // })
+
         __pager.display(
             selections[index],
             props
@@ -97,7 +94,9 @@ window.Pager = (() => {
     function removeByIndex(index) {
         if (index < 0 || index >= tabs.length) index = 0
 
-        saves.delete(tabs[selected])
+        let shouldBack = index === selected
+
+        saves.delete(tabs[index])
         beforeSwitchHandlers = []
 
         selections = selections
@@ -118,7 +117,7 @@ window.Pager = (() => {
 
         if(typeof onTabDestroy === 'function') onTabDestroy(index)
 
-        back()
+        if (shouldBack) back()
     }
 
     function remove(key) {
@@ -319,13 +318,13 @@ rem.emit('changeControlColor', controlColors[controlColorSelected])
 rem.emit('useAcrylic', settings.theme.useAcrylic)
 
 
-let coloredAppbar = false;
+let coloredAppbar = false
 rem.on('__pageFold', () => {
     coloredAppbar = true
-});
+})
 rem.on('__pageUnfold', () => {
     coloredAppbar = false
-});
+})
 </script>
 
 <style>
@@ -339,8 +338,8 @@ rem.on('__pageUnfold', () => {
     }
 
     .wallpaper {
-        --top: 0px;
-        --left: 0px;
+        --top: 0;
+        --left: 0;
         position: fixed;
         z-index: -999;
         background-color: #000;

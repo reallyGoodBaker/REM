@@ -13,11 +13,8 @@ window.contextMap = new Map()
 rem.isBeta = true
 
 initNetworkWatcher()
-initAudioDevicesFind()
+initAudioDevicesFind() 
 watchAudioDeviceChange()
-
-window.Canvas = document.createElement('canvas')
-window.CanvasCtx = Canvas.getContext('2d')
 
 export default new App({
     target: document.body
