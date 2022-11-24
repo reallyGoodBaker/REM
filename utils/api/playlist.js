@@ -1,7 +1,7 @@
 const {
     user_playlist, playlist_create, playlist_delete, playlist_detail, album_sublist, artist_sublist,
     album
-} = require('NeteaseCloudMusicApi');
+} = require('NeteaseCloudMusicApi')
 
 
 
@@ -39,6 +39,6 @@ async function getAlbumDetail(id, cookie) {
 }
 
 module.exports = {
-    getUserPlaylist, getPlaylistDetail, getAlbumSublist,
-    getArtistSublist, getAlbumDetail
+    getAlbumDetail, getAlbumSublist, getArtistSublist, getPlaylistDetail,
+    getUserPlaylist,
 }

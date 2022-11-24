@@ -1,4 +1,4 @@
-const {login_cellphone, login_qr_check, login_qr_create, login_qr_key, login_status, logout: lo} = require('NeteaseCloudMusicApi');
+const {login_cellphone, login_qr_check, login_qr_create, login_qr_key, login_status, logout: lo} = require('NeteaseCloudMusicApi')
 
 async function login(phone, passwd) {
     return await login_cellphone({

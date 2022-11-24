@@ -1,4 +1,4 @@
-const {daily_signin, yunbei_info, yunbei_sign} = require('NeteaseCloudMusicApi');
+const {daily_signin, yunbei_info, yunbei_sign} = require('NeteaseCloudMusicApi')
 
 async function checkIn(cookie) {
     const signed = (await yunbei_info({cookie})).body.mobileSign;
@@ -7,5 +7,5 @@ async function checkIn(cookie) {
 }
 
 module.exports = {
-    checkIn
+    checkIn,
 }

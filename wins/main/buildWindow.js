@@ -3,11 +3,10 @@ const {
     Menu,
 } = require('electron')
 const path = require('path')
-const RemStore = require('../../utils/server/rem-store')
+const RemStore = require('../../utils/server/rem-store.js')
+const {watchNetworkChange} = require('../../utils/network/server.js')
+
 const remStore = new RemStore()
-
-const { watchNetworkChange } = require('../../utils/network/server')
-
 
 Menu.setApplicationMenu(null)
 watchNetworkChange()
@@ -26,7 +25,7 @@ function getFitWidth(w) {
 }
 
 
-function buildWindow() {
+module.exports = function buildWindow() {
 
     const displayBounds = screen.getPrimaryDisplay().bounds
 
@@ -222,6 +221,3 @@ function setThumbarButtons(win) {
 
     win.setThumbarButtons(playBtns)
 }
-
-
-module.exports = buildWindow

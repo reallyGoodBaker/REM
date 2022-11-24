@@ -1,5 +1,5 @@
-const { app } = require('electron');
-const path = require('path');
+const {app} = require('electron')
+const path = require('path')
 const fs = require('fs')
 
 
@@ -35,7 +35,7 @@ app.on('window-all-closed', function () {
 })
 
 
-const buildMainWindow = require('./wins/main/buildWindow')
+const buildMainWindow = require('./wins/main/buildWindow.js')
 app.on('ready', () => {
     setTimeout(() => {
         buildMainWindow()
@@ -46,4 +46,5 @@ app.on('ready', () => {
 
 
 
-require('./wins/main/binding')()
+const initBindings = require('./wins/main/binding.js')
+initBindings()

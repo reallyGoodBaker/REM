@@ -1,4 +1,4 @@
-const {song_url, song_url_v1, song_detail, song_download_url} = require('NeteaseCloudMusicApi'); 
+const {song_url, song_url_v1, song_detail, song_download_url} = require('NeteaseCloudMusicApi')
 
 async function getSongUrl(id, cookie, br=999000) {
     return await song_url({id, cookie, br});
@@ -17,5 +17,5 @@ async function getSongDownload(id, cookie, br=999000) {
 }
 
 module.exports = {
-    getSongUrl, getSongDetail, getSongDownload, getSongUrlX
+    getSongUrl, getSongUrlX, getSongDetail, getSongDownload
 }

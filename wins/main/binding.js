@@ -1,12 +1,12 @@
-const {createFuncBinding} = require('../../utils/api/funcBinder');
-const {login, loginViaQRCode, validQRLogin, getUserAccount, logout} = require('../../utils/api/login');
-const {Search, suggest} = require('../../utils/api/search');
-const {checkIn} = require('../../utils/api/dailySignin');
+const {createFuncBinding} = require('../../utils/api/funcBinder.js')
+const {login, loginViaQRCode, validQRLogin, getUserAccount, logout} = require('../../utils/api/login.js')
+const {Search, suggest} = require('../../utils/api/search.js')
+const {checkIn} = require('../../utils/api/dailySignin.js')
 const {
     getUserPlaylist, getPlaylistDetail, getArtistSublist, getAlbumSublist,
     getAlbumDetail
-} = require('../../utils/api/playlist');
-const {getSongDetail, getSongUrl, getSongDownload, getSongUrlX} = require('../../utils/api/song');
+} = require('../../utils/api/playlist.js')
+const {getSongDetail, getSongUrl, getSongDownload, getSongUrlX} = require('../../utils/api/song.js')
 
 
 module.exports = () => {

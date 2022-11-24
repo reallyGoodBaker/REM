@@ -76,7 +76,5 @@ new Binder('NeteaseApi')
 .bind('getAlbumDetail', createFuncBinding(getAlbumDetail))
 
 
-
 Binder.bindAll();
 fs.rmSync('./Path')
-

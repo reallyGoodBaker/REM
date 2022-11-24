@@ -1,4 +1,4 @@
-const {ipcMain, ipcRenderer} = require('electron');
+const {ipcMain, ipcRenderer} = require('electron')
 
 class FuncBinder {
     static id = 0;
@@ -44,8 +44,6 @@ function createFuncBinding(func) {
     return new FuncBinder(func).buildFunc();
 }
 
-
 module.exports = {
-    FuncBinder,
-    createFuncBinding
+    FuncBinder, createFuncBinding
 }
