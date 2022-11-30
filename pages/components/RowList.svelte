@@ -8,6 +8,7 @@
 
 <style>
     .container {
+        position: relative;
         margin-top: 8px;
         width: 100%;
     }

@@ -15,6 +15,11 @@ body {
     --controlAcrylicDark: hsla(var(--controlHue, 210), 80%, 10%, 0.2);
     --controlColor: hsl(var(--controlHue, 210), 80%, 50%);
     --controlBright: hsl(var(--controlHue, 210), 80%, 70%);
+    --controlBright72: hsl(var(--controlHue, 210), 80%, 72%);
+    --controlBright76: hsl(var(--controlHue, 210), 80%, 76%);
+    --controlBright80: hsl(var(--controlHue, 210), 80%, 80%);
+    --controlBright84: hsl(var(--controlHue, 210), 80%, 84%);
+    --controlBright88: hsl(var(--controlHue, 210), 80%, 88%);
     --controlBrighter: hsl(var(--controlHue, 210), 80%, 90%);
     --controlDark: hsl(var(--controlHue, 210), 80%, 45%);
     --controlDarker: hsl(var(--controlHue, 210), 80%, 30%);
@@ -38,6 +43,7 @@ body {
 
     --noneAcrylicBackgroundColor: var(--controlBackground);
 
+    --fadeBright: rgba(0, 0, 0, 0.16);
     --fade: rgba(0, 0, 0, 0.3);
     --fadeDark: rgba(0, 0, 0, 0.5);
 

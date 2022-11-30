@@ -6,10 +6,14 @@
     let container = null;
 
     function onClick(ev) {
-        drawRipple(container, ev, fadeOut, rippleColor);
+        if (ev.button) {
+            return
+        }
+
+        drawRipple(container, ev, rippleColor);
     }
 
-    function drawRipple(container, ev, callback, rippleColor) {
+    function drawRipple(container, ev, rippleColor) {
         const {left, top} = container.getBoundingClientRect();
         const {pageX, pageY} = ev;
         const {offsetWidth, offsetHeight} = container;
@@ -27,9 +31,15 @@
                 height: '0px', backgroundColor: `${rippleColor||'var(--controlColor)'}`},
             {top: `${offsetHeight/2 - radius}px`, left: `${offsetWidth/2 - radius}px`,
                 width: `${2*radius}px`, height: `${2*radius}px`, backgroundColor: `${rippleColor||'var(--controlColor)'}`}
-        ], {duration: 320, fill: "forwards", easing: "cubic-bezier(0.05, 0.7, 0.2, 1)"}).onfinish = () => {
-            typeof callback === 'function' && callback.call(ripple, ripple);
-        };
+        ], {duration: 800, fill: "forwards", easing: "cubic-bezier(0.05, 0.8, 0.2, 1)"})
+
+        const cancelAnim = () => {
+            fadeOut(ripple)
+            document.removeEventListener('mouseup', cancelAnim)
+        }
+
+        document.addEventListener('mouseup', cancelAnim)
+
     }
 
     function fadeOut(ele) {

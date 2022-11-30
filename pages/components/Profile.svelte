@@ -2,10 +2,11 @@
     import ListTile from "./ListTile.svelte";
     import Popup from './Popup.svelte';
     import Login from '../Login.svelte';
-    import {getContext} from 'svelte';
+    import {getContext, onMount} from 'svelte';
     import Settings from "../Settings.svelte";
     import {defaultWizard} from '../../utils/wizard/edit-profile/index.js'
     import {store} from '../../utils/stores/base.js'
+    import ExtensionList from '../../extension/ExtensionList.svelte'
 
     let close = getContext('close');
     const s = (f, ...args) => {
@@ -16,7 +17,8 @@
 
     let isLogedin = !!user.avatarUrl;
 
-    let pop = false;
+    let pop = false, login
+
     let hide = async () => {
         pop = false;
         const profile = await store.get('profile');
@@ -30,6 +32,7 @@
     }
     let show = () => {
         pop = true;
+        console.log(login);
     }
 
 
@@ -54,6 +57,16 @@
     function showSettings() {
         close();
         Pager.openNew('$settings', Settings, {});
+    }
+
+    let showExtensions = false
+    onMount(async () => {
+        showExtensions = (await store.get('AppSettings/beta_features')).extensions
+    })
+
+    function showExtensionsPage() {
+        close()
+        Pager.openNew('$extensions', ExtensionList, {})
     }
 
 
@@ -90,7 +103,9 @@
         <Popup
             bind:showPopupWindow={pop}
             on:layerClick={hide}
+            
             >
+            <div bind:this={login}>?????</div>
             <Login/>
         </Popup>
 
@@ -144,6 +159,15 @@
             size={'small'}
             avatar={'\ue666'}
             data={s('download_manager')}/>
+        {#if showExtensions}
+        <ListTile
+            on:click={showExtensionsPage}
+            isUrl={false}
+            style={"font-size: small"}
+            size={'small'}
+            avatar={'\ue68b'}
+            data={s('extensions')}/>
+        {/if}
     </div>
 
     <footer class="column">

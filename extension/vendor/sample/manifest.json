@@ -1,0 +1,15 @@
+{
+    "name": "测试插件",
+    "ver": "1.0.0",
+    "desc": "这是一个测试插件",
+    "author": "RGB",
+    "entry": "index.js",
+    "icon": "icon.png",
+
+    "permissions": [
+        "audio_control",
+        "notification",
+        "new_page"
+    ]
+
+}

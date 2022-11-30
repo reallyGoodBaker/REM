@@ -1,9 +1,25 @@
 import {EventEmitter} from './events.js'
-export const rem = new EventEmitter({captureRejections: true})
+export const rem = new EventEmitter({captureRejections: true, enableWatcher: true})
 
 rem.on('error', err => {
     console.error(err);
 })
+
+const remEventWatcher = {
+    emit({type, args}) {
+        if (type === 'pageContentChange') {
+            return
+        }
+
+        console.log('emit', type, ...args);
+    },
+
+    add(arg) {
+        console.log('add', arg);
+    }
+}
+
+// rem.connectWatcher(remEventWatcher)
 
 export class LifeCycle {
 

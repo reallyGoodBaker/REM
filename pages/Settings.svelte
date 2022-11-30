@@ -1,7 +1,7 @@
 <script>
 import ScrollView from './components/ScrollView2.svelte'
 import Input from './components/Input.svelte'
-import { onDestroy, onMount, tick } from 'svelte';
+import { onMount, tick } from 'svelte';
 
 import SettingBeta from './settings/SettingBeta.svelte'
 import SettingTheme from './settings/SettingTheme.svelte'

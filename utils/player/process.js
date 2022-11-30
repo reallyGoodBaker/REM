@@ -9,6 +9,8 @@ let delay
     ,gain
     ,fader
     ,stereoPanner
+    ,dynamicsCompressor
+    ,connectNode
 
 let eq31
     ,eq62
@@ -119,9 +121,9 @@ export function setEqEnable(bool=true) {
 
     if (bool) {
         stereoPanner.connect(eq31)
-        eq16k.connect(delay)
+        eq16k.connect(connectNode)
     } else {
-        stereoPanner.connect(delay)
+        stereoPanner.connect(connectNode)
     }
 
     if (typeof rem !== 'undefined') {
@@ -142,11 +144,15 @@ export function initProcessor(ctx, srcNode, destNode) {
     gain = ctx.createGain()
     fader = ctx.createGain()
     stereoPanner = ctx.createStereoPanner()
+    dynamicsCompressor = ctx.createDynamicsCompressor()
+    connectNode = ctx.createGain()
     initAllEqualizers(ctx)
 
     srcNode.connect(gain)
     gain.connect(stereoPanner)
-    stereoPanner.connect(delay)
+    stereoPanner.connect(connectNode)
+    connectNode.connect(dynamicsCompressor)
+    dynamicsCompressor.connect(delay)
     delay.connect(fader)
     fader.connect(destNode)
 
@@ -175,7 +181,9 @@ function initProcessorConfig() {
                 4000: 0,
                 8000: 0,
                 16000: 0
-            }
+            },
+            dynamicsCompressor: true,
+
         }
 
         saveConfig()
@@ -262,4 +270,28 @@ export function setFade(fadeIn=0.2, fadeOut=0.2) {
 
 export function getFader() {
     return Object.assign({}, processConfig.fader)
+}
+
+export function dynamicsCompressorEnable(enable) {
+    if (typeof enable === 'undefined') {
+        return processConfig.dynamicsCompressor
+    }
+
+    if (processConfig.dynamicsCompressor === enable) {
+        return
+    }
+
+    processConfig.dynamicsCompressor = enable
+    saveConfig()
+
+    connectNode.disconnect()
+    dynamicsCompressor.disconnect()
+
+    if (enable) {
+        connectNode.connect(dynamicsCompressor)
+        dynamicsCompressor.connect(delay)
+        return
+    }
+
+    connectNode.connect(delay)
 }

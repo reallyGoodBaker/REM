@@ -2,7 +2,7 @@
 import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
 import { rem } from '../../utils/rem.js'
 import { store } from '../../utils/stores/base.js'
-import {vsync} from '../../utils/core/vsync.js'
+import { vsync } from '../../utils/core/vsync.js'
 
 let outerContainer
     ,meter
@@ -175,6 +175,10 @@ export function scrollTo(pos) {
     if (content) {
         content.scrollTop = pos
     }
+}
+
+export function offsetTop() {
+    return content?.scrollTop || 0
 }
 
 </script>

@@ -14,7 +14,7 @@ export class WizardContainer extends PopWindowWidget {
     /**@private*/ _pageIndex = 0
     /**@private*/ _pages = []
 
-    localeParser = t => t
+    localeParser = (...args) => langMapping.s(...args)
 
     get pageIndex() {
         return this._pageIndex

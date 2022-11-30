@@ -1,7 +1,6 @@
 <script>
     import ProgressWithInput from './ProgressWithInput.svelte'
     import {setStereoPanner, getStereoPan} from '../../../utils/player/process.js'
-    import { onMount } from 'svelte'
 
     const s = f => langMapping.s(f)
     

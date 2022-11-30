@@ -9,7 +9,7 @@ import Login from './Login.svelte'
 import SurfaceLayer from './components/SurfaceLayer.svelte';
 import Search from './components/Search.svelte'
 import {store} from '../utils/stores/base.js'
-import { rem } from '../utils/rem.js'
+import {rem} from '../utils/rem.js'
 
 let MinePage = Mine
 if(store.getSync('profile')) {
@@ -58,7 +58,7 @@ window.Pager = (() => {
         return true
     }
 
-    function selectByIndex(index, forceUpdate=false) {
+    function selectByIndex(index, forceUpdate=false, back=false) {
         if (index < 0 || index >= tabs.length) index = 0
 
         let props = Props[index]
@@ -73,7 +73,8 @@ window.Pager = (() => {
 
         __pager.display(
             selections[index],
-            props
+            props,
+            back
         )
 
         selected = index
@@ -88,7 +89,7 @@ window.Pager = (() => {
         let sel = tabs.indexOf(history[selected])
         !~sel && (sel = 0)
 
-        selectByIndex(sel, true)
+        selectByIndex(sel, true, true)
     }
 
     function removeByIndex(index) {
@@ -381,7 +382,9 @@ rem.on('__pageUnfold', () => {
         <Pager bind:this={__pager}/>
         <Control/>
     </div>
-    <SurfaceLayer></SurfaceLayer>
+    <SurfaceLayer>
+        
+    </SurfaceLayer>
 </div>
 
 <Appbar/>

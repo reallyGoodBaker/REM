@@ -13,6 +13,8 @@ export default {
     test_features: 'Beta',
     dev_tools: 'Developer tools',
     dev_tools_extra: 'Open or Close Developer Tools',
+    extensions: 'Extensions',
+    extensions_extra: 'Use extensions (Unstable)',
 
     cache: 'Cache',
     cache_quality: 'Quality of cache',
@@ -80,8 +82,10 @@ export default {
     enable_eq: 'Enable EQ',
     done: 'Done',
     none: 'None',
+    enabled: 'Enabled',
     disabled: 'Disabled',
     processing: 'Processing',
+    dynamic_compressor: 'Dynamic compressor',
 
     phone_number: 'Phone',
     qr_code: 'QR code',

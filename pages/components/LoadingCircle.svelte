@@ -8,7 +8,7 @@
     export let max = 270
     export let transformDuration = 500
     export let transformationDelay = 500
-    export let angularVelocity = 0.2
+    export let angularVelocity = 0.4
     export let roundCap = true
     export let lineWidth = 6
     export let strokeStyle = getComputedStyle(document.body).getPropertyValue('--controlColor')

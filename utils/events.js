@@ -185,9 +185,9 @@ class IndexedLinked {
 }
 export class EventEmitter {
     maxListeners = -1;
-    thisArg = {};
     _events = {};
     captureRejections = false;
+    thisArg = {};
     setMaxListeners(size) {
         this.maxListeners = size;
         return this;
@@ -207,6 +207,7 @@ export class EventEmitter {
         return this.maxListeners !== -1 && size === this.maxListeners;
     }
     _addListener(type, handler, prepend = false, once = false) {
+        this._callWatcherMethod('add', { type, handler, prepend, once });
         const linked = this._getEventLinked(type);
         if (this._canAddNew(linked.size())) {
             this._emitError(RangeError('Listeners is full and cannot join a new listener, please use setMaxListeners to resize'));
@@ -240,20 +241,24 @@ export class EventEmitter {
         this._addListener(type, handler, true);
         return this;
     }
-    removeListener(type, handler) {
+    _removeListener(type, handler) {
+        this._callWatcherMethod('remove', { type, handler });
         const eventLinked = this._getEventLinked(type);
         eventLinked.delete(handler);
         return this;
+    }
+    removeListener(type, handler) {
+        return this._removeListener(type, handler);
     }
     off(type, handler) {
-        const eventLinked = this._getEventLinked(type);
-        eventLinked.delete(handler);
-        return this;
+        return this._removeListener(type, handler);
     }
     removeAllListeners(type) {
+        this._callWatcherMethod('removeAll', { type });
         this._getEventLinked(type).free();
     }
     _emit(type, nullContext = false, ...args) {
+        this._callWatcherMethod('emit', { type, args });
         const l = this._getEventLinked(type);
         const ctx = this.thisArg;
         this.thisArg = nullContext
@@ -340,6 +345,31 @@ export class EventEmitter {
         if (opt) {
             this.captureRejections = opt.captureRejections || false;
             this.thisArg = opt.thisArg || {};
+            this._enableWatcher = opt.enableWatcher || false;
+        }
+    }
+    _watcher;
+    _enableWatcher;
+    connectWatcher(watcher) {
+        if (!this._enableWatcher) {
+            return;
+        }
+        this._watcher = watcher;
+    }
+    disconnectWatcher() {
+        if (this._watcher) {
+            this._watcher = null;
+        }
+    }
+    _callWatcherMethod(name, arg) {
+        if (!this._watcher) {
+            return;
+        }
+        try {
+            this._watcher[name]?.call(this, arg);
+        }
+        catch (er) {
+            this._emitError(er);
         }
     }
 }

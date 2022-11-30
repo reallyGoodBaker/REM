@@ -12,6 +12,7 @@
     import Fader from './TunnerComponents/Fader.svelte'
     import Equalizer from './TunnerComponents/Equalizer.svelte'
     import ToggleListTile from './ToggleListTile.svelte'
+    import DynamicCompressor from './TunnerComponents/DynamicCompressor.svelte';
     import {setEqEnable} from '../../utils/player/process.js'
     import {store} from '../../utils/stores/base.js'
     import { rem } from '../../utils/rem.js'
@@ -201,7 +202,7 @@
         background-color: var(--controlBrighter);
     }
 
-    .tunnerCard.marginBottom {
+    .marginBottom {
         margin-bottom: 24px;
     }
 
@@ -279,7 +280,12 @@
 
                 <div class="Column pair">
                     <div class="label" style="margin-top: 8px;">{s('equalizer')}{!processConfig.eq.enable? `  (${s('disabled')})`: ''}</div>
-                    <canvas style="align-self: flex-start;" bind:this={eqCanvas} id="eqCanvas" width="180" height="82"></canvas>
+                    <canvas style="align-self: flex-start; margin-bottom: 8px;" bind:this={eqCanvas} id="eqCanvas" width="180" height="82"></canvas>
+                </div>
+
+                <div class="Row pair">
+                    <div class="label">{s('dynamic_compressor')}</div>
+                    <em><div class="link">{processConfig.dynamicsCompressor? s('enabled'): s('disabled')}</div></em>
                 </div>
             </TunnerTile>
 
@@ -316,7 +322,7 @@
                     <Fader/>
                 </div>
 
-                <div class="tunnerCard marginBottom">
+                <div class="tunnerCard">
                     <ToggleListTile
                         clickable={false}
                         data={s('enable_eq')}
@@ -328,6 +334,12 @@
                         <Equalizer bind:enable={processConfig.eq.enable}/>
                     </div>
                 </div>
+
+                <div class="tunnerCard">
+                    <DynamicCompressor/>
+                </div>
+
+                <div class="marginBottom"></div>
 
             </ScrollView>
         </div>

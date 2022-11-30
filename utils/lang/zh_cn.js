@@ -13,6 +13,8 @@ export default {
     test_features: '测试功能',
     dev_tools: '开发者工具',
     dev_tools_extra: '开启或关闭开发者工具',
+    extensions: '插件',
+    extensions_extra: '使用插件（不稳定的功能）',
 
     cache: '缓存',
     cache_quality: '缓存音乐质量',
@@ -80,8 +82,10 @@ export default {
     enable_eq: '开启均衡器',
     done: '完成',
     none: '无',
+    enabled: '已启用',
     disabled: '已禁用',
     processing: '处理',
+    dynamic_compressor: '动态压缩器',
 
     phone_number: '电话',
     qr_code: '二维码',
