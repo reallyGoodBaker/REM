@@ -42,6 +42,11 @@
             avatar={'\ue68b'}
             data={s('extensions')}
             desc={'wow'}
+            permissions={[
+                "audio_control",
+                "notification",
+                "new_page"
+            ]}
         />
     </ScrollView2>
 </div>

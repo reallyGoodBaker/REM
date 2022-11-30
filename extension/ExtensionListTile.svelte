@@ -4,22 +4,24 @@
     import RippleLayer from '../pages/components/RippleLayer.svelte'
     import Toggle from '../pages/components/Toggle.svelte'
 
+    const s = v => langMapping.s(v)
     export let ver = '1.0'
     export let desc = ''
     export let isUrl = false
     export let icon = '\ue68b'
     export let name = langMapping.s('extensions')
+    export let permissions = []
 
     export let checked
 
     const emit = createEventDispatcher()
 
     function onToggle() {
-        checked = !checked
         emit('toggle', checked)
     }
 
     export function toggle() {
+        checked = !checked
         onToggle()
     }
 
@@ -49,6 +51,10 @@
 
     .i._btn:hover {
         background-color: var(--fadeBright);
+    }
+
+    .i._btn.red:hover {
+        color: darkred;
     }
 
     .btnGroup {
@@ -101,6 +107,10 @@
         font-size: small;
         color: var(--controlBlack52);
     }
+
+    ul {
+        padding-left: 24px;
+    }
 </style>
 
 <div class="Row outer">
@@ -121,14 +131,21 @@
         </div>
 
         <RippleLayer rippleColor='var(--fadeDark)' cssStyle="border-radius: 50%;">
-            <div class="iconfont i _btn">{'\ue863'}</div>
+            <div class="iconfont i _btn red">{'\ue863'}</div>
         </RippleLayer>
     </div>
 
 
     <div class="Row right-content">
         <div class="name">{name}<span class="ver">{ver}</span></div>
-        <div class="content">{desc}</div>
+        <div class="content">
+            {desc}
+            <ul>
+                {#each permissions as perm}
+                    <li>{s(perm)}</li>
+                {/each}
+            </ul>
+        </div>
         <div class="Row btnGroup">
             <RippleLayer rippleColor='var(--fadeDark)' cssStyle="border-radius: 50%;">
                 <div class="iconfont i _btn">{'\ue6aa'}</div>

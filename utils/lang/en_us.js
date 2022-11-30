@@ -15,6 +15,7 @@ export default {
     dev_tools_extra: 'Open or Close Developer Tools',
     extensions: 'Extensions',
     extensions_extra: 'Use extensions (Unstable)',
+    search_extension: '',
 
     cache: 'Cache',
     cache_quality: 'Quality of cache',
@@ -103,5 +104,9 @@ export default {
 
     disconnected: 'There is a problem with the network connection',
     reconnected: 'The network has been reconnected',
+
+    audio_control: 'Control your Audio',
+    notification: 'Send notifications to you',
+    new_page: 'Create new pages',
 
 }

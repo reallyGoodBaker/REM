@@ -104,5 +104,8 @@ export default {
     disconnected: '网络连接出现问题',
     reconnected: '网络已恢复',
 
+    audio_control: '控制你的音乐',
+    notification: '发送通知',
+    new_page: '创建新的页面',
     
 }
