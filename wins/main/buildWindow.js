@@ -15,22 +15,16 @@ watchNetworkChange()
 const appLock = app.requestSingleInstanceLock()
 if (!appLock) app.exit()
 
-
-function getFitWidth(w) {
-    if (process.platform === 'win32') {
-        return screen.screenToDipPoint({ x: w, y: 0 }).x
-    }
-
-    return w
+function scaleDisplayProp(num, scale=0.7) {
+    return ~~(num * scale)
 }
-
 
 module.exports = function buildWindow() {
 
-    const displayBounds = screen.getPrimaryDisplay().bounds
+    const {width: rawW, height: rawH} = screen.getPrimaryDisplay().bounds
 
-    const width = getFitWidth(1360),
-        height = ~~(displayBounds.height * 0.8)
+    const width = scaleDisplayProp(rawW),
+        height = scaleDisplayProp(rawH, 0.8)
 
     let browserWindow = new BrowserWindow({
         width,

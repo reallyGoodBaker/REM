@@ -38,7 +38,6 @@ new Binder('hooks')
     rmAll: (type) => ipcRenderer.removeAllListeners.call(ipcRenderer, type),
     zoom: (ratio) => webFrame.setZoomFactor(ratio),
 })
-ipcRenderer.setMaxListeners(Infinity)
 
 const { getWallpaper } = require('../../utils/Win11Wallpaper');
 new Binder('wallpaper').bind('getWallpaper', getWallpaper);

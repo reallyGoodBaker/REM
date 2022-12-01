@@ -12,7 +12,8 @@
 </head>
 <body>
     <script>
-        hooks.zoom(1.25 / window.devicePixelRatio)
+        const scale = (visualViewport.width * devicePixelRatio) / 1345
+        hooks.zoom(scale * 1.25 / devicePixelRatio)
     </script>
     <style>
         body {

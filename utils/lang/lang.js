@@ -24,7 +24,7 @@ export class Lang {
             returnVal = returnVal.replace(index, str)
         })
 
-        return returnVal
+        return returnVal ?? format
     }
 
     static s = this.parse

@@ -4,7 +4,7 @@
     import RippleLayer from '../pages/components/RippleLayer.svelte'
     import Toggle from '../pages/components/Toggle.svelte'
 
-    const s = v => langMapping.s(v)
+    const s = v => langMapping.s(v) || v
     export let ver = '1.0'
     export let desc = ''
     export let isUrl = false

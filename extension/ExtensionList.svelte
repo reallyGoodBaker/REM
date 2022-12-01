@@ -39,7 +39,7 @@
         <ExtensionListTile
             isUrl={false}
             customClickListener={true}
-            avatar={'\ue68b'}
+            icon={'\ue68b'}
             data={s('extensions')}
             desc={'wow'}
             permissions={[
