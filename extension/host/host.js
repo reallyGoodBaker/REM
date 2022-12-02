@@ -127,9 +127,12 @@ class ExtensionHost {
         await this.request('beforeDisable')
         await this.request('clearTimeouts')
 
-        this.extension.terminate()
+        const code = await this.extension.terminate()
         this.events.emit('kill', reason)
+        this.events.emit('exit', code)
         this.events.emit('-service')
+
+        this.extension = null
     }
 
     _registerComponents() {
