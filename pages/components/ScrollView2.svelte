@@ -255,7 +255,8 @@ export function offsetTop() {
         background-color: var(--acrylicBackgroundColor);
     }
     .track.hover > .thumb::before {
-        width: 12px;
+        right: calc(100% - 12px);
+        width: 10px;
         border-radius: 6px;
         background-color: #555;
     }

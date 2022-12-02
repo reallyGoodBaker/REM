@@ -4,9 +4,10 @@
     "desc": "这是一个测试插件",
     "author": "RGB",
     "entry": "index.js",
-    "icon": "icon.png",
+    "icon": "icon.v.png",
+    "id": "23dc60bf-4621-4ab3-92f7-50baf8c6ea1b",
 
-    "permissions": [
+    "components": [
         "audio_control",
         "notification",
         "new_page"

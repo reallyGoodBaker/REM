@@ -3,7 +3,38 @@
     import ExtensionListTile from './ExtensionListTile.svelte'
     import Input from '../pages/components/Input.svelte'
 
+    import {getManifests} from './initExtensionList'
+
     const s = v => langMapping.s(v)
+    const manifests = getManifests()
+
+    function isUrl(icon) {
+        if (!icon) {
+            return false
+        }
+
+        return icon.endsWith('.png')
+    }
+
+    function createUrl(icon, folderName) {
+        if (!icon) {
+            return '\ue68b'
+        }
+
+        if (icon.startsWith('.')) {
+            icon = icon.replace(/^\.\/(.*)/g, '$1')
+        }
+
+        if (icon.endsWith('.v.png')) {
+            return `file://${AppPaths.ExtVendor}/${folderName}/${icon}`
+        }
+        
+        if (icon.endsWith('.png')) {
+            return `file://${AppPaths.Extensions}/${folderName}/${icon}`
+        }
+        
+        return icon
+    }
 
 </script>
 
@@ -36,17 +67,17 @@
             <Input placeholder="搜索插件" cssText="width: 100px"/>
         </div>
 
+        {#each manifests as {name, desc, ver, components, icon, id, folderName}}
         <ExtensionListTile
-            isUrl={false}
+            isUrl={isUrl(icon)}
             customClickListener={true}
-            icon={'\ue68b'}
-            data={s('extensions')}
-            desc={'wow'}
-            permissions={[
-                "audio_control",
-                "notification",
-                "new_page"
-            ]}
+            icon={createUrl(icon, folderName)}
+            {id}
+            {name}
+            {desc}
+            {ver}
+            {components}
         />
+        {/each}
     </ScrollView2>
 </div>

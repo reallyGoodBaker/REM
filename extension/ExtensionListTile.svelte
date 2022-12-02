@@ -10,7 +10,8 @@
     export let isUrl = false
     export let icon = '\ue68b'
     export let name = langMapping.s('extensions')
-    export let permissions = []
+    export let components = []
+    export let id = ''
 
     export let checked
 
@@ -18,6 +19,9 @@
 
     function onToggle() {
         emit('toggle', checked)
+        hooks.send(`extension:${
+            checked? 'active': 'deactive'
+        }`, id)
     }
 
     export function toggle() {
@@ -34,7 +38,7 @@
         border: solid 1px var(--controlGray);
         border-radius: 10px;
         overflow: hidden;
-        background-color: var(--controlBrighter);
+        background-color: var(--dynamicControlLight);
         margin-bottom: 8px;
     }
 
@@ -141,7 +145,7 @@
         <div class="content">
             {desc}
             <ul>
-                {#each permissions as perm}
+                {#each components as perm}
                     <li>{s(perm)}</li>
                 {/each}
             </ul>

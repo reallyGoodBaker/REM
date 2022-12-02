@@ -3,7 +3,7 @@ const {
     Menu,
 } = require('electron')
 const path = require('path')
-const RemStore = require('../../utils/server/rem-store.js')
+const RemStore = require('../../utils/stores/rem-store.js')
 const {watchNetworkChange} = require('../../utils/network/server.js')
 
 const remStore = new RemStore()
@@ -61,10 +61,13 @@ module.exports = function buildWindow() {
         if (process.platform === 'win32') {
             setThumbarButtons(browserWindow)
         }
+
+        ipcMain.emit('win:loaded')
     })
 
     initMainWin(browserWindow)
     activeAppBarBtns(browserWindow)
+    initExtensions(browserWindow)
 
     browserWindow.show()
 
@@ -214,4 +217,18 @@ function setThumbarButtons(win) {
     ipcMain.on('thumbar:pause', setPause)
 
     win.setThumbarButtons(playBtns)
+}
+
+
+const {loaderBuilder} = require('../../extension/host/loader')
+const {Extensions} = require('../../utils/appPath/main')
+
+/**
+ * @param {BrowserWindow} bw 
+ */
+function initExtensions(bw) {
+    const loader = loaderBuilder(bw)
+
+    loader(path.resolve(__dirname, '../../extension/vendor'))
+    loader(Extensions)
 }

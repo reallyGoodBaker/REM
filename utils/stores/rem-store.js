@@ -1,8 +1,7 @@
 const fs = require('fs')
 const path = require('path')
-const {app} = require('electron')
-const APPDATA = path.resolve(app.getPath('appData'), 'rem/data')
-const APPSTORE = path.join(APPDATA, 'store')
+const {Data} = require('../appPath/main')
+const APPSTORE = path.join(Data, 'store')
 
 if (!fs.existsSync(APPSTORE)) {
     fs.mkdirSync(APPSTORE)

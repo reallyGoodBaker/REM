@@ -1,13 +1,15 @@
 const { ipcRenderer, webFrame } = require('electron');
 const Binder = require('../../utils/jsBinder');
 const { createFuncBinding } = require('../../utils/api/funcBinder');
-const fs = require('fs')
 
 
 const { fetchJson } = require('../../utils/server/fetch')
-const [
-    _, AppData, AppCache
-] = fs.readFileSync('./Path').toString().split('\n')
+const { readPath } = require('../../utils/appPath/renderer')
+const AppPaths = readPath()
+
+const { AppCache } = AppPaths
+
+new Binder('AppPaths').use(AppPaths)
 
 const {
     saveToCache,
@@ -76,4 +78,3 @@ new Binder('NeteaseApi')
 
 
 Binder.bindAll();
-fs.rmSync('./Path')

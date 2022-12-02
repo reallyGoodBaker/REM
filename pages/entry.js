@@ -6,12 +6,14 @@ import { initNetworkWatcher } from '../utils/network/browser.js'
 import { initAudioDevicesFind, watchAudioDeviceChange } from '../utils/devices/browser/find.js'
 import { Lang } from '../utils/lang/lang.js'
 import { rem, LifeCycle } from '../utils/rem.js'
+import { initExtensionList } from '../extension/initExtensionList.js'
 
 window.langMapping = new Lang(store.getSync('AppSettings/lang')?.selected || 'zh_cn')
 window.contextMap = new Map()
 
 rem.isBeta = true
 
+initExtensionList()
 initNetworkWatcher()
 initAudioDevicesFind() 
 watchAudioDeviceChange()
