@@ -45,8 +45,6 @@ class ExtensionHost {
             this.events.emit('message', v)
         })
 
-        ipcMain.emit('extension-worker-loaded', this.manifest)
-
         return ext
 
     }
@@ -80,9 +78,27 @@ class ExtensionHost {
      * @param {BrowserWindow} bw 
      */
     initExtension(bw) {
-        const extWorker = this.registerExtensionWorker()
+        //const extWorker = 
+        this.registerExtensionWorker()
         this._connectComponents(bw)
         this._registerComponents()
+        this._registerActivationChange(bw)
+
+        ipcMain.emit('extension:activated', this.manifest)
+    }
+
+    _registerActivationChange = bw => {
+        const web = bw.webContents
+
+        ipcMain.once('extension:activated', m => {
+            m.activated = true
+            web.send('extension:activated', m)
+        })
+
+        ipcMain.once('extension:deactivated', m => {
+            m.activated = false
+            web.send('extension:activated', m)
+        })
     }
 
     _connectComponents(bw) {
@@ -131,8 +147,9 @@ class ExtensionHost {
         this.events.emit('kill', reason)
         this.events.emit('exit', code)
         this.events.emit('-service')
-
         this.extension = null
+
+        ipcMain.emit('extension:deactivated', this.manifest)
     }
 
     _registerComponents() {

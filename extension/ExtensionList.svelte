@@ -40,7 +40,7 @@
 
 <style>
     .outer {
-        width: 400px;
+        width: 100%;
         height: 100%;
     }
 
@@ -58,26 +58,36 @@
         margin-bottom: 8px;
         margin-top: 12px;
     }
+
+    .inner {
+        width: 100%;
+    }
 </style>
 
 <div class="outer">
     <ScrollView2>
-        <div class="Row header">
-            <h1>{s('extensions')}</h1>
-            <Input placeholder="搜索插件" cssText="width: 100px"/>
-        </div>
+        <div class="Column inner"><div style="width: 400px;">
+            <div class="Row header">
+                <h1>{s('extensions')}</h1>
+                <Input placeholder="搜索插件" cssText="width: 100px"/>
+            </div>
 
-        {#each manifests as {name, desc, ver, components, icon, id, folderName}}
-        <ExtensionListTile
-            isUrl={isUrl(icon)}
-            customClickListener={true}
-            icon={createUrl(icon, folderName)}
-            {id}
-            {name}
-            {desc}
-            {ver}
-            {components}
-        />
-        {/each}
+            {#each manifests as {
+                name, desc, ver, components, icon, id, folderName,
+                activated
+            }}
+            <ExtensionListTile
+                isUrl={isUrl(icon)}
+                customClickListener={true}
+                icon={createUrl(icon, folderName)}
+                {id}
+                {name}
+                {desc}
+                {ver}
+                {components}
+                checked={activated}
+            />
+            {/each}
+        </div></div>
     </ScrollView2>
 </div>

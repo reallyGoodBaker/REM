@@ -12,7 +12,7 @@ class Configurator {
     sync = () => {
         try {
             this.store = JSON.parse(
-                fs.readFileSync(path).toString()
+                fs.readFileSync(this.path).toString()
             )
         } catch (_) { }
     }

@@ -1,5 +1,5 @@
 <script>
-import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
+import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 import { rem } from '../../utils/rem.js'
 import { store } from '../../utils/stores/base.js'
 import { vsync } from '../../utils/core/vsync.js'
