@@ -31,7 +31,7 @@ function mkdir(paths) {
 mkdir(paths)
 
 function savePath() {
-    fs.writeFileSync(path.join(__dirname, '../../path'), paths.join('\n'))
+    fs.writeFileSync(path.join(__dirname, '../../../path'), paths.join('\n'))
 }
 
 module.exports = {
