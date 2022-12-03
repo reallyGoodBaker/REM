@@ -23,13 +23,6 @@
         store.set('AppSettings/beta_features', betaFeatures)
     }
 
-    function onToggleExtensions({detail}) {
-        betaFeatures.extensions = detail
-        store.set('AppSettings/beta_features', betaFeatures)
-
-        rem.emit('showExtensionTab', detail)
-    }
-
     onMount(() => {
         hooks.send(`devtools:${
             betaFeatures.showDevTools ? 'open': 'close'
@@ -47,15 +40,6 @@
         isUrl={false}
         bind:checked={betaFeatures.showDevTools}
         on:toggle={onToggleDevTools}
-    />
-
-    <ToggleListTile
-        data={lang.s('extensions')}
-        extra={lang.s('extensions_extra')}
-        useAvatar={false}
-        isUrl={false}
-        bind:checked={betaFeatures.extensions}
-        on:toggle={onToggleExtensions}
     />
 </RowList>
 {/if}

@@ -59,11 +59,6 @@
         Pager.openNew('$settings', Settings, {});
     }
 
-    let showExtensions = false
-    onMount(async () => {
-        showExtensions = (await store.get('AppSettings/beta_features')).extensions
-    })
-
     function showExtensionsPage() {
         close()
         Pager.openNew('$extensions', ExtensionList, {})
@@ -159,7 +154,6 @@
             size={'small'}
             avatar={'\ue666'}
             data={s('download_manager')}/>
-        {#if showExtensions}
         <ListTile
             on:click={showExtensionsPage}
             isUrl={false}
@@ -167,7 +161,6 @@
             size={'small'}
             avatar={'\ue68b'}
             data={s('extensions')}/>
-        {/if}
     </div>
 
     <footer class="column">
