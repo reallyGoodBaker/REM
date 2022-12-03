@@ -28,11 +28,11 @@ function mkdir(paths) {
     }
 }
 
-function savePath() {
-    fs.writeFileSync(path.resolve(__dirname, './path'), paths.join('\n'))
-}
-
 mkdir(paths)
+
+function savePath() {
+    fs.writeFileSync(path.join(__dirname, '../../path'), paths.join('\n'))
+}
 
 module.exports = {
     paths,

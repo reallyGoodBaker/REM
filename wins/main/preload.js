@@ -1,7 +1,6 @@
-const { ipcRenderer, webFrame } = require('electron');
-const Binder = require('../../utils/jsBinder');
-const { createFuncBinding } = require('../../utils/api/funcBinder');
-
+const { ipcRenderer, webFrame } = require('electron')
+const Binder = require('../../utils/jsBinder')
+const { createFuncBinding } = require('../../utils/api/funcBinder')
 
 const { fetchJson } = require('../../utils/server/fetch')
 const { readPath } = require('../../utils/appPath/renderer')
