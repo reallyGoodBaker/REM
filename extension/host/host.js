@@ -1,10 +1,10 @@
-const {ipcMain} = require('electron')
+const { ipcMain } = require('electron')
 const path = require('path')
 const requireManifest = require('./manifestParser')
-const {Worker, MessagePort} = require('worker_threads')
-const {EventEmitter} = require('events')
-const {X509Certificate} = require('crypto')
-const {Blob} = require('buffer')
+const { Worker, MessagePort } = require('worker_threads')
+const { EventEmitter } = require('events')
+const { X509Certificate } = require('crypto')
+const { Blob } = require('buffer')
 const serviceMap = require('./serviceMap')
 
 class ExtensionHost {
@@ -32,6 +32,7 @@ class ExtensionHost {
         )
 
         ext.on('message', v => {
+
             if ('name' in v && 'args' in v) {
                 this.events.emit(`service:${v.name}`, v)
                 return
@@ -59,7 +60,7 @@ class ExtensionHost {
         const uid = this.requestId++
 
         return new Promise((res, rej) => {
-            const returnValHandler = ({uid, val, err}) => {
+            const returnValHandler = ({ uid, val, err }) => {
                 this.requests.delete(uid)
 
                 if (err) {
@@ -70,7 +71,7 @@ class ExtensionHost {
             }
 
             this.requests.set(uid, returnValHandler)
-            this.extension.postMessage({uid, name, args}, this._buildTransList(args))
+            this.extension.postMessage({ uid, name, args }, this._buildTransList(args))
         })
     }
 
@@ -97,7 +98,7 @@ class ExtensionHost {
 
         ipcMain.once('extension:deactivated', m => {
             m.activated = false
-            web.send('extension:activated', m)
+            web.send('extension:deactivated', m)
         })
     }
 
@@ -122,7 +123,7 @@ class ExtensionHost {
             return
         }
 
-        const component = this._initComponent(name, bw)
+        const component = this._initComponent(name, bw, this.extension)
         this.components.set(name, component)
     }
 
@@ -141,7 +142,7 @@ class ExtensionHost {
 
     async kill(reason) {
         await this.request('beforeDisable')
-        await this.request('clearTimeouts')
+        await this.request('clearTimers')
 
         const code = await this.extension.terminate()
         this.events.emit('kill', reason)
@@ -161,21 +162,20 @@ class ExtensionHost {
         }
     }
 
-
     _registerComponent = (component) => {
         for (const key of this._getComponentKeys(component)) {
-            const handler = ({args, id}) => {
+            const handler = async ({ args, id }) => {
                 let val
                     ,err = val = null
-                
+
                 try {
-                    val = component[key].apply(component, args)
+                    val = await component[key].apply(component, args)
                 } catch (er) {
                     err = er
                 }
 
-                if (typeof id === 'number') {
-                    const returnVal = {id, val, err}
+                if (typeof id === 'number' && this.extension) {
+                    const returnVal = { id, val, err }
                     this.extension.postMessage(returnVal, this._buildTransList(returnVal))
                 }
             }

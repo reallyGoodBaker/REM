@@ -1,8 +1,8 @@
-const {ExtensionHost} = require('./host')
-const {ipcMain, BrowserWindow} = require('electron')
-const {Data} = require('../../utils/appPath/main')
+const { ExtensionHost } = require('./host')
+const { ipcMain, BrowserWindow } = require('electron')
+const { Data } = require('../../utils/appPath/main')
 const path = require('path')
-const {open} = require('../../utils/stores/configurator')
+const { open } = require('../../utils/stores/configurator')
 const fs = require('fs')
 
 class ExtensionLoader {
@@ -52,7 +52,7 @@ class ExtensionLoader {
 
             host.initExtension(this.bw)
 
-            this.config.assign({[id]: true})
+            this.config.assign({ [id]: true })
             this.config.commit()
         }
     }
@@ -73,7 +73,7 @@ class ExtensionLoader {
 
             host.kill()
 
-            this.config.assign({[id]: false})
+            this.config.assign({ [id]: false })
             this.config.commit()
         }
     }

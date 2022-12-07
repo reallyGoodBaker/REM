@@ -5,6 +5,7 @@ const {
 const path = require('path')
 const RemStore = require('../../utils/stores/rem-store.js')
 const {watchNetworkChange} = require('../../utils/network/server.js')
+const {initExtRuntime} = require('../../extension/initExtensionHost')
 
 const remStore = new RemStore()
 
@@ -65,6 +66,7 @@ module.exports = function buildWindow() {
         ipcMain.emit('win:loaded')
     })
 
+    initExtRuntime()
     initMainWin(browserWindow)
     activeAppBarBtns(browserWindow)
     initExtensions(browserWindow)

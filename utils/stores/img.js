@@ -1,5 +1,5 @@
 import { LifeCycle } from "../rem";
-import {store} from './base.js'
+import { store } from './base.js'
 
 let storeLoaded = false
 
@@ -45,7 +45,7 @@ export async function getImgSrc(url) {
         return data
     }
 
-    const val =  URL.createObjectURL(new Blob([data]))
+    const val = URL.createObjectURL(new Blob([data]))
     imgUriCache.set(url, val)
 
     return val
@@ -82,7 +82,6 @@ export class ImageStore {
 
     handleLastUrls() {
 
-
     }
 }
 
@@ -90,8 +89,18 @@ export class ImageDecodeQueue {
     _queue = []
     _callbacks = []
     size
+    observer = new IntersectionObserver(entries => {
+        entries.forEach(v => {
+            if (v.isIntersecting) {
+                // v.target.style.opacity = '1'
+            } else {
+                // v.target.style.opacity = 0
+                // console.log(v.target)
+            }
+        })
+    })
 
-    constructor(size=4) {
+    constructor(size = 4) {
         this.size = size
         requestIdleCallback(this.handleOnce)
     }
@@ -120,6 +129,14 @@ export class ImageDecodeQueue {
         return new Promise(res => {
             this._callbacks.push(el => res(el))
         })
+    }
+
+    observe(img) {
+        this.observer.observe(img)
+    }
+
+    unobserve(img) {
+        this.observer.unobserve(img)
     }
 }
 

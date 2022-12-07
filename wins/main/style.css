@@ -55,7 +55,6 @@ body {
     color: var(--controlBlack);
 
     --acrylicTransparent: hsla(var(--controlHue, 210), 80%, 96%, 0.3);
-    zoom: var(--zoom, 1);
 }
 
 .column {

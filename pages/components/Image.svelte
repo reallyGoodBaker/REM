@@ -46,11 +46,13 @@
 
     onMount(async () => {
         await loadImage()
-        rem.on('win:focus', refreshImage)
+        imageDecodeQueue.observe(img)
+        // rem.on('win:focus', refreshImage)
     })
 
     Pager.beforeSwitch(() => {
-        rem.off('win:focus', refreshImage)
+        imageDecodeQueue.unobserve(img)
+        // rem.off('win:focus', refreshImage)
     })
 
 </script>

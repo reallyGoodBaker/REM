@@ -2,7 +2,7 @@
     import { onMount, setContext } from "svelte";
     import { EventEmitter } from "../../utils/events.js";
     import Popup from './Popup.svelte'
-    import {store} from '../../utils/stores/base.js'
+    import { store } from '../../utils/stores/base.js'
     import { rem } from '../../utils/rem.js'
 
     let layer = false;
@@ -121,13 +121,12 @@
         }
     })
 
-    import { networkChangeNotif } from "../../utils/network/browser.js"
     onMount(() => {
-        networkChangeNotif.inject(layerElement)
         connectNotif.inject(layerElement)
     })
 
     import TunnerWindow from './TunnerWindow.svelte'
+    import NotificationList from "../../utils/notification/NotificationList.svelte";
     let showTunnerWindow = false
     rem.on('tunnerOpen', () => showTunnerWindow = true)
     rem.on('tunnerClose', () => showTunnerWindow = false)
@@ -155,6 +154,7 @@
         noLayer={false}>
         <TunnerWindow/>
     </Popup>
+    <NotificationList/>
     <slot />
 </div>
 

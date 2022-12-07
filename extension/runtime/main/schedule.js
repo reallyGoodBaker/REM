@@ -24,7 +24,7 @@ class Timeout {
     }
 }
 
-provide('clearTimeouts', () => {
+provide('clearTimers', () => {
     Timeout.cancelAll()
 })
 

@@ -105,8 +105,10 @@ export default {
     disconnected: 'There is a problem with the network connection',
     reconnected: 'The network has been reconnected',
 
-    audio_control: 'Control your Audio',
-    notification: 'Send notifications to you',
-    new_page: 'Create new pages',
+    $audio_control: 'Control your Audio',
+    $notification: 'Send notifications to you',
+    $new_page: 'Create new pages',
 
+    notification: 'Notification',
+    
 }
