@@ -25,7 +25,7 @@ class ExtensionHost {
         })
     }
 
-    registerExtensionWorker = () => {
+    _registerExtensionWorker = () => {
 
         const ext = this.extension = new Worker(
             path.join(this.root, this.manifest.entry)
@@ -80,7 +80,7 @@ class ExtensionHost {
      */
     initExtension(bw) {
         //const extWorker = 
-        this.registerExtensionWorker()
+        this._registerExtensionWorker()
         this._connectComponents(bw)
         this._registerComponents()
         this._registerActivationChange(bw)
@@ -153,7 +153,7 @@ class ExtensionHost {
         ipcMain.emit('extension:deactivated', this.manifest)
     }
 
-    _registerComponents() {
+    _registerComponents = () => {
         for (const name of this.componentNames()) {
             let component
             if (component = this.components.get(name)) {
