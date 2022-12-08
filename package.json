@@ -32,7 +32,8 @@
     "build": {
         "appId": "top.rgb39.rem",
         "files": [
-            "!pages/**/{*.svelte,*.js,*.d.ts}",
+            "!pages/**/*.js",
+            "!*/**/{*.svelte,*.d.ts}",
             "!build.*",
             "!*.md",
             "!rollup.config.js",
