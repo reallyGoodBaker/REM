@@ -40,19 +40,21 @@
     }
 
     const refreshImage = async () => {
-        img.remove()
-        await loadImage()
+        if (!imageDecodeQueue.isVisible(img)) {
+            img.remove()
+            await loadImage()
+        }
     }
 
     onMount(async () => {
         await loadImage()
         imageDecodeQueue.observe(img)
-        // rem.on('win:focus', refreshImage)
+        rem.on('win:focus', refreshImage)
     })
 
     Pager.beforeSwitch(() => {
         imageDecodeQueue.unobserve(img)
-        // rem.off('win:focus', refreshImage)
+        rem.off('win:focus', refreshImage)
     })
 
 </script>

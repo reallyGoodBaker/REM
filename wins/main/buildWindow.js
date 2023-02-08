@@ -163,8 +163,8 @@ function activeAppBarBtns(browserWindow) {
         ev.sender.send('win:screenSize', screen.getPrimaryDisplay().bounds)
     })
 
-    browserWindow.on('will-move', (ev, bounds) => {
-        browserWindow.webContents.executeJavaScript(`window.__changeBgPos && window.__changeBgPos(${bounds.x}, ${bounds.y})`)
+    browserWindow.on('will-move', (_, bounds) => {
+        browserWindow.webContents.send('pos-change', bounds)
     })
 
 }

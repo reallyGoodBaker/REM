@@ -1,6 +1,6 @@
 <script>
     import { onDestroy, onMount } from "svelte"
-    import Notification from "./notification.svelte"
+    import Notification from "./Notification.svelte"
     import { rem } from "../rem.js"
 
     let notifications = []

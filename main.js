@@ -1,7 +1,6 @@
 const {app} = require('electron')
 const {savePath} = require('./utils/appPath/main')
 
-
 //将主要路径写入Path供preload使用
 savePath()
 

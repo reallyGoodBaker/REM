@@ -89,13 +89,18 @@ export class ImageDecodeQueue {
     _queue = []
     _callbacks = []
     size
+    visible = new WeakSet()
+
+    isVisible(img) {
+        return this.visible.has(img)
+    }
+
     observer = new IntersectionObserver(entries => {
         entries.forEach(v => {
             if (v.isIntersecting) {
-                // v.target.style.opacity = '1'
+                this.visible.add(v.target)
             } else {
-                // v.target.style.opacity = 0
-                // console.log(v.target)
+                this.visible.delete(v.target)
             }
         })
     })

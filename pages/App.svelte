@@ -218,16 +218,7 @@ rem.on('__openMinePage', () => {
     window.Pager.openNew('$mine', Mine, {}, true)
 })
 
-window.__changeBgPos = changePos
-
-
-hooks.on('win:screen-move', (ev, x, y) => {
-    if (wpEle) {
-        wpEle.style.setProperty('--top', y)
-        wpEle.style.setProperty('--left', x)
-    }
-})
-
+hooks.on('pos-change', (_, {x, y}) => changePos(x, y))
 hooks.on('win:max', () => changePos(0, 0))
 hooks.on('win:unmax', (_, data) => {
     changePos(data[0], data[1])
@@ -237,19 +228,30 @@ hooks.send('winbind:move')
 
 let wallpaperWidth = 1080, wpEle
 
+import {vsync} from '../utils/core/vsync.js'
+const pos = {
+    x: 0,
+    y: 0
+}
+
 function changePos(x,y) {
     if (!useAcrylic) {
         return
     }
 
-    if (wpEle) {
-        wpEle.style.setProperty('--top', y)
-        wpEle.style.setProperty('--left', x)
-    }
+    pos.x = x
+    pos.y = y
 }
 
+let bgRefresh = vsync(() => {
+    if (wpEle) {
+        wpEle.style.setProperty('--top', pos.y)
+        wpEle.style.setProperty('--left', pos.x)
+    }
+})
 
-(async () => {
+
+;(async () => {
     let data = await getBounds(),
         ss = await getScreenSize()
 
@@ -283,8 +285,17 @@ rem.on('changeControlColor', color => {
 rem.on('useAcrylic', async boolean => {
     settings.theme.useAcrylic = useAcrylic = boolean
     if (boolean) {
+        bgRefresh = vsync(() => {
+            if (wpEle) {
+                wpEle.style.setProperty('--top', pos.y)
+                wpEle.style.setProperty('--left', pos.x)
+            }
+        })
+
         let data = await getBounds()
         changePos(data.x, data.y)
+    } else {
+        bgRefresh.cancel()
     }
     store.set('sys-settings', settings)
 })
@@ -335,6 +346,7 @@ rem.on('__pageUnfold', () => {
         display: grid;
         grid-template-rows: 89px 1fr 72px;
         grid-template-columns: 1fr;
+        backdrop-filter: blur(48px);
         contain: strict;
     }
 
@@ -344,9 +356,9 @@ rem.on('__pageUnfold', () => {
         position: fixed;
         z-index: -999;
         background-color: #000;
-        filter: blur(48px);
-        transform: translate(calc(var(--left) * -1px), calc(var(--top) * -1px));
-        will-change: transform;
+        top: calc(var(--top) * -1px);
+        left: calc(var(--left) * -1px);
+        transform: translateZ(0);
     }
 
     .head {

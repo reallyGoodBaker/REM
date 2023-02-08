@@ -95,7 +95,7 @@
             requestAnimationFrame(() => {
                 scrollv.update()
             })
-        });
+        })
     }
 
     function clearPlaylist(id) {
@@ -323,6 +323,7 @@
     .card-container {
         flex-wrap: wrap;
         justify-content: flex-start;
+        contain: paint;
     }
 
     .toggle.unfold {
@@ -453,7 +454,6 @@
             <div class="avatar" style="background-color: var(--controlGray);"></div>
             {:then url} 
             <Image width={160} height={160} radius={'4px'} src={url} borderWidth={'0px'}/>
-            <!-- <div class="avatar" style="background-image: url({url});"></div> -->
             {/await}
             <div class="btn light FAB"
                 on:click|stopPropagation={() => {fastPlay(list.id)}}

@@ -1,6 +1,7 @@
 const fs = require('fs')
 const http = require('http')
 const os = require('os')
+const {nativeImage} = require('electron')
 
 const userProfile = process.env.USERPROFILE
 const platform = os.platform()
@@ -21,8 +22,15 @@ async function getDailyBackgroundUrl() {
  * @returns {Buffer}
  */
 async function getWallpaper() {
-    if (platform === 'win32' && release === '10') {
-        return fs.readFileSync(`${userProfile}/Application Data/Microsoft/Windows/Themes/TranscodedWallpaper`)
+    if (platform === 'win32' && release >= '10') {
+        const raw = nativeImage.createFromPath(`${userProfile}/Application Data/Microsoft/Windows/Themes/TranscodedWallpaper`)
+        const proc = raw.resize({
+            width: 640,
+            height: 360,
+            quality: 'good'
+        })
+
+        return proc.toDataURL()
     }
     return await getDailyBackgroundUrl()
 }

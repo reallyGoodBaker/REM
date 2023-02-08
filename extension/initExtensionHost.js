@@ -36,6 +36,11 @@ function initExtRuntime() {
         path.resolve(__dirname, './runtime'),
         ExtensionRuntime
     )
+
+    cp(
+        path.resolve(__dirname, './dependencies'),
+        DataNodeModules
+    )
 }
 
 module.exports = {

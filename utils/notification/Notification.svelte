@@ -48,7 +48,7 @@
         margin: 0 12px 8px 0;
         pointer-events: all;
         overflow: hidden;
-        background-color: var(--dynamicControlLight);
+        background-color: var(--controlBrighter);
     }
 
     .icon {

@@ -6,7 +6,7 @@
     "scripts": {
         "build-app": "electron-builder",
         "build": "rollup -c",
-        "start": "rollup -c && electron --trace-deprecation .",
+        "start": "rollup -c && electron .",
         "postinstall": "electron-builder install-app-deps"
     },
     "author": "RGB",
