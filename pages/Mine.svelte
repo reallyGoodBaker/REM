@@ -489,7 +489,9 @@
         artistSublist.count
     )}</div>
     {#each artistSublist as artist, i}
-        <div class="Column artist-c active">
+        <div class="Column artist-c active" on:click={() => {
+            console.log(artist)
+        }}>
             <div class="btn light FAB"
                 on:click|stopPropagation={() => {}}
                 on:mouseenter|stopPropagation={dullParent}

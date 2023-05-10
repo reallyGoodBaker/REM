@@ -1,7 +1,7 @@
-const {parentPort, MessagePort} = require('worker_threads')
-const {X509Certificate} = require('crypto')
-const {Blob} = require('buffer')
-const {EventEmitter} = require('stream')
+const { parentPort, MessagePort } = require('worker_threads')
+const { X509Certificate } = require('crypto')
+const { Blob } = require('buffer')
+const { EventEmitter } = require('stream')
 
 const invokeCallbacks = new Map()
 let invokeId = 0
@@ -9,12 +9,12 @@ let invokeId = 0
 const services = new Map()
 
 function call(name, ...args) {
-    parentPort.postMessage({name, args}, getTransList(args))
+    parentPort.postMessage({ name, args }, getTransList(args))
 }
 
 function invoke(name, ...args) {
     const id = invokeId++
-    parentPort.postMessage({id, name, args}, getTransList(args))
+    parentPort.postMessage({ id, name, args }, getTransList(args))
 
     return new Promise((res, rej) => {
         const callback = (err, val) => {
@@ -37,7 +37,7 @@ parentPort.on('message', v => {
     _handleMainRequest(v)
 })
 
-function _handleMainReturned({id, val, err}) {
+function _handleMainReturned({ id, val, err }) {
     let handler = invokeCallbacks.get(id)
 
     if (typeof handler !== 'function') {
@@ -47,7 +47,7 @@ function _handleMainReturned({id, val, err}) {
     handler.call(undefined, err, val)
 }
 
-async function _handleMainRequest({uid, name, args}) {
+async function _handleMainRequest({ uid, name, args }) {
     let handler
     if (typeof (handler = services.get(name)) === 'function') {
         let val, err = val = null
@@ -57,11 +57,11 @@ async function _handleMainRequest({uid, name, args}) {
             err = e
         }
 
-        parentPort.postMessage({uid, val, err}, getTransList([val]))
+        parentPort.postMessage({ uid, val, err }, getTransList([val]))
         return
     }
 
-    parentPort.postMessage({uid, val: null, err: null})
+    parentPort.postMessage({ uid, val: null, err: null })
 }
 
 function getTransList(list) {

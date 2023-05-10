@@ -29,7 +29,7 @@
     }
 
     let loginTypeEnum = ['phone_number', 'qr_code'];
-    let loginType = 0;
+    let loginType = 1;
     let img;
 
 
@@ -77,6 +77,8 @@
         rem.emit('logined', p)
         performClick();
     }
+
+    getQRLoginInfo()
 
 </script>
 
@@ -132,10 +134,12 @@
 </style>
 
 <div class="row c">
-    <h3>{s('login_type', s(loginTypeEnum[loginType]))} <span class="span" on:click={() => {
-        loginType = loginType? 0: 1;
-        loginType && getQRLoginInfo();
-    }}>{s('switch_to')}{s(loginTypeEnum[loginType? 0: 1])}</span></h3>
+    <h3>{s('login_type', s(loginTypeEnum[loginType]))}
+        <!-- <span class="span" on:click={() => {
+            loginType = loginType? 0: 1
+            loginType && getQRLoginInfo()
+        }}>{s('switch_to')}{s(loginTypeEnum[loginType? 0: 1])}</span> -->
+    </h3>
     {#if !loginType}
         <input type="text" class="{error&&'error'}" bind:value={phone} placeholder={s('phone_number')}>
         <input type="password" class="{error&&'error'}" bind:value={passwd} placeholder={s('password')}>

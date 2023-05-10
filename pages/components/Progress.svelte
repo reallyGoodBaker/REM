@@ -46,7 +46,7 @@
         width: var(--rail-width);
         height: 10px;
         display: block;
-        -webkit-appearance: none;
+        appearance: none;
         border-radius: 10px;
     }
 

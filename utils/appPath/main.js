@@ -2,13 +2,14 @@ const {app} = require('electron')
 const path = require('path')
 const fs = require('fs')
 
-const AppRoot = path.resolve(app.getPath('appData'), 'rem')
+const ProdPath = 'rem'
+const AppRoot = path.resolve(app.getPath('appData'), ProdPath)
 
 function pathResolve(name) {
     return path.resolve(AppRoot, name)
 }
 
-const DownloadPath = path.join(app.getPath('downloads'), 'rem')
+const DownloadPath = path.join(app.getPath('downloads'), ProdPath)
 const ExtVendor = path.join(__dirname, '../../extension/vendor')
 
 const paths = [

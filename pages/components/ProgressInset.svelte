@@ -44,7 +44,7 @@
         width: var(--rail-width);
         height: 12px;
         display: block;
-        -webkit-appearance: none;
+        appearance: none;
         transform: scale(1);
         transition: transform 0.1s ease-in-out;
     }

@@ -14,7 +14,7 @@ class ExtensionLoader {
      * @param {string} folder 
      * @param {BrowserWindow} bw 
      */
-    constructor(folder, bw) {
+       constructor(folder, bw) {
         this.root = folder
         this.bw = bw
 
