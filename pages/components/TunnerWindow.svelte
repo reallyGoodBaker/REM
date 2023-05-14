@@ -28,7 +28,7 @@
         rem.emit('tunnerClose')
     }
 
-    let metadata = globalPlayer.getMetadata()?.format
+    let metadata = AudioPlayer.getMetadata()?.format
 
     let processConfig = store.getSync('process')
 

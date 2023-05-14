@@ -7,15 +7,17 @@ import { Lang } from '../utils/lang/lang.js'
 import { rem, LifeCycle } from '../utils/rem.js'
 import { initExtensionList } from '../extension/initExtensionList.js'
 import { initCrossThreadNotification } from '../utils/notification/browser.js'
+import { initSettings } from './settings/initSettings.js'
 
 window.langMapping = new Lang(store.getSync('AppSettings/lang')?.selected || 'zh_cn')
 window.contextMap = new Map()
 
 rem.isBeta = true
 
+initSettings()
 initExtensionList()
 initNetworkWatcher()
-initAudioDevicesFind() 
+initAudioDevicesFind()
 watchAudioDeviceChange()
 initCrossThreadNotification()
 

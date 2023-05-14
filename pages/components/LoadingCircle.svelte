@@ -3,7 +3,7 @@
 
     let canvas, ctx
 
-    export let size = 200
+    export let size = 100
     export let min = 60
     export let max = 270
     export let transformDuration = 500

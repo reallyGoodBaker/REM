@@ -1,7 +1,7 @@
 const {search, search_hot, search_suggest} = require('NeteaseCloudMusicApi')
 
 async function Search(keywords, type) {
-    if(keywords) return await search({keywords, type});
+    if (keywords) return await search({keywords, type});
     return await search_hot({});
 }
 

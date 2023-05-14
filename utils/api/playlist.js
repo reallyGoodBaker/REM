@@ -34,8 +34,12 @@ async function getArtistSublist(cookie, count=12) {
 }
 
 async function getAlbumDetail(id, cookie) {
-    const detail = await album({id, cookie});
-    return detail;
+    try {
+        const detail = await album({id, cookie})
+        return detail
+    } catch (_) {
+        return null
+    }
 }
 
 module.exports = {

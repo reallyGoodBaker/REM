@@ -1,6 +1,7 @@
-import {AudioData} from './audiodata.js'
-import {LifeCycle, rem} from '../rem.js'
-import {store} from '../stores/base.js'
+import { AudioData } from './audiodata.js'
+import { LifeCycle, rem } from '../rem.js'
+import { store } from '../stores/base.js'
+import { AudioPlayer } from './player.js'
 
 /**
  * @param {string[]} raw 
@@ -123,15 +124,15 @@ export class MainPlaylist {
     static async load(index) {
         this.current = index
         const ad = this.getAudioData(index)
-        await globalPlayer.loadData(ad)
+        await AudioPlayer.loadData(ad)
         rem.emit('loadedContent')
         rem.emit('setControlsContent', ad)
     }
 
     static playByAudioData(ad) {
-        globalPlayer.loadData(ad)
+        AudioPlayer.loadData(ad)
         .then(async () => {
-            await globalPlayer.play()
+            await AudioPlayer.play()
             rem.emit('loadedContent')
         })
 

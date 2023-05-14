@@ -4,7 +4,7 @@
     import ScrollView from "./components/ScrollView2.svelte";
     import SplitList from "./components/SplitList.svelte";
     import Input from "./components/Input.svelte";
-    import {store} from '../utils/stores/base.js'
+    import { store } from '../utils/stores/base.js'
     import { rem } from '../utils/rem.js'
 
 
@@ -13,8 +13,8 @@
     const defaultSortFunc = () => 1;
     export let listSplitter = store.getSync('playlist/splitter') || {
         location: [0, 16, 44, 72],
-        names: ['功能', '歌曲名', '艺术家', '专辑'],
-    };
+        names: ['#', '歌曲名', '艺术家', '专辑'],
+    }
 
     let displayTypeLabels = ['\ue68e', '\ue600']
     let displayType = store.getSync('playlist/displayType') || 0
@@ -88,17 +88,18 @@
 
 
     function loc2width(location) {
-        let loc = [...location];
-        let widths = new Array(location.length).fill(0);
-        loc.push(100);
+        let loc = [...location]
+        let widths = new Array(location.length).fill(0)
+        loc.push(100)
         widths.forEach((el, i, arr) => {
-            arr[i] = loc[i+1] - loc[i];
-        });
+            arr[i] = loc[i+1] - loc[i]
+        })
 
-        return widths;
+        return widths
     }
 
-    let widths = loc2width(listSplitter.location), location = listSplitter.location;
+    let widths = loc2width(listSplitter.location),
+        location = listSplitter.location;
 
     let dragging = false;
     let splitWindowWidth = 0, raw = 0, rx = 0, ox = 0, index, element;
@@ -174,8 +175,8 @@
 
     }
 
-    import {MainPlaylist} from '../utils/player/playlist.js'
-    import { onDestroy, onMount, tick } from "svelte";
+    import { MainPlaylist } from '../utils/player/playlist.js'
+    import { onDestroy, onMount, tick } from "svelte"
 
     async function dbClick(ev) {
         const {listData, i} = ev.detail;
@@ -332,11 +333,10 @@
     .nav {
         padding-bottom: 12px;
         width: 100%;
-        height: 60px;
+        height: 92px;
         border-bottom: solid 1px rgba(0,0,0,0.12);
         justify-content: space-between;
         box-sizing: border-box;
-        padding: 0px 24px;
     }
 
     .splitter {
@@ -514,42 +514,42 @@
     </div>
 </div>
 
-<div class="playlistContent" style="">
+<div class="playlistContent">
 
-    <div class="nav Row">
-        <Input
-            type="text"
-            placeholder={'\ue6a8  搜索列表'}
-            fullBorder={true}
-            on:input={ev => {
-                doSearch(ev.detail)
-            }}/>
+    <div class="nav">
+        <div class="Row" style="margin: 0 24px; height: 60px; align-items: center; justify-content: space-between;">
+            <Input
+                type="text"
+                placeholder={'\ue6a8  搜索列表'}
+                fullBorder={true}
+                on:input={ev => {
+                    doSearch(ev.detail)
+                }}/>
 
-    <div class="Row view-display" on:click={ev => {
-            displayType = (+ev.target.getAttribute('index')) ?? displayType
-        }}>
-            {#each displayTypeLabels as label, i}
-            <div index="{i}" class="{displayType === i? 'selected': ''}">{label}</div>
+            <div class="Row view-display" on:click={ev => {
+                    displayType = (+ev.target.getAttribute('index')) ?? displayType
+                }}>
+                {#each displayTypeLabels as label, i}
+                <div index="{i}" class="{displayType === i? 'selected': ''}">{label}</div>
+                {/each}
+            </div>
+        </div>
+        <div class="Row splitter"
+            style="width: calc(100% - 44px); margin: 0px 24px;"
+            bind:this={splitterContainer}
+            on:mousedown={startSplitDrag}
+        >
+            {#each listSplitter.names as name, i}
+            <div class="splitterTab{sortBy===i?!forwards?' forwards': ' backwards': ''}" style="width: {widths[i]}%" on:click={() => sortList(i)}>{name}</div>
             {/each}
         </div>
     </div>
-
     
-    <div style="height: calc(100% - 60px); ">
+    <div style="height: calc(100% - 92px); ">
         <ScrollView bind:this={scrollv}>
             {#if displayType === 0}
 
             <div class="Column c" bind:this={container}>
-            
-                <div class="Row splitter"
-                    style="width: calc(100% - 44px); margin: 0px 24px;"
-                    bind:this={splitterContainer}
-                    on:mousedown={startSplitDrag}
-                >
-                    {#each listSplitter.names as name, i}
-                    <div class="splitterTab{sortBy===i?!forwards?' forwards': ' backwards': ''}" style="width: {widths[i]}%" on:click={() => sortList(i)}>{name}</div>
-                    {/each}
-                </div>
             
                 <div class="Column list">
                     <SplitList

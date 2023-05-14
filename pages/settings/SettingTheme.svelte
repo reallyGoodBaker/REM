@@ -7,11 +7,7 @@
 
     const lang = s => langMapping.s(s)
 
-    let {colors, selected, useAcrylic} = store.getSync('AppSettings/theme') || {
-        colors: [2, 39, 148, 210, 270, 292, 322],
-        selected: 3,
-        useAcrylic: false
-    }
+    let {colors, selected, useAcrylic} = store.getSync('AppSettings/theme')
 
     const saveTheme = () => store.set('AppSettings/theme', {
         colors, selected, useAcrylic

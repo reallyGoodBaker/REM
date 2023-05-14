@@ -7,10 +7,7 @@
 
     $: lang = window.langMapping
 
-    let betaFeatures = store.getSync('AppSettings/beta_features') || {
-        showDevTools: false,
-        extensions: false,
-    }
+    let betaFeatures = store.getSync('AppSettings/beta_features')
 
     function onToggleDevTools({detail}) {
         const show = detail

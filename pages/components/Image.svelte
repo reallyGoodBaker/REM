@@ -29,38 +29,48 @@
         })
     }
 
-    async function loadImage() {
-        img.src = await getImgSrc(src)
-
-        await imageDecodeQueue.decode(img)
-        if (container) {
-            container.appendChild(img)
-            await fadeInImage()
+    async function _showImage() {
+        try {
+            await img.decode()
+        } finally {
+            if (container) {
+                container.appendChild(img)
+                await fadeInImage()
+            }
         }
     }
 
-    const refreshImage = async () => {
-        if (!imageDecodeQueue.isVisible(img)) {
-            img.remove()
-            await loadImage()
+    async function loadImage() {
+        if (!src || !container) {
+            return
         }
+
+        img.src = await getImgSrc(src)
+
+        imageDecodeQueue.watch(container, _showImage, () => img.remove())
     }
 
     onMount(async () => {
         await loadImage()
-        imageDecodeQueue.observe(img)
-        rem.on('win:focus', refreshImage)
+        imageDecodeQueue.observe(container)
+        rem.on('win:focus', loadImage)
     })
 
-    Pager.beforeSwitch(() => {
-        imageDecodeQueue.unobserve(img)
-        rem.off('win:focus', refreshImage)
-    })
+    const unobserve = () => {
+        if (container) {
+            imageDecodeQueue.unobserve(container)
+            rem.off('win:focus', loadImage)
+        }
+    }
+
+    Pager.beforeSwitch(unobserve)
+    onDestroy(unobserve)
 
 </script>
 
 <style>
     .c {
+        flex-shrink: 0;
         overflow: hidden;
     }
 </style>

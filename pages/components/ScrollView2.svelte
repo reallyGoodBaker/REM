@@ -12,6 +12,7 @@ let outerContainer
 
 export let minThumbHeight = 12
 export let hoverToShow = false
+export let innerSize = 0
 
 let thumbHeight = 0
     ,hideTrack = false
@@ -198,6 +199,11 @@ export function offsetTop() {
         overflow: auto;
     }
 
+    .restrict-container.advance {
+        content-visibility: auto;
+        contain-intrinsic-size: var(--size);
+    }
+
     .restrict-container::-webkit-scrollbar {
         width: 0;
     }
@@ -277,7 +283,11 @@ export function offsetTop() {
 
 
 <div class="out-container" bind:this={outerContainer}>
-    <div class="restrict-container" bind:this={content}>
+    <div
+        class="restrict-container {innerSize ? 'advance' : ''}"
+        style={innerSize ? `--size: ${innerSize}` : ''}
+        bind:this={content}
+    >
         <div class="meter" bind:this={meter} style="width: 100%;">
             <slot/>
         </div>

@@ -7,23 +7,8 @@
         return langMapping.s(key)
     }
 
-    let leftStick = store.getSync('AppSettings/left_stick') || {
-        levels: [
-            {label: lang('slow'), value: 0.3},
-            {label: lang('medium'), value: 0.65},
-            {label: lang('fast'), value: 1}
-        ],
-        selected: 1
-    }
-
-    let rightStick = store.getSync('AppSettings/right_stick') || {
-        levels: [
-            {label: lang('slow'), value: 0.3},
-            {label: lang('medium'), value: 0.65},
-            {label: lang('fast'), value: 1}
-        ],
-        selected: 1
-    }
+    let leftStick = store.getSync('AppSettings/left_stick')
+    let rightStick = store.getSync('AppSettings/right_stick')
 
     let left = leftStick.selected, right = rightStick.selected
 

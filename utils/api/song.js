@@ -4,7 +4,7 @@ async function getSongUrl(id, cookie, br=999000) {
     return await song_url({id, cookie, br});
 }
 
-async function getSongUrlX(id, cookie, level='hires') {
+async function getSongUrlX(id, cookie, level='jymaster') {
     return await song_url_v1({id, cookie, level});
 }
 

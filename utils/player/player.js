@@ -63,7 +63,7 @@ export class AudioPlayer {
         return AudioPlayer.load(source)
     }
 
-    async loadData(audioData) {
+    static async loadData(audioData, onload=Function.prototype) {
         audioData.onLoadMetadata = metadata => {
             AudioPlayer.metadata = metadata
             rem.emit('metadata', metadata)
@@ -72,11 +72,10 @@ export class AudioPlayer {
         AudioPlayer.audioData = audioData
     
         this.load(await audioData.url())
-        this.onDataLoaded()
+        onload.call(this)
     }
-
-    onDataLoaded() {
-
+    loadData(audioData, onload) {
+        AudioPlayer.loadData(audioData, onload)
     }
 
     static volume(number) {
@@ -114,9 +113,13 @@ export class AudioPlayer {
     }
 
     static metadata = {}
-    getMetadata() {
-        return Object.assign({}, AudioPlayer.metadata)
+    static getMetadata() {
+        return Object.assign({}, this.metadata)
     }
+    getMetadata() {
+        return AudioPlayer.getMetadata()
+    }
+
 }
 
 
@@ -133,7 +136,6 @@ LifeCycle.when('runtimeReady').then(() => {
     }
 
     const globalPlayer = new AudioPlayer()
-    window.globalPlayer = globalPlayer
 
     initProcessor(AudioPlayer.audioCtx, srcNode, destNode)
     initAncProcessor(AudioPlayer.audioCtx, destNode)

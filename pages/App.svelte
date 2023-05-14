@@ -8,8 +8,8 @@ import Appbar from './components/Appbar.svelte'
 import Login from './Login.svelte'
 import SurfaceLayer from './components/SurfaceLayer.svelte';
 import Search from './components/Search.svelte'
-import {store} from '../utils/stores/base.js'
-import {rem} from '../utils/rem.js'
+import { store } from '../utils/stores/base.js'
+import { rem } from '../utils/rem.js'
 
 let MinePage = Mine
 if(store.getSync('profile')) {
@@ -170,6 +170,7 @@ window.Pager = (() => {
     }
 
 })()
+
 
 async function getWallpaperDataSrc() {
     let rawData = await wallpaper.getWallpaper(),

@@ -10,10 +10,7 @@
     let {
         langs,
         selected
-    } = store.getSync('AppSettings/lang') || {
-        langs: [...Object.keys(Lang.langs)],
-        selected: 'zh_cn'
-    }
+    } = store.getSync('AppSettings/lang')
 
     function onSelected({detail}) {
         selected = langs[detail]

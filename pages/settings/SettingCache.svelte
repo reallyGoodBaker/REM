@@ -6,12 +6,7 @@
     
     $: lang = window.langMapping
 
-    let {qualities, selected} = store.getSync('AppSettings/cache') || {
-        qualities: [
-            'lossless'
-        ],
-        selected: 0,
-    }
+    let {qualities, selected} = store.getSync('AppSettings/cache')
 
     function onSelectedControlColor({detail}) {
         selected = detail

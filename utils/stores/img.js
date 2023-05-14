@@ -86,63 +86,76 @@ export class ImageStore {
 }
 
 export class ImageDecodeQueue {
-    _queue = []
-    _callbacks = []
-    size
-    visible = new WeakSet()
 
-    isVisible(img) {
-        return this.visible.has(img)
+    _callbacks = new WeakMap()
+    _watched = new WeakSet()
+    _queue = []
+    _size
+    _taskCount
+
+    constructor(size=40, taskCount=10) {
+        this._size = size
+        this._taskCount = taskCount
+
+        this._handleQueue()
+    }
+
+    _handleQueue = () => {
+        const tasks = this._queue.splice(0, this._taskCount)
+
+        for (const task of tasks) {
+            task.call(null)
+        }
+
+        setTimeout(this._handleQueue)
     }
 
     observer = new IntersectionObserver(entries => {
         entries.forEach(v => {
+            const callbacks = this._callbacks.get(v.target)
+
+            if (!callbacks) {
+                return
+            }
+
+            if (this._queue.length === this._size) {
+                this._queue.shift()
+            }
+
             if (v.isIntersecting) {
-                this.visible.add(v.target)
+                this._watched.add(v.target)
+                this._queue.push(callbacks.onVisible)
             } else {
-                this.visible.delete(v.target)
+                if (!this._watched.has(v.target)) {
+                    return
+                }
+                this._watched.delete(v.target)
+                callbacks.onInvisible()
             }
         })
     })
 
-    constructor(size = 4) {
-        this.size = size
-        requestIdleCallback(this.handleOnce)
-    }
-
-    add(img) {
-        this._queue.push(img)
-    }
-
-    handleOnce = async () => {
-        const imgs = await this._decodeQueue()
-        const callbacks = this._callbacks.splice(0, this.size)
-
-        imgs.forEach((img, i) => {
-            callbacks[i].call(null, img)
-        })
-
-        requestIdleCallback(this.handleOnce)
-    }
-
-    async _decodeQueue() {
-        return await Promise.all(this._queue.splice(0, this.size).map(img => img.decode()))
-    }
-
-    decode(img) {
-        this.add(img)
-        return new Promise(res => {
-            this._callbacks.push(el => res(el))
+    watch(el, onVisible=Function.prototype, onInvisible=Function.prototype) {
+        this._callbacks.set(el, {
+            onVisible, onInvisible
         })
     }
 
-    observe(img) {
-        this.observer.observe(img)
+    observe(el) {
+        this.observer.observe(el)
     }
 
-    unobserve(img) {
-        this.observer.unobserve(img)
+    unobserve(el) {
+        this.observer.unobserve(el)
     }
 }
 
 export const imageDecodeQueue = new ImageDecodeQueue()
+
+export const neteaseImgSizeParam = (h, w) => `?param=${h}y${w}`
+
+export const NETEASE_IMG_SMALLER = neteaseImgSizeParam(20, 20)
+export const NETEASE_IMG_SMALL = neteaseImgSizeParam(56, 56)
+export const NETEASE_IMG_MEDIUM = neteaseImgSizeParam(96, 96)
+export const NETEASE_IMG_LARGE = neteaseImgSizeParam(140, 140)
+export const NETEASE_IMG_LARGER = neteaseImgSizeParam(200, 200)

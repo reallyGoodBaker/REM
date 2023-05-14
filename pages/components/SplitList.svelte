@@ -1,14 +1,17 @@
 <script>
     import SplitTile from "./SplitTile.svelte";
-    import {afterUpdate, createEventDispatcher, onMount} from 'svelte';
+    import { afterUpdate, createEventDispatcher, onMount } from 'svelte'
     import LoadingCircle from './LoadingCircle.svelte'
+    import SplitTileArtist from './SplitTileArtist.svelte'
+    import SplitTileAlbum from "./SplitTileAlbum.svelte"
+    import SplitTileTitle from "./SplitTileTitle.svelte"
 
     let emit = createEventDispatcher();
 
-    export let listData = [];
-    export let location = [];
-    export let selections = new Set();
-    export let focus = -1;
+    export let listData = []
+    export let location = []
+    export let selections = new Set()
+    export let focus = -1
 
     function onClick(i) {
         emit('click', {listData, i});
@@ -34,12 +37,12 @@
 {#each listData as data, i}
 <SplitTile
     data={[
-        i + 1, data.name,
-        data.ar.reduce((pre, cur) => {
-            return [...pre, cur.name];
-        }, []).join(' / '),
-        data.al.name,
+        i + 1,
+        { title: data.name, picUrl: data.al.picUrl },
+        data.ar,
+        data.al,
     ]}
+    components={[, SplitTileTitle, SplitTileArtist, SplitTileAlbum]}
     bind:location
     on:click={() => onClick(i)}
     on:dbclick={() => dbClick(i)}

@@ -7,37 +7,21 @@ export class AudioData {
 
     urls = {}
 
-    getPlayUrlAsync = async (quality='high') => {
-        let br
-        
-        try {
-            br = quality === 'low'? this.data.l.br:
-                quality === 'medium'? this.data.m.br: this.data.h.br
-        } catch (error) {
-            switch (quality) {
-                case 'low': 
-                    br = this.data.h? this.data.h.br: false
-                    if(br) break
-                case 'high':
-                    br = this.data.m? this.data.m.br: false
-                    if(br) break
-                case 'medium': 
-                    br = this.data.l? this.data.l.br: false
-                    if(br) break
-            }
-        }
-
-
-        const res = this.urls[quality] = await NeteaseApi.getSongUrlX(this.data.id, await store.get('cookie'))
+    getPlayUrlAsync = async () => {
+        const quality = await store.get('AppSettings/cache')
+        const qualityStr = quality.qualities[quality.selected].value
+        const res = this.urls[quality] = await NeteaseApi.getSongUrlX(
+            this.data.id,
+            await store.get('cookie'),
+            qualityStr
+        )
         let url = res.body.data[0].url
 
         const type = this.type = res.body.data[0].type
-
-
-        const media = await server.getMedia(`ne${this.data.id}.${type}`, this.onLoadMetadata)
+        const media = await server.getMedia(`${this.data.id}-${qualityStr}.${type}`, this.onLoadMetadata)
 
         if (!media) {
-            server.saveToCache(url, `ne${this.data.id}.${type}`, this.onLoadMetadata)
+            server.saveToCache(url, `${this.data.id}-${qualityStr}.${type}`, this.onLoadMetadata)
             return url
         }
         
