@@ -5,6 +5,8 @@
     import SplitTileArtist from './SplitTileArtist.svelte'
     import SplitTileAlbum from "./SplitTileAlbum.svelte"
     import SplitTileTitle from "./SplitTileTitle.svelte"
+    import VirtualList from "./VirtualList.svelte"
+    import RecyclerScrollView from "./RecyclerScrollView.svelte";
 
     let emit = createEventDispatcher();
 
@@ -12,6 +14,9 @@
     export let location = []
     export let selections = new Set()
     export let focus = -1
+    export let components = [, SplitTileTitle, SplitTileArtist, SplitTileAlbum]
+
+    $: list = listData.map((item, index) => {item.i = index; return item})
 
     function onClick(i) {
         emit('click', {listData, i});
@@ -34,22 +39,28 @@
 </script>
 
 {#if listData.length}
-{#each listData as data, i}
-<SplitTile
-    data={[
-        i + 1,
-        { title: data.name, picUrl: data.al.picUrl },
-        data.ar,
-        data.al,
-    ]}
-    components={[, SplitTileTitle, SplitTileArtist, SplitTileAlbum]}
-    bind:location
-    on:click={() => onClick(i)}
-    on:dbclick={() => dbClick(i)}
-    selected={selections.has(i)}
-    focus={~focus && focus}
-/>
-{/each}
+<RecyclerScrollView
+    templateHeight={56}
+    count={listData.length}
+    getItem={i => listData[i]}
+    let:item={data}
+>
+    <SplitTile
+        data={[
+            data.i + 1,
+            { title: data.name, picUrl: data.al.picUrl },
+            data.ar,
+            data.al,
+        ]}
+        {components}
+        bind:location
+        on:click={() => onClick(data.i)}
+        on:dbclick={() => dbClick(data.i)}
+        selected={selections.has(data.i)}
+        focus={~focus && focus}
+    />
+</RecyclerScrollView>
+
 {:else}
 <div class="Column" style="width: 100%; margin-top: 20px">
     <LoadingCircle

@@ -2,4 +2,10 @@
     export let data = ''
 </script>
 
-<div>{data}</div>
+<style>
+    .line {
+        flex-shrink: 0;
+    }
+</style>
+
+<div class="line">{data}</div>

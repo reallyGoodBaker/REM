@@ -12,6 +12,7 @@
     "author": "RGB",
     "license": "GPLv2",
     "dependencies": {
+        "@sveltejs/svelte-virtual-list": "^3.0.1",
         "music-metadata": "^7.12.6",
         "NeteaseCloudMusicApi": "^4.8.10",
         "node-fetch": "^2.6.7"

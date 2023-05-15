@@ -35,8 +35,6 @@
             }],
             artist: data.artist(),
         }
-
-        console.log(content.artist)
     })
 
     async function setContent(audioData) {

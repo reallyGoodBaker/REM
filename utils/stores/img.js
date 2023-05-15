@@ -136,16 +136,16 @@ export class ImageDecodeQueue {
     })
 
     watch(el, onVisible=Function.prototype, onInvisible=Function.prototype) {
-        this._callbacks.set(el, {
-            onVisible, onInvisible
-        })
-    }
+        try {
+            this._callbacks.set(el, {
+                onVisible, onInvisible
+            })
 
-    observe(el) {
-        this.observer.observe(el)
+            this.observer.observe(el)
+        } catch (_) {}
     }
-
-    unobserve(el) {
+    
+    unwatch(el) {
         this.observer.unobserve(el)
     }
 }

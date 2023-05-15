@@ -40,7 +40,7 @@
         }
     }
 
-    async function loadImage() {
+    export async function loadImage() {
         if (!src || !container) {
             return
         }
@@ -52,13 +52,12 @@
 
     onMount(async () => {
         await loadImage()
-        imageDecodeQueue.observe(container)
         rem.on('win:focus', loadImage)
     })
 
     const unobserve = () => {
         if (container) {
-            imageDecodeQueue.unobserve(container)
+            imageDecodeQueue.unwatch(container)
             rem.off('win:focus', loadImage)
         }
     }

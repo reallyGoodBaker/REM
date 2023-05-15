@@ -311,14 +311,6 @@
 
 
 <style>
-    .c {
-        justify-content: flex-start;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        border-radius: 16px 16px 0px 0px;
-    }
-
     .header {
         --color: var(--controlBrighter);
         background: linear-gradient(to bottom, transparent 180px, var(--color) 292px, var(--color) 400px);
@@ -366,14 +358,6 @@
         justify-content: space-between;
         align-items: flex-start;
         color: var(--controlBlack);
-    }
-
-    .list {
-        box-sizing: border-box;
-        align-items: flex-start;
-        width: 100%;
-        flex-grow: 1;
-        flex-shrink: 1;
     }
 
     .splitterTab {
@@ -546,26 +530,14 @@
     </div>
     
     <div style="height: calc(100% - 92px); ">
-        <ScrollView bind:this={scrollv}>
-            {#if displayType === 0}
-
-            <div class="Column c" bind:this={container}>
-            
-                <div class="Column list">
-                    <SplitList
-                        on:update={onSplitListMounted}
-                        on:click={onClick}
-                        on:dbclick={dbClick}
-                        bind:listData={_listData}
-                        bind:location
-                        bind:selections
-                    ></SplitList>
-                </div>
-            
-            </div>
-
-            {/if}
-        </ScrollView>
+        <SplitList
+            on:update={onSplitListMounted}
+            on:click={onClick}
+            on:dbclick={dbClick}
+            bind:listData={_listData}
+            bind:location
+            bind:selections
+        ></SplitList>
     </div>
 
 </div>

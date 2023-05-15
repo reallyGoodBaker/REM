@@ -1,6 +1,6 @@
 const player = require('../../runtime/player/main')
-const {provide} = require('../../runtime/main/invoker')
-const {interval} = require('../../runtime/main/schedule')
+const { provide } = require('../../runtime/main/invoker')
+const { interval } = require('../../runtime/main/schedule')
 
 interval(() => {
     console.log('next track')

@@ -131,9 +131,9 @@ LifeCycle.when('runtimeReady').then(() => {
         AudioPlayer.em.emit('ended')
     })
     
-    AudioPlayer.audioElement.onloadedmetadata = () => {
-        rem.emit('setControlsContent', AudioPlayer.audioData)
-    }
+    // AudioPlayer.audioElement.onloadedmetadata = () => {
+    //     rem.emit('setControlsContent', AudioPlayer.audioData)
+    // }
 
     const globalPlayer = new AudioPlayer()
 

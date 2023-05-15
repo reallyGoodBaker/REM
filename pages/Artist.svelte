@@ -5,7 +5,10 @@
     import { store } from "../utils/stores/base"
     import { MainPlaylist } from "../utils/player/playlist"
     import { AudioPlayer } from '../utils/player/player'
-    import { NETEASE_IMG_MEDIUM } from "../utils/stores/img";
+    import { NETEASE_IMG_MEDIUM } from "../utils/stores/img"
+    import RecyclerScrollView from "./components/RecyclerScrollView.svelte"
+
+    import SplitTileText from "./components/SplitTileText.svelte"
 
     export let id = 0
 
@@ -59,11 +62,12 @@
 
 <style>
     .c {
+        flex-wrap: nowrap;
         box-sizing: border-box;
         width: 100%;
         height: 100%;
         padding: 24px;
-        overflow: auto;
+        overflow-y: auto;
     }
 
     .artist {

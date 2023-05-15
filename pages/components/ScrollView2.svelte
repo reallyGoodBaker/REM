@@ -160,6 +160,10 @@ onDestroy(() => {
     updater.cancel()
 })
 
+export function getViewport() {
+    return outerContainer
+}
+
 export function prepared() {
     return !!content
 }
