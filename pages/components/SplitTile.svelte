@@ -1,6 +1,5 @@
 <script>
     import {createEventDispatcher} from 'svelte'
-    import { fade } from 'svelte/transition'
     import SplitTileText from './SplitTileText.svelte'
 
     let emit = createEventDispatcher()
@@ -18,6 +17,9 @@
     export let selected = false
     export let focus = false
     export let components = []
+    export let index = 0
+
+    console.log(index)
 
     function loc2width(location) {
         let widths = new Array(location.length).fill(0)
@@ -54,7 +56,7 @@
         transition: all 0.08s;
     }
 
-    .tile:nth-child(2n) {
+    .tile.even {
         background-color: rgba(0,0,0,0.04);
     }
 
@@ -72,7 +74,7 @@
 </style>
 
 
-<div class="Row c tile{selected?' selected': ''}{focus?' focus': ''}"
+<div class="Row c tile{selected?' selected': ''}{focus?' focus': ''} {index % 2 ? 'even' : ''}"
     on:click={onClick}
     on:dblclick={dbClick}
 >

@@ -52,6 +52,7 @@
             data.ar,
             data.al,
         ]}
+        index={data.i}
         {components}
         bind:location
         on:click={() => onClick(data.i)}
