@@ -99,7 +99,7 @@
         margin-left: 20px;
         height: 100%;
         border-radius: 12px;
-        background-color: var(--controlBrighter);
+        background-color: var(--dynamicControlLight);
         overflow-y: auto;
         flex-wrap: wrap;
         gap: 2px;
