@@ -6,9 +6,6 @@
     import { MainPlaylist } from "../utils/player/playlist"
     import { AudioPlayer } from '../utils/player/player'
     import { NETEASE_IMG_MEDIUM } from "../utils/stores/img"
-    import RecyclerScrollView from "./components/RecyclerScrollView.svelte"
-
-    import SplitTileText from "./components/SplitTileText.svelte"
 
     export let id = 0
 
@@ -144,7 +141,7 @@
                 radius={'8px'}
             />
             <div class="txt title">{artist.name}{artist.transNames[0] ? ` (${artist.transNames[0]})` : ''}</div>
-            <div class="txt desc scrollable">{artist.briefDesc}</div>
+            <div class="txt desc scrollable flex">{artist.briefDesc}</div>
         </div>
 
         <div class="Row pop scrollable">

@@ -19,8 +19,6 @@
     export let components = []
     export let index = 0
 
-    console.log(index)
-
     function loc2width(location) {
         let widths = new Array(location.length).fill(0)
         location = [...location]

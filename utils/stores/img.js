@@ -51,6 +51,10 @@ export async function getImgSrc(url) {
     return val
 }
 
+export function removeImageCache(url) {
+    URL.revokeObjectURL(url)
+}
+
 export class ImageStore {
     last = []
     onloads = []

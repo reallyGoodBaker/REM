@@ -289,7 +289,7 @@ progress.horizontal {
     background-color: transparent;
 }
 .scrollable::-webkit-scrollbar-thumb {
-    background-color: var(--controlGray);
+    background-color: var(--fade);
     border-radius: 2px;
 }
 .scrollable.horizontal {
@@ -299,4 +299,13 @@ progress.horizontal {
 .scrollable.vertical {
     overflow-y: auto;
     overflow-x: hidden;
+}
+.scrollable.flex::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+.scrollable.flex:hover::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+    background-color: transparent;
 }

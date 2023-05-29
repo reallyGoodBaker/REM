@@ -14,8 +14,9 @@
         header: {
             imgUrl: album.picUrl,
             title: album.name,
-            subtitle: s('created_by', album.artist.name),
+            artists: album.artists,
             trackCount: album.size,
+            desc: album.description,
         },
         listData: songs
     })

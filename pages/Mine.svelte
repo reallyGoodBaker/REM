@@ -186,7 +186,7 @@
     async function fastPlay(id, type=0) {
         let list = type === 0
             ? await getDetailX(id)
-            : await getAlbumDetail(id)
+            : (await getAlbumDetail(id)).songs
         
         const cur = MainPlaylist.getCurrentData()
 
@@ -217,7 +217,7 @@
         let al = await store.get('al' + id)
  
         if (!al) {
-            al = (await NeteaseApi.getAlbumDetail(id, await store.get('cookie'))).body.songs
+            al = (await NeteaseApi.getAlbumDetail(id, await store.get('cookie'))).body
             store.set('al'+id, al)
         }
 
@@ -344,8 +344,16 @@
         box-shadow: 0px 6px 8px rgba(0,0,0,0.2);
     }
 
-    .card:hover {
-        transform: translateY(-2px);
+    .pic {
+        transition: box-shadow 0.04s;
+    }
+
+    .card:hover > .pic {
+        box-shadow: 0px 2px 24px rgba(0, 0, 0, 0.6);
+    }
+
+    .card:active > .pic {
+        box-shadow: unset;
     }
 
     .artist-c {
@@ -437,7 +445,7 @@
                     header: {
                         imgUrl: list.coverImgUrl,
                         title: list.name,
-                        subtitle: s('created_by', list.creator.nickname),
+                        artists: [list.creator],
                         playCount: list.playCount,
                         trackCount: list.trackCount,
                     },
@@ -451,11 +459,13 @@
             });
             
         }}>
-            {#await getImgSrc(list.coverImgUrl + NETEASE_IMG_LARGE)}
-            <div class="avatar" style="background-color: var(--controlGray);"></div>
-            {:then url} 
-            <Image width={160} height={160} radius={'4px'} src={url} borderWidth={'0px'}/>
-            {/await}
+            <div class="pic">
+                {#await getImgSrc(list.coverImgUrl + NETEASE_IMG_LARGE)}
+                <div class="avatar" style="background-color: var(--controlGray);"></div>
+                {:then url} 
+                <Image width={160} height={160} radius={'4px'} src={url} borderWidth={'0px'}/>
+                {/await}
+            </div>
             <div class="btn light FAB"
                 on:click|stopPropagation={() => {fastPlay(list.id)}}
                 on:mouseenter|stopPropagation={dullParent}
@@ -491,7 +501,6 @@
     )}</div>
     {#each artistSublist as artist, i}
         <div class="Column artist-c active" on:click={() => {
-            console.log(artist)
             window.Pager.openNew(artist.name, Artist, artist)
         }}>
             <div class="btn light FAB"
@@ -532,19 +541,20 @@
     )}</div>
     {#each albumSublist as al, i}
         <div class="Column artist-c al active"
-            on:click={() => {
-                let id = al.id;
+            on:click={async () => {
+                let id = al.id
+                const {album, songs} = await getAlbumDetail(id)
                 
                 onClick(al.name, async() => {
                     return {
                         header: {
-                            imgUrl: al.picUrl,
-                            title: al.name,
-                            subtitle: `${al.artists.reduce((pre, cur) => [...pre, cur.name], []).join(' ')}`,
-                            playCount: al.playCount,
-                            trackCount: al.size,
+                            imgUrl: album.picUrl,
+                            title: album.name,
+                            artists: album.artists,
+                            trackCount: album.size,
+                            desc: album.description,
                         },
-                        listData: getAlbumDetail(id),
+                        listData: songs,
                         sortBy: await store.get('playlist/sortBy'),
                         forwards: await store.get('playlist/forwards'),
                         onTabDestroy() {

@@ -1,11 +1,11 @@
 <script>
 
-    import Avatar from "./components/Avatar.svelte";
-    import ScrollView from "./components/ScrollView2.svelte";
-    import SplitList from "./components/SplitList.svelte";
-    import Input from "./components/Input.svelte";
+    import Avatar from "./components/Avatar.svelte"
+    import SplitList from "./components/SplitList.svelte"
+    import Input from "./components/Input.svelte"
     import { store } from '../utils/stores/base.js'
     import { rem } from '../utils/rem.js'
+    import Link from "./components/Link.svelte"
 
 
     export let header = null;
@@ -177,6 +177,7 @@
 
     import { MainPlaylist } from '../utils/player/playlist.js'
     import { onDestroy, onMount, tick } from "svelte"
+    import Artist from "./Artist.svelte"
 
     async function dbClick(ev) {
         const {listData, i} = ev.detail;
@@ -347,6 +348,8 @@
     }
 
     .subtitle {
+        display: flex;
+        gap: 8px;
         color: var(--controlNight);
     }
 
@@ -471,7 +474,9 @@
         background-color: var(--controlBrighter);
     }
 
-
+    .desc {
+        margin-top: 40px;
+    }
 </style>
 
 <div class="Row" style="width: 100%; height: 100%;">
@@ -486,9 +491,18 @@
     </div>
     <div class="bread-crumb">{header.trackCount} 首</div>
     <div class="Column rowl">
-        <div>
+        <div class="scrollable vertical flex" style="height: 160px;">
             <h3 class="title">{header.title}</h3>
-            <div class="subtitle">{header.subtitle}</div>
+            <div class="subtitle">
+                {#each (header.artists ?? []) as ar}
+                    <Link text={ar.name} cssText='font-size: normal;' on:click={() => {
+                        window.Pager.openNew(ar.name, Artist, ar)
+                    }}/>
+                {/each}
+            </div>
+            {#if header.desc}
+            <div class="desc">{header.desc}</div>
+            {/if}
         </div>
 
         <div class="Row">

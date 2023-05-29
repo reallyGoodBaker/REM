@@ -1,7 +1,7 @@
 <script>
     import { onDestroy, onMount } from 'svelte';
     import { rem } from '../../utils/rem.js';
-    import { getImgSrc, imageDecodeQueue } from '../../utils/stores/img.js'
+    import { getImgSrc, removeImageCache, imageDecodeQueue } from '../../utils/stores/img.js'
 
     export const alt = ''
     export let src = ''
@@ -56,6 +56,7 @@
     })
 
     const unobserve = () => {
+        removeImageCache(src)
         if (container) {
             imageDecodeQueue.unwatch(container)
             rem.off('win:focus', loadImage)
