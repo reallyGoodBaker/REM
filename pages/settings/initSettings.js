@@ -1,16 +1,21 @@
 import { store } from "../../utils/stores/base"
 import { Lang } from '../../utils/lang/lang.js'
+import { setClearFont } from "../../utils/style/font"
 
 function lang(key) {
     return langMapping.s(key)
 }
 
-function init(name, defaultValue) {
+function init(name, defaultValue, init) {
     let val = store.getSync(name)
 
     if (!val) {
         val = defaultValue
         store.set(name, val)
+    }
+
+    if (typeof init === 'function') {
+        init.call(null, val)
     }
 }
 
@@ -60,5 +65,11 @@ export function initSettings() {
         colors: [2, 39, 148, 210, 270, 292, 322],
         selected: 3,
         useAcrylic: false
+    })
+
+    init('AppSettings/font', {
+        clearFont: false
+    }, val => {
+        setClearFont(val.clearFont)
     })
 }

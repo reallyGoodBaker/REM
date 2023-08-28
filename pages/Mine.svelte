@@ -6,7 +6,7 @@
     import { NETEASE_IMG_LARGE, getImgSrc } from '../utils/stores/img.js'
     import { store } from '../utils/stores/base.js'
     import { getColor } from '../utils/style/imageBasicColor.js'
-    import Image from "./components/Image.svelte"
+    import Image from "./components/Image2.svelte"
     import Artist from "./Artist.svelte"
 
     const s = (str, ...args) => langMapping.s(str, ...args)
@@ -331,18 +331,6 @@
         transform: rotate(180deg);
     }
 
-    .avatar {
-        position: relative;
-        border-radius: 4px;
-        width: 160px;
-        height: 160px;
-        background-size: 160px 160px;
-        transition: 0.1s;
-    }
-
-    .avatar:hover {
-        box-shadow: 0px 6px 8px rgba(0,0,0,0.2);
-    }
 
     .pic {
         transition: box-shadow 0.04s;
@@ -460,11 +448,7 @@
             
         }}>
             <div class="pic">
-                {#await getImgSrc(list.coverImgUrl + NETEASE_IMG_LARGE)}
-                <div class="avatar" style="background-color: var(--controlGray);"></div>
-                {:then url} 
-                <Image width={160} height={160} radius={'4px'} src={url} borderWidth={'0px'}/>
-                {/await}
+                <Image fit={true} width={160} height={160} radius={'4px'} src={list.coverImgUrl + NETEASE_IMG_LARGE} borderWidth={'0px'}/>
             </div>
             <div class="btn light FAB"
                 on:click|stopPropagation={() => {fastPlay(list.id)}}
@@ -503,11 +487,6 @@
         <div class="Column artist-c active" on:click={() => {
             window.Pager.openNew(artist.name, Artist, artist)
         }}>
-            <div class="btn light FAB"
-                on:click|stopPropagation={() => {}}
-                on:mouseenter|stopPropagation={dullParent}
-                on:mouseleave|stopPropagation={activeParent}
-            >{'\ue615'}</div>
             <Image
                 width={140}
                 height={140}

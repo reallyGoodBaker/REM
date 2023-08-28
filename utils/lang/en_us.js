@@ -111,4 +111,7 @@ export default {
 
     notification: 'Notification',
     
+    font: 'Font',
+    font_clear: 'Use clear fonts',
+    font_clear_extra: 'recommended for low-resolution screens',
 }

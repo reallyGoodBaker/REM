@@ -109,4 +109,8 @@ export default {
     $new_page: '创建新的页面',
     
     notification: '通知',
+
+    font: '字体设置',
+    font_clear: '使用清晰字体',
+    font_clear_extra: '低分辨率屏幕推荐打开',
 }

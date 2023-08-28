@@ -13,6 +13,8 @@ export async function saveImg(url) {
 
     index.push(url)
     store.set('ThumbNails/index', index)
+
+    return buf
 }
 
 export async function getImg(url) {
@@ -25,6 +27,18 @@ export async function getImg(url) {
     }
 
     return store.getRaw(`ThumbNails/${uri}`)
+}
+
+export async function getImageBitmap(url, opt) {
+    let index = await store.get('ThumbNails/index') || []
+    const uri = index.indexOf(url)
+    let binary = await store.getRaw(`ThumbNails/${uri}`)
+    
+    if (!binary) {
+        binary = await saveImg(url)
+    }
+
+    return createImageBitmap(new Blob([binary]), opt)
 }
 
 const imgUriCache = new Map()
@@ -50,6 +64,7 @@ export async function getImgSrc(url) {
 
     return val
 }
+
 
 export function removeImageCache(url) {
     URL.revokeObjectURL(url)
@@ -97,21 +112,21 @@ export class ImageDecodeQueue {
     _size
     _taskCount
 
-    constructor(size=40, taskCount=10) {
+    constructor(size=40, taskCount=5) {
         this._size = size
         this._taskCount = taskCount
 
         this._handleQueue()
     }
 
-    _handleQueue = () => {
+    _handleQueue = async () => {
         const tasks = this._queue.splice(0, this._taskCount)
 
         for (const task of tasks) {
-            task.call(null)
+            await task.call(null)
         }
 
-        setTimeout(this._handleQueue)
+        requestIdleCallback(this._handleQueue)
     }
 
     observer = new IntersectionObserver(entries => {

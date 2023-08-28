@@ -102,7 +102,7 @@ function initMainWin(browserWindow) {
     })
 
     ipcMain.on('devtools:open', () => {
-        browserWindow.webContents.openDevTools()
+        browserWindow.webContents.openDevTools({ mode: 'detach' })
     })
 
     ipcMain.handle('store:get', (_, name) => {

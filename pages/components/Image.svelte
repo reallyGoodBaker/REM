@@ -1,6 +1,6 @@
 <script>
-    import { onDestroy, onMount } from 'svelte';
-    import { rem } from '../../utils/rem.js';
+    import { onDestroy, onMount } from 'svelte'
+    import { rem } from '../../utils/rem.js'
     import { getImgSrc, removeImageCache, imageDecodeQueue } from '../../utils/stores/img.js'
 
     export const alt = ''
@@ -13,6 +13,8 @@
     export let skeletonColor = 'var(--controlGray)'
 
     let container
+
+    $: loadImage(src)
 
     const img = new Image(width, height)
     img.draggable = false
@@ -40,7 +42,7 @@
         }
     }
 
-    export async function loadImage() {
+    export async function loadImage(src) {
         if (!src || !container) {
             return
         }
@@ -51,7 +53,7 @@
     }
 
     onMount(async () => {
-        await loadImage()
+        await loadImage(src)
         rem.on('win:focus', loadImage)
     })
 
@@ -59,7 +61,7 @@
         removeImageCache(src)
         if (container) {
             imageDecodeQueue.unwatch(container)
-            rem.off('win:focus', loadImage)
+            rem.off('win:focus', () => loadImage(src))
         }
     }
 

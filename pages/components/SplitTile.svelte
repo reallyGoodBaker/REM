@@ -41,7 +41,7 @@
         justify-content: flex-start;
         cursor: default;
         font-size: small;
-        user-select: all;
+        user-select: none;
     }
 
     .t {

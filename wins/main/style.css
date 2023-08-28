@@ -4,11 +4,12 @@
     /* --acrylicBackgroundColor: transparent; */
     -webkit-app-region: no-drag;
     border-radius: 12px;
-    font-family: Roboto, sans-serif;
     user-select: none;
 }
 
 body {
+    font-family: 'Roboto', 'Misans', sans-serif;
+
     --color: #000;
     --controlHue: 210;
     --controlAcrylic: hsla(var(--controlHue, 210), 80%, 98%, 0.3);
@@ -300,12 +301,9 @@ progress.horizontal {
     overflow-y: auto;
     overflow-x: hidden;
 }
-.scrollable.flex::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-}
-.scrollable.flex:hover::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
+.scrollable.flex::-webkit-scrollbar-thumb {
     background-color: transparent;
+}
+.scrollable.flex:hover::-webkit-scrollbar-thumb {
+    background-color: var(--fade);
 }

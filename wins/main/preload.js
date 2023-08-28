@@ -36,8 +36,8 @@ new Binder('hooks')
     once: (...args) => ipcRenderer.once.apply(ipcRenderer, args),
     off: (...args) => ipcRenderer.removeListener.apply(ipcRenderer, args),
     rm: (...args) => ipcRenderer.removeListener.apply(ipcRenderer, args),
-    rmAll: (type) => ipcRenderer.removeAllListeners.call(ipcRenderer, type),
-    zoom: (ratio) => webFrame.setZoomFactor(ratio),
+    rmAll: type => ipcRenderer.removeAllListeners.call(ipcRenderer, type),
+    zoom: ratio => webFrame.setZoomFactor(ratio),
 })
 
 const { getWallpaper } = require('../../utils/Win11Wallpaper');
@@ -54,7 +54,7 @@ const {
 } = require('../../utils/api/playlist')
 const { getSongDetail, getSongUrl, getSongDownload, getSongUrlX } = require('../../utils/api/song')
 const { logout } = require('NeteaseCloudMusicApi')
-const { getArtistDetail, getArtistSongs } = require('../../utils/api/artist')
+const { getArtistDetail, getArtistSongs, getArtistAlbums } = require('../../utils/api/artist')
 
 
 new Binder('NeteaseApi')
@@ -77,6 +77,7 @@ new Binder('NeteaseApi')
 .bind('getAlbumDetail', createFuncBinding(getAlbumDetail))
 .bind('getArtistDetail', createFuncBinding(getArtistDetail))
 .bind('getArtistSongs', createFuncBinding(getArtistSongs))
+.bind('getArtistAlbums', createFuncBinding(getArtistAlbums))
 
 
 Binder.bindAll();

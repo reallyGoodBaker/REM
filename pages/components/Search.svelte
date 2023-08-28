@@ -7,7 +7,7 @@
     import { rem } from '../../utils/rem.js'
 
     let showPopup = false
-
+    let searchInput
     let l = langMapping.getMapping()
 
     const updateLang = lang => {
@@ -16,7 +16,10 @@
 
     rem.on('langChange', updateLang)
 
-    const show = () => showPopup = true;
+    const show = () => {
+        showHot = false
+        showPopup = true
+    }
     const hide = async () => {
         showPopup = false;
         const profile = await store.get('profile');
@@ -53,15 +56,15 @@
 
     let value, showHot = false, hots = [];
     async function search() {
+        searchInput.focus()
         const res = await NeteaseApi.search(value);
         //console.log(res);
     }
 
     async function getHot() {
         hots = (await NeteaseApi.search()).body.result.hots.reduce((pre, cur) => {
-            return [...pre, cur.first];
-        }, []);
-        showHot = true;
+            return [...pre, cur.first]
+        }, [])
     }
 
     let suggests;
@@ -144,9 +147,10 @@
         <input type="text" class="input" placeholder={l['search']}
             spellcheck="false"
             bind:value
+            bind:this={searchInput}
             on:change={search}
             on:focus={getHot}
-            on:blur={()=>setTimeout(()=>showHot=false)}
+            on:click={() => showHot = !showHot}
             on:input={getSuggest}>
 
         <div class="avatar-container">
@@ -173,7 +177,6 @@
 
     <Popup
         noLayer={true}
-        on:layerClick={()=>showHot=false}
         showPopupWindow={showHot}
         cssText={"position: fixed; top: 56px; width: 360px; overflow: hidden; max-height: calc(100vh - 148px); min-height: 0; background-color: var(--controlWhite);"}>
         {#if suggests}

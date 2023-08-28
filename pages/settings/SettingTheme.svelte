@@ -36,12 +36,12 @@
         isUrl={false}
         on:selected={onSelectedControlColor}
     />
-    <ToggleListTile
+    <!-- <ToggleListTile
         data={lang('use_acrylic')}
         extra={lang('use_acrylic_extra')}
         useAvatar={false}
         isUrl={false}
         bind:checked={useAcrylic}
         on:toggle={onToggleUseAcrylic}
-    />
+    /> -->
 </RowList>

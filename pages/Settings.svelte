@@ -9,6 +9,7 @@ import SettingCache from './settings/SettingCache.svelte'
 import SettingStick from './settings/SettingStick.svelte'
 import SettingOutput from './settings/SettingOutput.svelte'
 import SettingLang from './settings/SettingLang.svelte'
+import SettingFont from './settings/SettingFont.svelte'
 
 import { rem } from '../utils/rem.js'
 
@@ -71,5 +72,6 @@ onMount(async () => {
     <SettingStick/>
     <SettingOutput/>
     <SettingLang/>
+    <SettingFont/>
 
 </div></ScrollView>

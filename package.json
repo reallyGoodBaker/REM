@@ -1,7 +1,7 @@
 {
     "name": "rem",
-    "version": "0.1.10",
-    "description": "Pomelo",
+    "version": "0.1.11",
+    "description": "Quarenden",
     "main": "./main.js",
     "scripts": {
         "build-app": "electron-builder",

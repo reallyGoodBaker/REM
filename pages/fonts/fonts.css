@@ -1,4 +1,9 @@
 @font-face {
-    font-family: Roboto;
+    font-family: 'Roboto';
     src: url('roboto.ttf') format('trurtype');
+}
+
+@font-face {
+    font-family: 'Misans';
+    src: url('MiSans.ttf') format('trurtype');
 }

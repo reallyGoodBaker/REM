@@ -6,6 +6,7 @@
     export let templateHeight =  100
     export let count =  0
     export let getItem = index => ({})
+    export let height = '100%'
 
     /** @type {HTMLElement}*/
     let box
@@ -45,7 +46,8 @@
     }
 
     function refreshData() {
-        end = start + templateCount + 2
+        const _end = start + templateCount + 2
+        end = _end > count ? count : _end
         
         if (start > 0) {
             offset = 1
@@ -71,8 +73,8 @@
     onDestroy(remove)
 
 </script>
-
-<ScrollView2 bind:this={v}>
+ 
+<ScrollView2 bind:this={v} cssText="height: {height}">
     <div class="Column" style="width: 100%; padding-top: {(start - offset) * templateHeight}px; padding-bottom: {(count - end) * templateHeight}px;" bind:this={box}>
         {#each visible as item, index}
         <slot {item} {index}/>

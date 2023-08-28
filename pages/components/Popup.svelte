@@ -17,6 +17,7 @@
     export let noLayer = false;
     export let shadowBlurRadius = 8
     export let shadowOffset = 2
+    export let layerColor = 'var(--fade)'
     export function animate(keyframes, options={}) {
         return windowContainer.animate(keyframes, options);
     }
@@ -44,6 +45,7 @@
 <style>
     .layer {
         -webkit-app-region: no-drag;
+        --bgc: var(--fade);
         pointer-events: all;
         position: fixed;
         z-index: 99999;
@@ -51,7 +53,7 @@
         top: 0px;
         width: 100vw;
         height: 100vh;
-        background-color: rgba(0,0,0,0.4);
+        background-color: var(--bgc);
         animation: showPopupWindow 0.12s;
     }
 
@@ -81,7 +83,7 @@
 </style>
 
 {#if showPopupWindow && !noLayer}
-<div class="layer row" on:click|stopPropagation={handleOnLayerClick} out:fade={{duration: 100}}>
+<div style="--bgc: {layerColor}" class="layer row" on:click|stopPropagation={handleOnLayerClick} out:fade={{duration: 100}}>
     <div use:binder class="container" style="{cssText}; --blur-radius: {shadowBlurRadius}px; --offset: {shadowOffset}px;" on:click|stopPropagation>
         <slot></slot>
     </div>

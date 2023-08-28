@@ -227,7 +227,7 @@
 
     <div class="Column outerWindow tunnerPanel" style="width: 300px;">
         <div class="Row" style="height: 72vh; margin-left: 12px;">
-        <ScrollView bind:this={scrollv} hoverToShow={true}>
+        <ScrollView bind:this={scrollv} hoverToShow={true} cssText='height: 498px;'>
             <div class="Column" style="padding: 12px 0;">
             <TunnerTile
                 title={s('input')}
