@@ -2,6 +2,7 @@ import { AudioData } from './audiodata.js'
 import { LifeCycle, rem } from '../rem.js'
 import { store } from '../stores/base.js'
 import { AudioPlayer } from './player.js'
+import { invoker } from '../main-invoker/browser.js'
 
 /**
  * @param {string[]} raw 
@@ -44,17 +45,17 @@ export class MainPlaylist {
      * @returns {number[]}
      */
     static query(config) {
-        let matched = []
+        let result = this.listData
 
-        this.listData.forEach((el, i) => {
-            if (config.name) {
-                if (el.name.includes(config.name)) {
-                    matched.push(i)
-                }
-            }
-        })
+        if (config.name) {
+            result = result.filter(({ name }) => name.includes(config.name))
+        }
 
-        return matched
+        // if (config.ar) {
+            
+        // }
+
+        return result
     }
     
     static next() {
@@ -145,4 +146,6 @@ LifeCycle.when('runtimeReady').then(() => {
     navigator.mediaSession.setActionHandler('previoustrack', () => MainPlaylist.playPrev())
     hooks.on('player:previous', () => MainPlaylist.playPrev())
     hooks.on('player:next', () => MainPlaylist.playNext())
+    invoker.on('playlist:previous', () => MainPlaylist.playPrev())
+    invoker.on('playlist:next', () => MainPlaylist.playNext())
 })

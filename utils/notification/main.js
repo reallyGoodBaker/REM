@@ -1,5 +1,5 @@
 const crypto = require('crypto')
-const {ipcMain} = require('electron')
+const { ipcMain } = require('electron')
 
 const prop = name => 'notification:' + name
 

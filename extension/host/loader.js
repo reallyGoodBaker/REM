@@ -39,7 +39,7 @@ class ExtensionLoader {
     }
 
     enumIds() {
-        return [...this.extensions.keys()]
+        return Array.from(this.extensions.keys())
     }
 
     start = id => {

@@ -20,6 +20,7 @@ class ExtensionHost {
         const manifestPath = path.join(folder, 'manifest.json')
         this.manifest = requireManifest(manifestPath)
 
+        this.events.setMaxListeners(Infinity)
         this.events.on('internal-error', err => {
             console.error(err)
         })
@@ -34,7 +35,7 @@ class ExtensionHost {
         ext.on('message', v => {
 
             if ('name' in v && 'args' in v) {
-                this.events.emit(`service:${v.name}`, v)
+                this.events.emit(`@${v.name}`, v)
                 return
             }
 
@@ -180,9 +181,9 @@ class ExtensionHost {
                 }
             }
 
-            this.events.on(`service:${key}`, handler)
+            this.events.on(`@${key}`, handler)
             this.events.once(`-service`, () => {
-                this.events.off(`service:${key}`, handler)
+                this.events.off(`@${key}`, handler)
             })
         }
     }

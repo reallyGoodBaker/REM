@@ -4,7 +4,7 @@
     "description": "Quarenden",
     "main": "./main.js",
     "scripts": {
-        "build-app": "electron-builder",
+        "build-app": "rollup -c && electron-builder",
         "build": "rollup -c",
         "start": "rollup -c && electron .",
         "postinstall": "electron-builder install-app-deps"

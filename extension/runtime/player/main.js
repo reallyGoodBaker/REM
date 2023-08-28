@@ -1,4 +1,4 @@
-const {invoke} = require('../main/invoker')
+const { invoke } = require('../main/invoker')
 
 class BackgroundPlayerController {
     async play() {
@@ -9,12 +9,24 @@ class BackgroundPlayerController {
         await invoke('player:pause')
     }
 
-    async next() {
-        await invoke('player:next')
+    async isPlaying() {
+        return await invoke('player.isPlaying')
     }
 
-    async previous() {
-        await invoke('player:previous')
+    async duration() {
+        return await invoke('player.duration')
+    }
+
+    async seek(time) {
+        return await invoke('player:seek', time)
+    }
+
+    async metadata() {
+        return await invoke('player.metadata')
+    }
+
+    async audioData() {
+        return await invoke('player.audioData')
     }
 }
 

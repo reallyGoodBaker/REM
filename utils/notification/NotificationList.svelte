@@ -3,12 +3,14 @@
     import Notification from "./Notification.svelte"
     import { rem } from "../rem.js"
 
-    let notifications = []
+    let notifications = {}
 
     function addNotification(notification) {
-        notifications.push(notification)
+        notifications[notification.channel] = notification
         notifications = notifications
     }
+
+    $: values = Object.values(notifications)
 
     onMount(() => {
         rem.on("notification:send", addNotification)
@@ -35,7 +37,7 @@
 
 
 <div class="Column outer">
-    {#each notifications as notif}
+    {#each values as notif}
         <Notification {...notif} />
     {/each}
 </div>

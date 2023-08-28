@@ -17,7 +17,7 @@
 
 <style>
     .ibtn {
-        font-family: iconfont;
+        font-family: 'Material Symbols Round';
         display: flex;
         justify-content: center;
         align-items: center;

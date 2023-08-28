@@ -27,7 +27,11 @@
         }
     }
 
-    onMount(() => setTimeout(close, timeout))
+    onMount(() => {
+        if (timeout >= 0) {
+            setTimeout(close, timeout)
+        }
+    })
 
     function btnWrapper(func) {
         return (...args) => {
@@ -101,7 +105,7 @@
 
         <div class="Row">
             <ControlBtn btn={{
-                icon: '\ue6aa',
+                icon: '\ue8b8',
                 label: '设置',
                 onClick() {}
             }}/>

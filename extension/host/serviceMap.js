@@ -1,5 +1,6 @@
 
 module.exports = {
-    audio_control: require('./services/playerController'),
+    audio_player: require('./services/playerController'),
+    playlist: require('./services/playlistService'),
     notification: require('../../utils/notification/main')
 }

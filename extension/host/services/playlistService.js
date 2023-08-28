@@ -6,16 +6,15 @@ module.exports = function (bw) {
     return new Proxy({
         keys() {
             return [
-                ':play', ':pause', '.isPlaying', '.metadata', '.audioData',
-                '.duration', ':seek'
-            ].map(v => 'player' + v)
+                ':next', ':previous', ''
+            ].map(v => 'playlist' + v)
         }
     }, {
         get(t, p) {
             if (p === 'keys') {
                 return t[p]
             }
-            if (p.startsWith('player')) {
+            if (p.startsWith('playlist')) {
                 return () => invoker.invoke(p)
             }
         },

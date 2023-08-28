@@ -1,5 +1,5 @@
 {
-    "name": "测试插件",
+    "name": "通知栏音乐控制器",
     "ver": "1.0.0",
     "desc": "这是一个测试插件",
     "author": "RGB",
@@ -8,9 +8,10 @@
     "id": "23dc60bf-4621-4ab3-92f7-50baf8c6ea1b",
 
     "components": [
-        "audio_control",
+        "audio_player",
         "notification",
-        "new_page"
+        "new_page",
+        "playlist"
     ]
 
 }

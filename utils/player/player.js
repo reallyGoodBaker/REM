@@ -4,6 +4,7 @@ import {initOutputAudio} from '../devices/browser/output.js'
 import {fadeBeforePause, fadeBeforePlay, initProcessor} from './process.js'
 import {initAncProcessor} from './anc.js'
 import {LifeCycle, rem} from '../rem.js'
+import { invoker } from '../main-invoker/browser.js'
 
 initAudioDevicesFind()
 
@@ -19,6 +20,8 @@ export class AudioPlayer {
     on(type, handler) {
         AudioPlayer.on(type, handler)
     }
+
+    static isPlayingIgnoreFade = false
 
     static async play() {
         await this.audioElement.play(),
@@ -66,6 +69,7 @@ export class AudioPlayer {
     static async loadData(audioData, onload=Function.prototype) {
         audioData.onLoadMetadata = metadata => {
             AudioPlayer.metadata = metadata
+            console.log(metadata)
             rem.emit('metadata', metadata)
         }
 
@@ -114,7 +118,7 @@ export class AudioPlayer {
 
     static metadata = {}
     static getMetadata() {
-        return Object.assign({}, this.metadata)
+        return structuredClone(this.metadata)
     }
     getMetadata() {
         return AudioPlayer.getMetadata()
@@ -141,8 +145,20 @@ LifeCycle.when('runtimeReady').then(() => {
     initAncProcessor(AudioPlayer.audioCtx, destNode)
     initOutputAudio(destNode.stream)
 
+    AudioPlayer.on('play', () => AudioPlayer.isPlayingIgnoreFade = true)
+    AudioPlayer.on('pause', () => AudioPlayer.isPlayingIgnoreFade = false)
+    AudioPlayer.on('ended', () => AudioPlayer.isPlayingIgnoreFade = false)
+
     navigator.mediaSession.setActionHandler('play', () => globalPlayer.play())
     navigator.mediaSession.setActionHandler('pause', () => globalPlayer.pause())
-    hooks.on('player:play', () => globalPlayer.play())
+    hooks.on('player:play', async () => await globalPlayer.play())
     hooks.on('player:pause', () => globalPlayer.pause())
+
+    invoker.on('player:play', async () => await globalPlayer.play())
+    invoker.on('player:pause', () => globalPlayer.pause())
+    invoker.on('player.isPlaying', () => AudioPlayer.isPlayingIgnoreFade)
+    invoker.on('player.duration', () => globalPlayer.duration())
+    invoker.on('player:seek', (_, t) => globalPlayer.seek(t))
+    invoker.on('player.metadata', () => globalPlayer.getMetadata())
+    invoker.on('player.audioData', () => structuredClone(AudioPlayer.audioData.data))
 })

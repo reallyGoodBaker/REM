@@ -1,14 +1,51 @@
-const player = require('../../runtime/player/main')
-const { provide } = require('../../runtime/main/invoker')
-const { interval } = require('../../runtime/main/schedule')
+const {
+    player, notification, playlist, interval,
+} = require('../../runtime')
 
-interval(() => {
-    console.log('next track')
-    player.next()
-}, 10000)
+const play = {
+    icon: '\ue037',
+    onClick() {
+        player.play()
+        sendNotif()
+    }
+}
 
-console.log('YES!!!!!!')
+const pause = {
+    icon: '\ue034',
+    onClick() {
+        player.pause()
+        sendNotif()
+    }
+}
 
-provide('beforeDisable', () => {
-    console.log('NO!!!!!!!')
-})
+const pre = {
+    icon: '\ue045',
+    onClick() {
+        playlist.previous()
+        sendNotif()
+    }
+}
+
+const next = {
+    icon: '\ue044',
+    onClick() {
+        playlist.next()
+        sendNotif()
+    }
+}
+
+const sendNotif = async () => {
+    const { name } = await player.audioData()
+    const notifBody = {
+        channel: 'mini-control',
+        title: name,
+        onCancel: sendNotif,
+        controls: [ (await player.isPlaying()) ? pause : play, pre, next ]
+    }
+
+    notification.send(notifBody)
+}
+
+sendNotif()
+
+// interval()

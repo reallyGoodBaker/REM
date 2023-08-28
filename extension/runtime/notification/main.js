@@ -4,8 +4,8 @@ function toCloneableControls(controls) {
     return (controls || []).map(({label, icon}) => ({label, icon}))
 }
 
-function toClonableNotification({title, icon, message, timeout, controls}) {
-    return {title, icon, message, timeout, controls: toCloneableControls(controls)}
+function toClonableNotification({title, icon, message, timeout, channel, controls}) {
+    return {title, icon, message, timeout, channel, controls: toCloneableControls(controls)}
 }
 
 function NotNull(func) {
@@ -19,7 +19,7 @@ module.exports = {
         const active = await invoke('notification:send', toClonableNotification(n))
 
         if (!~active) {
-            return NotNull(n.onCancel).call(n)
+            return NotNull(n.onCancel).call(n), undefined
         }
 
         let btn

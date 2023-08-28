@@ -1,11 +1,12 @@
 import {rem} from '../rem.js'
 
-export function notification(title='', message='', icon='\ue758', timeout=10000, controls=[]) {
+export function notification(title='', message='', icon='\ue758', timeout=10000, channel='', controls=[]) {
     return {
         title,
         message,
         icon,
         timeout,
+        channel,
         controls
     }
 }
@@ -16,16 +17,18 @@ export function notify(notification) {
 
 export function initCrossThreadNotification() {
     hooks.on('notification:send', (_, n) => {
+        console.log(n)
         const {
             uuid,
             title,
             message,
             icon,
             timeout,
-            controls
+            channel,
+            controls,
         } = n
 
-        const notif = notification(title, message, icon, timeout, controls)
+        const notif = notification(title, message, icon, timeout, channel, controls)
 
         const handler = i => {
             hooks.send('notification:callback', {active: i, uuid})
