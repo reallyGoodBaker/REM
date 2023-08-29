@@ -53,12 +53,12 @@ export class LifeCycle {
         }
 
         if (state < this._currentState) {
-            throw `[LifeCycle::when] when ${stateStr} but now is ${this.states[this._currentState]}`
+            return new Promise(resolve => {
+                this._lifeCycle.once(stateStr, resolve)
+            })
         }
 
-        return new Promise(resolve => {
-            this._lifeCycle.once(stateStr, resolve)
-        })
+        return Promise.resolve()
     }
 
     /**
