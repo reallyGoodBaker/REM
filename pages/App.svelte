@@ -6,10 +6,10 @@ import Mine from './Mine.svelte'
 import Explorer from './Explorer.svelte'
 import Appbar from './components/Appbar.svelte'
 import Login from './Login.svelte'
-import SurfaceLayer from './components/SurfaceLayer.svelte';
+import SurfaceLayer from './components/SurfaceLayer.svelte'
 import Search from './components/Search.svelte'
 import { store } from '../utils/stores/base.js'
-import { rem } from '../utils/rem.js'
+import { LifeCycle, rem } from '../utils/rem.js'
 
 let MinePage = Mine
 if(store.getSync('profile')) {
@@ -172,133 +172,23 @@ window.Pager = (() => {
 })()
 
 
-async function getWallpaperDataSrc() {
-    let rawData = await wallpaper.getWallpaper(),
-        targetUrl = ''
-
-    if (typeof rawData === 'string') {
-        targetUrl = rawData
-    } else {
-        targetUrl = URL.createObjectURL(new Blob([rawData]))
-    }
-
-    return targetUrl
-}
-
-
-let wallpaperImg,
-    settings = store.getSync('sys-settings'),
-    useAcrylic = false
-
-async function initBackground() {
-    wallpaperImg = await getWallpaperDataSrc()
-}
-
-initBackground()
-
-
-function getBounds() {
-    return new Promise((res) => {
-        hooks.once('win:bounds', (ev, data) => {
-            res(data)
-        })
-        hooks.send('winquery:bounds')
-    })
-}
-
-function getScreenSize() {
-    return new Promise((res) => {
-        hooks.once('win:screenSize', (ev, data) => {
-            res(data)
-        })
-        hooks.send('winquery:screenSize')
-    })
-}
+let settings = store.getSync('sys-settings')
 
 rem.on('__openMinePage', () => {
     window.Pager.openNew('$mine', Mine, {}, true)
 })
 
-hooks.on('pos-change', (_, {x, y}) => changePos(x, y))
-hooks.on('win:max', () => changePos(0, 0))
-hooks.on('win:unmax', (_, data) => {
-    changePos(data[0], data[1])
-})
-
+hooks.on('win:max', Function.prototype)
+hooks.on('win:unmax', Function.prototype)
 hooks.send('winbind:move')
 
-let wallpaperWidth = 1080, wpEle
-
-import {vsync} from '../utils/core/vsync.js'
-const pos = {
-    x: 0,
-    y: 0
-}
-
-function changePos(x,y) {
-    if (!useAcrylic) {
-        return
-    }
-
-    pos.x = x
-    pos.y = y
-}
-
-let bgRefresh = vsync(() => {
-    if (wpEle) {
-        wpEle.style.setProperty('--top', pos.y)
-        wpEle.style.setProperty('--left', pos.x)
-    }
-})
-
-
-;(async () => {
-    let data = await getBounds(),
-        ss = await getScreenSize()
-
-    window.Pager.select(0)
-    wallpaperWidth = ss.width 
-    changePos(data.x, data.y)
-})()
-
-
-rem.on('useAcrylic', bool => {
-    document.body.style.setProperty(
-        '--dynamicControlLight',
-        bool? 'var(--acrylicBackgroundColor)': 'var(--controlBrighter)'
-    )
-})
 
 //==================================================================
-import {getColor} from '../utils/style/imageBasicColor.js'
-
-rem.on('playerReady', () => {
-    document.body.style.setProperty('--color', getColor(wpEle, 1))
-    requestIdleCallback(() => {
-        hooks.send('win:show-main')
-    })
-})
+LifeCycle.when('controlsReady')
+    .then(() => window.Pager.select(0))
 
 rem.on('changeControlColor', color => {
     document.body.style.setProperty('--controlHue', color)
-})
-
-rem.on('useAcrylic', async boolean => {
-    settings.theme.useAcrylic = useAcrylic = boolean
-    if (boolean) {
-        bgRefresh = vsync(() => {
-            if (wpEle) {
-                wpEle.style.setProperty('--top', pos.y)
-                wpEle.style.setProperty('--left', pos.x)
-            }
-        })
-
-        let data = await getBounds()
-        changePos(data.x, data.y)
-    } else {
-        bgRefresh.cancel()
-    }
-    store.set('sys-settings', settings)
 })
 
 
@@ -308,7 +198,6 @@ if (!settings) {
     settings = {
         theme: {
             controlColor: [2, 39, 148, 210, 270, 292, 322],
-            useAcrylic: false,
         },
         beta: {
             showDevTools: false
@@ -325,11 +214,7 @@ if (!settings) {
 let controlColors = settings.theme.controlColor.slice(1)
 let controlColorSelected = settings.theme.controlColor[0]
 
-
-
 rem.emit('changeControlColor', controlColors[controlColorSelected])
-rem.emit('useAcrylic', settings.theme.useAcrylic)
-
 
 let coloredAppbar = false
 rem.on('__pageFold', () => {
@@ -351,25 +236,10 @@ rem.on('__pageUnfold', () => {
         contain: strict;
     }
 
-    .wallpaper {
-        --top: 0;
-        --left: 0;
-        position: fixed;
-        z-index: -999;
-        background-color: #000;
-        top: calc(var(--top) * -1px);
-        left: calc(var(--left) * -1px);
-        transform: translateZ(0);
-    }
-
     .head {
         z-index: 2;
         background-color: transparent;
         transition: background-color 0.08s;
-    }
-
-    .head.noneAcrylic, .head.color.noneAcrylic {
-        background-color: var(--controlBackground);
     }
 
     .head.color {
@@ -380,24 +250,21 @@ rem.on('__pageUnfold', () => {
 
 </style>
 
-<div style="transition: background-color 0.2s; background-color: var({useAcrylic?'--acrylicBackgroundColor':'--noneAcrylicBackgroundColor'});">
-    <img class="wallpaper" src={wallpaperImg} alt="" width={wallpaperWidth} bind:this={wpEle}>
-    <div class="row window">
-        <div class="row head{coloredAppbar? ' color': ''}{useAcrylic?'':' noneAcrylic'}">
-            <div style="width: 100vw; height: 54px; justify-content: center; -webkit-app-region: drag;" class="Row">
-                <Search/>
-            </div>
-            <Nav
-                bind:selected
-                bind:tabs
-            ></Nav>
+<div class="row window" style="background-color: var(--noneAcrylicBackgroundColor);">
+    <div class="row head{coloredAppbar? ' color': ''}">
+        <div style="width: 100vw; height: 54px; justify-content: center; -webkit-app-region: drag;" class="Row">
+            <Search/>
         </div>
-        <Pager bind:this={__pager}/>
-        <Control/>
+        <Nav
+            bind:selected
+            bind:tabs
+        ></Nav>
     </div>
-    <SurfaceLayer>
-        
-    </SurfaceLayer>
+    <Pager bind:this={__pager}/>
+    <Control/>
 </div>
+<SurfaceLayer>
+    
+</SurfaceLayer>
 
 <Appbar/>

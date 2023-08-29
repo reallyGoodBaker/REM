@@ -2,7 +2,7 @@
     export let marginHorizon = '10px';
     export let marginVertical = '6px';
     export let radius = '8px';
-    export let color = 'var(--dynamicControlLight)';
+    export let color = 'var(--controlBrighter)';
     export let title = '';
 </script>
 

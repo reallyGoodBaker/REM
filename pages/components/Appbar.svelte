@@ -64,27 +64,32 @@
     }
 
     .clk {
-        font-family: iconfont;
-        font-size: 14px;
+        font-family: 'Material Symbols Round';
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
         width: 32px;
         height: 32px;
         border-radius: 8px;
         cursor: pointer;
         background-color: transparent;
-        transition: background-color 0.12s, color 0.12s;
-    }
-
-    .clk.small {
-        font-size: 12px;
     }
 
     .clk:hover {
         background-color: rgba(0, 0, 0, 0.2);
     }
+    .clk:active {
+        background-color: rgba(0, 0, 0, 0.4);
+    }
 
     .clk.red:hover {
         background-color: red;
         color: #fff;
+    }
+    .clk.red:active {
+        background-color: darkred;
+        color: #aaa;
     }
 
     .btn-group {
@@ -121,11 +126,11 @@
 
 <div class="column container {reverse? 'left': 'right'}">
     <div class="column btn-group appbtns{reverse? ' rev': ''}">
-        <div class="column clk" on:click={min}>&#xe698;</div>
-        <div class="column clk small" style="margin: 0 4px;" on:click={toggleMax}>
-            {fullScreen ? "\ue891" : "\ue88f"}
+        <div class="column clk" on:click={min}>{'\ue931'}</div>
+        <div class="column clk" style="margin: 0 4px;" on:click={toggleMax}>
+            {fullScreen ? "\ue5d1" : "\ue5d0"}
         </div>
-        <div class="column clk red" on:click={close}>⨉</div>
+        <div class="column clk red" on:click={close}>{'\ue5cd'}</div>
     </div>
 </div>
 

@@ -87,6 +87,9 @@ class ExtensionHost {
         this._registerActivationChange(bw)
 
         ipcMain.emit('extension:activated', this.manifest)
+        ipcMain.once('win:show-main', () => {
+            this.request('playerReady')
+        })
     }
 
     _registerActivationChange = bw => {

@@ -1,5 +1,5 @@
 const {
-    player, notification, playlist, interval,
+    player, notification, playlist, provide
 } = require('../../runtime')
 
 const play = {
@@ -35,7 +35,7 @@ const next = {
 }
 
 const sendNotif = async () => {
-    const { name } = await player.audioData()
+    const { name } = (await player.audioData()) ?? { name: '' }
     const notifBody = {
         channel: 'mini-control',
         title: name,
@@ -46,6 +46,4 @@ const sendNotif = async () => {
     notification.send(notifBody)
 }
 
-sendNotif()
-
-// interval()
+provide('playerReady', sendNotif)

@@ -34,13 +34,10 @@ export class LifeCycle {
         playerReady: 2,
         controlsReady: 3,
 
-        started: 4,
-
         0: 'uninit',
         1: 'runtimeReady',
         2: 'playerReady',
         3: 'controlsReady',
-        4: 'started',
     }
 
     static _currentState = LifeCycle.states.uninit
@@ -48,7 +45,7 @@ export class LifeCycle {
     /**
      * @param {keyof LifeCycle.states} state
      */
-    static when = (state) => {
+    static when = state => {
         const stateStr = state
         state = this.states[state]
         if (typeof state === 'undefined') {
@@ -59,43 +56,27 @@ export class LifeCycle {
             throw `[LifeCycle::when] when ${stateStr} but now is ${this.states[this._currentState]}`
         }
 
-        return new Promise((resolve) => {
-            this._lifeCycle.once(stateStr, () => {
-                resolve()
-
-                requestIdleCallback(() => {
-                    if (!this._lifeCycle.listenerCount(stateStr)) {
-                        this.next()
-                    }
-                })
-
-            })
+        return new Promise(resolve => {
+            this._lifeCycle.once(stateStr, resolve)
         })
     }
 
-    static start = () => {
-        if (this._currentState !== this.states.uninit) {
-            throw '[LifeCycle::start]'
+    /**
+     * @param {keyof LifeCycle.states} state
+     */
+    static fire = state => {
+        const stateStr = state
+        state = this.states[state]
+
+        if (typeof state === 'undefined') {
+            throw '[LifeCycle::when]: Unknown state'
         }
 
-        this.next()
-    }
-
-    static next = () => {
-        if (this._currentState > 4) {
-            return
+        if (state < this._currentState) {
+            throw `[LifeCycle::when] when ${stateStr} but now is ${this.states[this._currentState]}`
         }
 
-        requestIdleCallback(() => {
-            if (!this._lifeCycle.listenerCount(this.states[this._currentState])) {
-                this.next()
-            }
-
-            this._lifeCycle.emitNone(this.states[
-                this._currentState++
-            ])
-
-        })
+        this._lifeCycle.emit(stateStr)
     }
 
 }

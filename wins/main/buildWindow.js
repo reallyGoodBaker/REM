@@ -21,7 +21,6 @@ function scaleDisplayProp(num, scale=0.7) {
 }
 
 module.exports = function buildWindow() {
-
     const {width: rawW, height: rawH} = screen.getPrimaryDisplay().bounds
 
     const width = scaleDisplayProp(rawW),
@@ -44,7 +43,7 @@ module.exports = function buildWindow() {
 
 
     browserWindow.loadFile(path.resolve(__dirname, './index.html'))
-    // browserWindow.webContents.openDevTools({ mode: 'detach' })
+    browserWindow.webContents.openDevTools({ mode: 'detach' })
 
     browserWindow.on('closed', () => {
         browserWindow = null;

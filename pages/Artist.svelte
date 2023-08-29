@@ -89,7 +89,7 @@
     async function getArtistAlbums() {
         const detail = save.albums
             ?? (save.albums = await NeteaseApi.getArtistAlbums(id))
-        console.log(detail)
+        // console.log(detail)
         return detail
     }
 
@@ -287,7 +287,7 @@
         background-color: var(--fade);
     }
     .tile.selected, .tile.selected:hover, .tile.selected:active {
-        background-color: var(--dynamicControlLight);
+        background-color: var(--controlBrighter);
         box-shadow: 0 0 6px var(--fade);
     }
     .icon-round {
@@ -296,7 +296,7 @@
 
     .pop_container {
         padding: 16px;
-        background-color: var(--dynamicControlLight);
+        background-color: var(--controlBrighter);
         box-sizing: border-box;
         height: calc(100% - 32px);
         border-radius: 0 8px 8px 8px;

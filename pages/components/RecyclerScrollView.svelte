@@ -36,7 +36,9 @@
         await tick()
 
         looper = vsync(() => {
-            const nextStart = Math.ceil(v.offsetTop() / templateHeight)
+            const nextStart = Math.ceil(
+                (typeof v.offsetTop === 'function' ? v.offsetTop() : v.offsetTop) / templateHeight
+            )
             if (nextStart === start) {
                 return
             }

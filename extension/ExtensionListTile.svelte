@@ -38,7 +38,7 @@
         border: solid 1px var(--controlGray);
         border-radius: 10px;
         overflow: hidden;
-        background-color: var(--dynamicControlLight);
+        background-color: var(--controlBrighter);
         margin-bottom: 8px;
     }
 

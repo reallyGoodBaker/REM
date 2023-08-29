@@ -467,7 +467,7 @@
 
 {#if artistSublist.length}
 <div class="Row" row-title="{s('favorite_artists')}" style="--item-height: 200px; --item-width: 200px; align-self: flex-start;">
-    <div class="btn light dynamic"
+    <div class="btn light"
         style="position: absolute; left: 200px; top: 0px; border-radius: 6px;"
         on:click={() => {
             if (!pageStore.showAllArtists) {
@@ -502,7 +502,7 @@
 
 {#if albumSublist.length}
 <div class="Row" row-title="{s('favorite_albums')}" style="--item-height: 200px; --item-width: 200px; align-self: flex-start;">
-    <div class="btn light dynamic"
+    <div class="btn light"
         style="position: absolute; left: 200px; top: 0px; border-radius: 6px;"
         on:click={() => {
             if (!pageStore.showAllAlbums) {

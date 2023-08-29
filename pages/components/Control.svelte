@@ -38,7 +38,7 @@
     })
 
     async function setContent(audioData) {
-
+        console.log(audioData)
         globalMetadata.title(audioData.title())
         globalMetadata.album(audioData.album().name)
         globalMetadata.artist(audioData.artist().reduce((pre, cur) => [...pre, cur.name], []).join('; '))
@@ -97,6 +97,7 @@
             detailReady = true
         }
     })
+
     LifeCycle.when('playerReady').then(async () => {
         AudioPlayer.on('play', () => playing = true)
         AudioPlayer.on('pause', () => playing = false)
@@ -113,6 +114,8 @@
         }
 
         playerReady = true
+
+        LifeCycle.fire('controlsReady')
     })
 
     function onClick() {

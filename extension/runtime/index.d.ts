@@ -56,7 +56,10 @@ import type { TransferListItem } from 'node'
 
 export const invoke: (name: string, ...args: readonly TransferListItem[]) => Promise<TransferListItem>
 export const call: (name: string, ...args: readonly TransferListItem[]) => void
+
+type InternalProvideKeys = 'beforeDisable' | 'clearTimers' | 'playerReady'
+
 /**
  * 为 `ExtensionHost` 提供跨进程调用的函数
  */
-export const provide: (name: string, handler: (...args: readonly TransferListItem[]) => any) => void
+export const provide: (name: InternalProvideKeys, handler: (...args: readonly TransferListItem[]) => any) => void
