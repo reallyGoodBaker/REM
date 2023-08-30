@@ -180,19 +180,19 @@
     import Artist from "./Artist.svelte"
 
     async function dbClick(ev) {
-        const {listData, i} = ev.detail;
+        const { listData, i } = ev.detail
 
-        const matches = MainPlaylist.query({
-            name: listData[i].name
-        })
+        // const matches = MainPlaylist.query({
+        //     name: listData[i].name
+        // })
 
-        if (!matches.length) {
-            MainPlaylist.loadList(listData)
-            MainPlaylist.play(i)
-            return
-        }
+        // if (matches.length) {
+        //     MainPlaylist.play(matches[0])
+        //     return
+        // }
 
-        MainPlaylist.play(matches[0]);
+        MainPlaylist.loadList(listData)
+        MainPlaylist.play(i)
     }
 
     let container

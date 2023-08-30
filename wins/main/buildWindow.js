@@ -58,6 +58,8 @@ module.exports = function buildWindow() {
     })
 
     ipcMain.once('win:show-main', () => {
+        globalThis.playerReady = true
+
         if (process.platform === 'win32') {
             setThumbarButtons(browserWindow)
         }

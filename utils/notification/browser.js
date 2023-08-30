@@ -17,7 +17,6 @@ export function notify(notification) {
 
 export function initCrossThreadNotification() {
     hooks.on('notification:send', (_, n) => {
-        console.log(n)
         const {
             uuid,
             title,

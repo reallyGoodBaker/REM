@@ -15,7 +15,6 @@ class ExtensionHost {
      * @param {string} folder
      */
     constructor(folder) {
-
         this.root = folder
         const manifestPath = path.join(folder, 'manifest.json')
         this.manifest = requireManifest(manifestPath)
@@ -86,10 +85,12 @@ class ExtensionHost {
         this._registerComponents()
         this._registerActivationChange(bw)
 
-        ipcMain.emit('extension:activated', this.manifest)
-        ipcMain.once('win:show-main', () => {
-            this.request('playerReady')
+        this.events.on('@@@ready', ({ id }) => {
+            this.extension.postMessage({ id, val: globalThis.playerReady, err: null })
         })
+
+        ipcMain.emit('extension:activated', this.manifest)
+        ipcMain.on('win:show-main', () => this.request('ready'))
     }
 
     _registerActivationChange = bw => {
@@ -101,6 +102,10 @@ class ExtensionHost {
         })
 
         ipcMain.once('extension:deactivated', m => {
+            this.components.clear()
+            this.events.eventNames()
+                .forEach(name => this.events.removeAllListeners(name))
+
             m.activated = false
             web.send('extension:deactivated', m)
         })
@@ -183,7 +188,6 @@ class ExtensionHost {
                     this.extension.postMessage(returnVal, this._buildTransList(returnVal))
                 }
             }
-
             this.events.on(`@${key}`, handler)
             this.events.once(`-service`, () => {
                 this.events.off(`@${key}`, handler)

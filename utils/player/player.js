@@ -160,7 +160,7 @@ LifeCycle.when('runtimeReady').then(() => {
     invoker.on('player.duration', () => globalPlayer.duration())
     invoker.on('player:seek', (_, t) => globalPlayer.seek(t))
     invoker.on('player.metadata', () => globalPlayer.getMetadata())
-    invoker.on('player.audioData', () => structuredClone(AudioPlayer.audioData?.data))
-
-    LifeCycle.fire('playerReady')
+    invoker.on('player.audioData', () => {
+        return structuredClone(AudioPlayer.audioData?.data)
+    })
 })

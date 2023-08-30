@@ -74,12 +74,23 @@ function getTransList(list) {
     })
 }
 
-function provide(name, handler) {
+async function provide(name, handler) {
     if (typeof handler === 'function') {
         services.set(name, handler)
     }
 }
 
+async function ready() {
+    return await invoke('@@ready')
+}
+
+async function whenReady(cb) {
+    if (await ready())
+        cb.call(null)
+    else
+        provide('ready', cb)   
+}
+
 module.exports = {
-    invoke, call, provide
+    invoke, call, provide, ready, whenReady,
 }

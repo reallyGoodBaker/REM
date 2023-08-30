@@ -1,4 +1,4 @@
-const {provide} = require('./invoker')
+const { provide } = require('./invoker')
 
 class Timeout {
     static record = new Map()
@@ -39,7 +39,7 @@ function interval(callback, t=50) {
         val.id = v.id
         val.timeout = v.timeout
     }
-    let val = timeout(callback, t)
+    let val = timeout(loop, t)
 
     return val
 }

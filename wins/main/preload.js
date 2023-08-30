@@ -42,10 +42,6 @@ new Binder('hooks')
     zoom: ratio => webFrame.setZoomFactor(ratio),
 })
 
-const { getWallpaper } = require('../../utils/Win11Wallpaper');
-new Binder('wallpaper').bind('getWallpaper', getWallpaper);
-
-
 
 const { login, loginViaQRCode, validQRLogin, getUserAccount } = require('../../utils/api/login')
 const { Search, suggest } = require('../../utils/api/search')

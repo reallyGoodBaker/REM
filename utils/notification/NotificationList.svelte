@@ -4,13 +4,19 @@
     import { rem } from "../rem.js"
 
     let notifications = {}
+    let container
 
     function addNotification(notification) {
-        notifications[notification.channel] = notification
-        notifications = notifications
-    }
+        /**@type {Notification}*/
+        const oldNotif = notifications[notification.channel]
 
-    $: values = Object.values(notifications)
+        if (oldNotif) {
+            oldNotif.close()
+        }
+
+        const notif = new Notification({ target: container, props: notification })
+        notifications[notification.channel] = notif
+    }
 
     onMount(() => {
         rem.on("notification:send", addNotification)
@@ -36,8 +42,4 @@
 </style>
 
 
-<div class="Column outer">
-    {#each values as notif}
-        <Notification {...notif} />
-    {/each}
-</div>
+<div class="Column outer" bind:this={container}></div>

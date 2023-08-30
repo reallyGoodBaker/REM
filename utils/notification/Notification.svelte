@@ -1,5 +1,5 @@
 <script>
-    import { onMount, setContext } from "svelte"
+    import { onMount, setContext, createEventDispatcher } from "svelte"
     import Image from "../../pages/components/Image.svelte"
     import ControlBtn from './ControlBtn.svelte'
 
@@ -17,12 +17,14 @@
     }
 
     let container
+    const emit = createEventDispatcher()
 
-    function close() {
+    export function close() {
         if (container) {
             if (typeof onCancel === 'function') {
                 onCancel.call(container)
             }
+            emit('close')
             container.remove()
         }
     }

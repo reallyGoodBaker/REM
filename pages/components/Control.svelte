@@ -1,6 +1,5 @@
 <script>
     import Avatar from "./Avatar.svelte"
-    import Progress from "./Progress.svelte"
     import ProgressInset from "./ProgressInset.svelte"
     import { globalMetadata } from '../../utils/player/metadata.js'
     import { MainPlaylist } from '../../utils/player/playlist.js'
@@ -12,6 +11,7 @@
     import Artist from "../Artist.svelte"
     import { NETEASE_IMG_SMALL } from "../../utils/stores/img.js"
     import { AudioPlayer } from '../../utils/player/player.js'
+    import { onMount } from "svelte";
 
     let l = langMapping.getMapping()
     rem.on('langChange', lang => {
@@ -38,7 +38,6 @@
     })
 
     async function setContent(audioData) {
-        console.log(audioData)
         globalMetadata.title(audioData.title())
         globalMetadata.album(audioData.album().name)
         globalMetadata.artist(audioData.artist().reduce((pre, cur) => [...pre, cur.name], []).join('; '))
@@ -46,7 +45,6 @@
             src: audioData.album().picUrl
         })
         globalMetadata.notifyObservers(audioData)
-
     }
 
     let ctx, container
@@ -108,14 +106,15 @@
         let listPlaying = await store.get('listPlaying'),
             playIndex = await store.get('listElementPlaying')
 
-        if (listPlaying && typeof playIndex === 'number') {
-            MainPlaylist.loadList(listPlaying)
-            MainPlaylist.load(playIndex)
-        }
-
         playerReady = true
 
+        if (listPlaying && typeof playIndex === 'number') {
+            MainPlaylist.loadList(listPlaying)
+            await MainPlaylist.load(playIndex)
+        }
+
         LifeCycle.fire('controlsReady')
+        hooks.send('win:show-main')
     })
 
     function onClick() {
@@ -190,6 +189,9 @@
      */
     var btns = new Array(5)
 
+    onMount(() => {
+        LifeCycle.fire('playerReady')
+    })
 </script>
 
 

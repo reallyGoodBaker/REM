@@ -81,6 +81,6 @@ export class LifeCycle {
 
 }
 
-LifeCycle.when('controlsReady').then(() => {
-    hooks.send('win:show-main')
-})
+// LifeCycle.when('controlsReady').then(() => {
+//     hooks.send('win:show-main')
+// })

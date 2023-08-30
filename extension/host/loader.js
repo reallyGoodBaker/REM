@@ -45,7 +45,6 @@ class ExtensionLoader {
     start = id => {
         let host
         if (host = this.extensions.get(id)) {
-
             if (host.extension) {
                 return
             }
@@ -60,7 +59,6 @@ class ExtensionLoader {
     _listenExtensionsChange() {
         ipcMain.on('extension:active', (_, id) => this.start(id))
         ipcMain.on('extension:deactive', (_, id) => this._deactiveExtension(id))
-
     }
 
     _deactiveExtension = id => {
