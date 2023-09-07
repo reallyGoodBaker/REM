@@ -72,5 +72,9 @@ export default {
 	],
 	watch: {
 		clearScreen: false
-	}
+	},
+	onwarn: (warning, handler) => {
+		if (warning.code.startsWith('a11y-')) return
+		handler(warning)
+	},
 };
