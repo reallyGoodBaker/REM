@@ -143,11 +143,6 @@
         bind:y={cmY}
         bind:data={cmData}
     />
-    <VirtualCursor
-        bind:enable={vcEnable}
-        bind:active={vcActive}
-        bind:htmlElement={virtCursor}
-    />
     <Popup
         bind:showPopupWindow={showTunnerWindow}
         shadowBlurRadius={24}
@@ -156,6 +151,11 @@
     </Popup>
     <NotificationList/>
     <slot />
+    <VirtualCursor
+        bind:enable={vcEnable}
+        bind:active={vcActive}
+        bind:htmlElement={virtCursor}
+    />
 </div>
 
 <style>

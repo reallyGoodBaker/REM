@@ -20,12 +20,6 @@
         store.set('AppSettings/beta_features', betaFeatures)
     }
 
-    onMount(() => {
-        hooks.send(`devtools:${
-            betaFeatures.showDevTools ? 'open': 'close'
-        }`)
-    })
-
 </script>
 
 {#if rem.isBeta}

@@ -89,7 +89,7 @@
     async function getArtistAlbums() {
         const detail = save.albums
             ?? (save.albums = await NeteaseApi.getArtistAlbums(id))
-        // console.log(detail)
+        console.log(detail)
         return detail
     }
 
@@ -156,6 +156,7 @@
                         let:item={als}>
                         <div class="album-col">
                             {#each als as al}
+                            {#if al}
                             <div class="album" on:click={async () => {
                                 let id = al.id
                                 const {album, songs} = await getAlbumDetail(id)
@@ -177,7 +178,7 @@
                                 <div class="Column info align_start">
                                     <div class="Column align_start">
                                         <div class="album-title">{al.name}</div>
-                                        <div class="Row" style="gap: 8px; justify-content: flex-start;">
+                                        <div class="Row" style="column-gap: 8px; justify-content: flex-start;">
                                             {#each al.artists as { name }}
                                             <Link text={name}/>
                                             {/each}
@@ -196,8 +197,7 @@
                                     </div>
                                 </div>
                             </div>
-                            {:else}
-                            <!-- Nothing -->
+                            {/if}
                             {/each}
                         </div>
                     </RecyclerScrollView>
@@ -370,6 +370,11 @@
         width: 100%;
         word-break: break-all;
         font-size: larger;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
     }
 
     .info {

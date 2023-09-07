@@ -6,6 +6,9 @@ function lang(key) {
     return langMapping.s(key)
 }
 
+/**
+ * @type {<T>(name: string, defaultValue: T, init: (val: T) => void) => void}
+ */
 function init(name, defaultValue, init) {
     let val = store.getSync(name)
 
@@ -23,6 +26,10 @@ export function initSettings() {
     init('AppSettings/beta_features', {
         showDevTools: false,
         extensions: false,
+    }, ({ showDevTools }) => {
+        hooks.send(`devtools:${
+            showDevTools ? 'open': 'close'
+        }`)
     })
 
     init('AppSettings/cache', {
@@ -64,7 +71,6 @@ export function initSettings() {
     init('AppSettings/theme', {
         colors: [2, 39, 148, 210, 270, 292, 322],
         selected: 3,
-        useAcrylic: false
     })
 
     init('AppSettings/font', {

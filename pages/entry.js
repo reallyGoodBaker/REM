@@ -8,6 +8,9 @@ import { rem, LifeCycle } from '../utils/rem.js'
 import { initExtensionList } from '../extension/initExtensionList.js'
 import { initCrossThreadNotification } from '../utils/notification/browser.js'
 import { initSettings } from './settings/initSettings.js'
+import { initHighLevelApi } from '../utils/high-level/browser'
+
+initHighLevelApi()
 
 window.langMapping = new Lang(store.getSync('AppSettings/lang')?.selected || 'zh_cn')
 window.contextMap = new Map()

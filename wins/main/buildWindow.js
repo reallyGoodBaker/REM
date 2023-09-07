@@ -43,7 +43,7 @@ module.exports = function buildWindow() {
 
 
     browserWindow.loadFile(path.resolve(__dirname, './index.html'))
-    browserWindow.webContents.openDevTools({ mode: 'detach' })
+    // browserWindow.webContents.openDevTools({ mode: 'detach' })
 
     browserWindow.on('closed', () => {
         browserWindow = null;
