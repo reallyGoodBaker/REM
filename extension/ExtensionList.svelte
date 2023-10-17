@@ -4,6 +4,7 @@
     import Input from '../pages/components/Input.svelte'
 
     import {getManifests} from './initExtensionList'
+    import { onMount } from 'svelte';
 
     const s = v => langMapping.s(v)
     const manifests = getManifests()
@@ -36,27 +37,15 @@
         return icon
     }
 
+    onMount(() => {
+        Pager.setSearchPlaceholder('搜索插件')
+    })
 </script>
 
 <style>
     .outer {
         width: 100%;
         height: 100%;
-    }
-
-    h1 {
-        margin: 0;
-        margin-left: 24px;
-        margin-bottom: 12px;
-        margin-top: 12px;
-        font-weight: normal;
-    }
-
-    .header {
-        justify-content: space-between;
-        padding-right: 8px;
-        margin-bottom: 8px;
-        margin-top: 12px;
     }
 
     .inner {
@@ -67,11 +56,6 @@
 <div class="outer">
     <ScrollView2>
         <div class="Column inner"><div style="width: 400px;">
-            <div class="Row header">
-                <h1>{s('extensions')}</h1>
-                <Input placeholder="搜索插件" cssText="width: 100px"/>
-            </div>
-
             {#each manifests as {
                 name, desc, ver, components, icon, id, folderName,
                 activated

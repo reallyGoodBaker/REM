@@ -1,7 +1,7 @@
 {
     "name": "rem",
-    "version": "0.1.11",
-    "description": "Quarenden",
+    "version": "0.1.12",
+    "description": "Quina",
     "main": "./main.js",
     "scripts": {
         "build-app": "rollup -c && electron-builder",

@@ -1,50 +1,34 @@
 <script>
-    import ListTile from "./ListTile.svelte";
-    import Popup from './Popup.svelte';
-    import Login from '../Login.svelte';
-    import {getContext, onMount} from 'svelte';
-    import Settings from "../Settings.svelte";
+    import ListTile from "./ListTile.svelte"
+    import Login from '../Login.svelte'
+    import { getContext } from 'svelte'
+    import Settings from "../Settings.svelte"
     import {defaultWizard} from '../../utils/wizard/edit-profile/index.js'
     import {store} from '../../utils/stores/base.js'
     import ExtensionList from '../../extension/ExtensionList.svelte'
+
+    function login() {
+        Pager.openNew('登录', Login)
+    }
 
     let close = getContext('close');
     const s = (f, ...args) => {
         return langMapping.s(f, ...args) || f
     }
 
-    export let user;
+    export let user
 
-    let isLogedin = !!user.avatarUrl;
-
-    let pop = false, login
-
-    let hide = async () => {
-        pop = false;
-        const profile = await store.get('profile');
-        if (profile) {
-            user = {
-                avatarUrl: profile.avatarUrl,
-                name: profile.nickname,
-            }
-            isLogedin = !!user.avatarUrl;
-        }
-    }
-    let show = () => {
-        pop = true;
-        console.log(login);
-    }
-
+    let isLogedin = !!user.avatarUrl
 
     function logOut() {
         NeteaseApi.logout()
-        store.rm('profile');
-        store.rm('token');
+        store.rm('profile')
+        store.rm('token')
         user = {
             avatarUrl: '',
             name: 'not_login',
         }
-        isLogedin = !!user.avatarUrl;
+        isLogedin = !!user.avatarUrl
     }
 
 
@@ -56,7 +40,7 @@
 
     function showSettings() {
         close();
-        Pager.openNew('$settings', Settings, {});
+        Pager.openNew('$settings', Settings, {})
     }
 
     function showExtensionsPage() {
@@ -64,7 +48,24 @@
         Pager.openNew('$extensions', ExtensionList, {})
     }
 
-
+    const options = [
+        {
+            isUrl: false,
+            avatar: '\ue6aa',
+            title: s('settings'),
+            onClick: showSettings,
+        },
+        {
+            avatar: '\ue666',
+            title: s('download_manager'),
+            onClick: Function.prototype,
+        },
+        {
+            avatar: '\ue68b',
+            title: s('extensions'),
+            onClick: showExtensionsPage,
+        },
+    ]
 </script>
 
 
@@ -75,35 +76,25 @@
     }
 
     .c {
+        contain: paint;
+        border-radius: 16px;
         width: 300px;
         padding: 12px 0px;
         background-color: var(--controlWhite);
     }
 
-    header, .article {
-        border-bottom: solid 1px #ddd;
-    }
-
-    footer {
-        width: 100%;
-        margin: 12px 0px 4px 0px;
-        font-size: x-small;
-        color: #bbb;
+    header.row {
+        contain: paint;
+        width: calc(100% - 20px);
+        margin: 4px 10px 0;
+        background-color: var(--controlBackground2);
+        border-radius: 12px;
     }
 </style>
 
 
 <div class="row c">
     <header class="row">
-        <Popup
-            bind:showPopupWindow={pop}
-            on:layerClick={hide}
-            
-            >
-            <div bind:this={login}>?????</div>
-            <Login/>
-        </Popup>
-
         <ListTile
             isUrl={user.avatarUrl}
             avatar={user.avatarUrl || '\ue6bb'}
@@ -135,37 +126,21 @@
             size={'small'}
             avatar={'\ue610'}
             data={s('login')}
-            on:click={show}/>
+            on:click={login}/>
         {/if}
 
     </header>
 
     <div class="article row">
-        <ListTile
-            on:click={showSettings}
-            isUrl={false}
-            style={"font-size: small"}
-            size={'small'}
-            avatar={'\ue6aa'}
-            data={s('settings')}/>
-        <ListTile
-            isUrl={false}
-            style={"font-size: small"}
-            size={'small'}
-            avatar={'\ue666'}
-            data={s('download_manager')}/>
-        <ListTile
-            on:click={showExtensionsPage}
-            isUrl={false}
-            style={"font-size: small"}
-            size={'small'}
-            avatar={'\ue68b'}
-            data={s('extensions')}/>
+        {#each options as { title, avatar, onClick, isUrl }}
+            <ListTile
+                on:click={onClick}
+                isUrl={!!isUrl}
+                padding={16}
+                style={"font-size: small"}
+                size={'small'}
+                avatar={avatar}
+                data={title}/>
+        {/each}
     </div>
-
-    <footer class="column">
-        REM
-    </footer>
-
-
 </div>

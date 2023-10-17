@@ -235,6 +235,10 @@
     onMount(() => {
         const {save} = Pager.getContext()
         requestIdleCallback(() => scrollv.setOffsetRatio(save.offsetRatio))
+
+        Pager.setSearchPlaceholder('搜索我喜好的')
+        Pager.setOnSearchInput(v => console.log(v))
+        Pager.setOnSearch(v => console.log(v))
     })
 
 </script>

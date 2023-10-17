@@ -145,8 +145,7 @@
     />
     <Popup
         bind:showPopupWindow={showTunnerWindow}
-        shadowBlurRadius={24}
-        noLayer={false}>
+        shadowBlurRadius={24}>
         <TunnerWindow/>
     </Popup>
     <NotificationList/>

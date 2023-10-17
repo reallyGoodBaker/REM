@@ -97,10 +97,12 @@
         save.selected = selected
     })
 
-    onMount(() => {
+    onMount(async () => {
         if (typeof save.selected === 'number') {
             selected = save.selected
         }
+
+        Pager.setSearchPlaceholder(`搜索${(await getArtist()).artist.artist.name}的作品`)
     })
 </script>
 

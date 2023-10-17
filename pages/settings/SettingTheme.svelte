@@ -1,7 +1,6 @@
 <script>
     import RowList from "../components/RowList.svelte"
     import SelectListTile from "../components/SelectListTile.svelte"
-    import ToggleListTile from "../components/ToggleListTile.svelte"
     import {store} from '../../utils/stores/base.js'
     import { rem } from '../../utils/rem.js'
 
@@ -19,12 +18,6 @@
         saveTheme()
     }
 
-    function onToggleUseAcrylic({detail}) {
-        useAcrylic = detail
-        rem.emit('useAcrylic', detail)
-        saveTheme()
-    }
-
 </script>
 
 <RowList title={lang('theme')}>
@@ -36,12 +29,4 @@
         isUrl={false}
         on:selected={onSelectedControlColor}
     />
-    <!-- <ToggleListTile
-        data={lang('use_acrylic')}
-        extra={lang('use_acrylic_extra')}
-        useAvatar={false}
-        isUrl={false}
-        bind:checked={useAcrylic}
-        on:toggle={onToggleUseAcrylic}
-    /> -->
 </RowList>

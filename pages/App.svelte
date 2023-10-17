@@ -28,6 +28,8 @@ let tabs = [
     '$explorer',
 ]
 
+let searchPlaceholder = ''
+
 let __pager
 window.Pager = (() => {
 
@@ -36,8 +38,38 @@ window.Pager = (() => {
         saves = new Map()
             .set(tabs[0], {})
             .set(tabs[1], {}),
-        beforeSwitchHandlers = []
+        beforeSwitchHandlers = [],
+        onSearchInput = Function.prototype,
+        onSearch = Function.prototype
 
+    function setOnSearchInput(handler) {
+        onSearchInput = handler
+    }
+
+    function setOnSearch(handler) {
+        onSearch = handler
+    }
+
+    function setSearchPlaceholder(message) {
+        searchPlaceholder = message
+    }
+
+    function performSearchInput(str) {
+        if (onSearchInput.call) {
+            onSearchInput.call(null, str)
+        }
+    }
+
+    function performSearch(str) {
+        if (onSearch.call) {
+            onSearch.call(null, str)
+        }
+    }
+
+    function clearSearchListeners() {
+        onSearchInput = Function.prototype
+        onSearch = Function.prototype
+    }
 
     function add(name, component, props={}, force=false) {
         if(has(name)) {
@@ -68,6 +100,7 @@ window.Pager = (() => {
 
         beforeSwitchHandlers.forEach(f => f.call(null))
         beforeSwitchHandlers = []
+        clearSearchListeners()
 
         history[index] = tabs[selected]
 
@@ -167,6 +200,8 @@ window.Pager = (() => {
         removeByIndex: i => {
             if(i > 1) removeByIndex(i)
         },
+        setOnSearch, setOnSearchInput, setSearchPlaceholder,
+        performSearch, performSearchInput,
     }
 
 })()
@@ -187,11 +222,6 @@ hooks.send('winbind:move')
 LifeCycle.when('controlsReady')
     .then(() => window.Pager.select(0))
 
-rem.on('changeControlColor', color => {
-    document.body.style.setProperty('--controlHue', color)
-})
-
-
 //=======================================================================
 
 if (!settings) {
@@ -210,11 +240,6 @@ if (!settings) {
 
     store.set('sys-settings', settings)
 }
-
-let controlColors = settings.theme.controlColor.slice(1)
-let controlColorSelected = settings.theme.controlColor[0]
-
-rem.emit('changeControlColor', controlColors[controlColorSelected])
 
 let coloredAppbar = false
 rem.on('__pageFold', () => {
@@ -253,7 +278,7 @@ rem.on('__pageUnfold', () => {
 <div class="row window" style="background-color: var(--noneAcrylicBackgroundColor);">
     <div class="row head{coloredAppbar? ' color': ''}">
         <div style="width: 100vw; height: 54px; justify-content: center; -webkit-app-region: drag;" class="Row">
-            <Search/>
+            <Search placeholder={searchPlaceholder}/>
         </div>
         <Nav
             bind:selected

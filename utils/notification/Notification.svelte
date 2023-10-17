@@ -9,6 +9,7 @@
     export let controls = []
     export let timeout = 10000
     export let onCancel = () => {}
+    export let onConfig = null
 
     setContext('close', close)
 
@@ -26,6 +27,15 @@
             }
             emit('close')
             container.remove()
+        }
+    }
+
+    export function config() {
+        if (container) {
+            if (typeof onConfig === 'function') {
+                onConfig.call(container)
+            }
+            emit('config')
         }
     }
 
@@ -89,6 +99,12 @@
         height: fit-content;
     }
 
+    .title-message {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 260px;
+    }
 </style>
 
 
@@ -102,15 +118,17 @@
                     {icon}
                 {/if}
             </div>
-            <div>{title}</div>
+            <div class="title-message">{title}</div>
         </div>
 
         <div class="Row">
-            <ControlBtn btn={{
-                icon: '\ue8b8',
-                label: '设置',
-                onClick() {}
-            }}/>
+            {#if typeof onConfig === 'function'}
+                <ControlBtn btn={{
+                    icon: '\ue8b8',
+                    label: '设置',
+                    onClick: config
+                }}/>
+            {/if}
             <ControlBtn btn={{
                 icon: '⨉',
                 label: '关闭',

@@ -36,6 +36,7 @@
 
     function updateMetadata(data) {
         metadata = data.format
+        scrollv.update()
     }
 
     function updateProcessConf(data) {
@@ -221,90 +222,100 @@
         border-radius: 8px;
     }
 
+    .c {
+        height: 72vh;
+        width: 72vw;
+        border-radius: 12px;
+        contain: paint;
+    }
+
+    .Row, .Column {
+        box-sizing: border-box;
+    }
 </style>
 
-<div class="Row" style="height: 72vh; width: 72vw;">
+<div class="Row c">
 
     <div class="Column outerWindow tunnerPanel" style="width: 300px;">
         <div class="Row" style="height: 72vh; margin-left: 12px;">
-        <ScrollView bind:this={scrollv} hoverToShow={true} cssText='height: 498px;'>
-            <div class="Column" style="padding: 12px 0;">
-            <TunnerTile
-                title={s('input')}
-                icon={'\ue936'}>
-                {#if metadata}
-                <div>{s('codec')}<em>{metadata.codec}</em></div>
-                <div>{s('num_of_tracks')}<em>{metadata.numberOfChannels}</em></div>
-                {#if metadata.bitrate > 0}
-                <div>{s('bitrate')}<em>{~~(metadata.bitrate/10)/100} kBps</em></div>
-                {/if}
-                {#if metadata.bitsPerSample}
-                <div>{s('bit_length')}<em>{metadata.bitsPerSample} bit</em></div>
-                {/if}
-                <div style="margin-bottom: 8px;">{s('sample_rate')}<em>{metadata.sampleRate/1000} kHz</em></div>
-                <div>{s('decoder')}<em>{`${s('builtin')} FFmpeg ${s('decoder')}`}</em></div>
-                {:else}
-                {s('none')}
-                {/if}
-            </TunnerTile>
+            <ScrollView bind:this={scrollv} hoverToShow={true} cssText='height: 498px;'>
+                <div class="Column" style="box-sizing: border-box; padding: 20px 0;">
+                    <TunnerTile
+                        title={s('input')}
+                        icon={'\ue936'}>
+                        {#if metadata}
+                        <div>{s('codec')}<em>{metadata.codec}</em></div>
+                        <div>{s('num_of_tracks')}<em>{metadata.numberOfChannels}</em></div>
+                        {#if metadata.bitrate > 0}
+                        <div>{s('bitrate')}<em>{~~(metadata.bitrate/10)/100} kBps</em></div>
+                        {/if}
+                        {#if metadata.bitsPerSample}
+                        <div>{s('bit_length')}<em>{metadata.bitsPerSample} bit</em></div>
+                        {/if}
+                        <div style="margin-bottom: 8px;">{s('sample_rate')}<em>{metadata.sampleRate/1000} kHz</em></div>
+                        <div>{s('decoder')}<em>{`${s('builtin')} FFmpeg ${s('decoder')}`}</em></div>
+                        {:else}
+                        {s('none')}
+                        {/if}
+                    </TunnerTile>
 
-            <TunnerTile
-                title={s('processing')}>
-                <div>{s('bit_length')}<em>Float 32bit</em></div>
-                <div>{s('frequency')}<em>{AudioPlayer.audioCtx.sampleRate/1000} kHz</em></div>
-                <div class="Row pair">
-                    <div class="label">{s('gain')}</div>
-                    <em><div class="link">{
-                    processConfig.gain.gain > 1? '+': processConfig.gain.gain < 1? '-': ''
-                    }{processConfig.gain.gain.toFixed(2)}</div></em>
-                </div>
+                    <TunnerTile
+                        title={s('processing')}>
+                        <div>{s('bit_length')}<em>Float 32bit</em></div>
+                        <div>{s('frequency')}<em>{AudioPlayer.audioCtx.sampleRate/1000} kHz</em></div>
+                        <div class="Row pair">
+                            <div class="label">{s('gain')}</div>
+                            <em><div class="link">{
+                            processConfig.gain.gain > 1? '+': processConfig.gain.gain < 1? '-': ''
+                            }{processConfig.gain.gain.toFixed(2)}</div></em>
+                        </div>
 
-                <div class="Row pair">
-                    <div class="label">{s('stereo_pan')}</div>
-                    <em><div class="link">{processConfig.stereoPanner.pan.toFixed(2)} ({
-                        ((1 - processConfig.stereoPanner.pan) / 2).toFixed(2)
-                    }/{
-                        ((processConfig.stereoPanner.pan + 1) / 2).toFixed(2)
-                    })</div></em>
-                </div>
+                        <div class="Row pair">
+                            <div class="label">{s('stereo_pan')}</div>
+                            <em><div class="link">{processConfig.stereoPanner.pan.toFixed(2)} ({
+                                ((1 - processConfig.stereoPanner.pan) / 2).toFixed(2)
+                            }/{
+                                ((processConfig.stereoPanner.pan + 1) / 2).toFixed(2)
+                            })</div></em>
+                        </div>
 
-                <div class="Row pair">
-                    <div class="label">{s('delay')}</div>
-                    <em><div class="link">{(processConfig.delay.delayTime).toFixed(2)}s</div></em>
-                </div>
+                        <div class="Row pair">
+                            <div class="label">{s('delay')}</div>
+                            <em><div class="link">{(processConfig.delay.delayTime).toFixed(2)}s</div></em>
+                        </div>
 
-                <div class="Row pair">
-                    <div class="label">{s('fade_in_and_out')}</div>
-                    <em><div class="link">{(processConfig.fader.fadeIn).toFixed(2)}s / {(processConfig.fader.fadeOut).toFixed(2)}s</div></em>
-                </div>
+                        <div class="Row pair">
+                            <div class="label">{s('fade_in_and_out')}</div>
+                            <em><div class="link">{(processConfig.fader.fadeIn).toFixed(2)}s / {(processConfig.fader.fadeOut).toFixed(2)}s</div></em>
+                        </div>
 
-                <div class="Column pair">
-                    <div class="label" style="margin-top: 8px;">{s('equalizer')}{!processConfig.eq.enable? `  (${s('disabled')})`: ''}</div>
-                    <canvas style="align-self: flex-start; margin-bottom: 8px;" bind:this={eqCanvas} id="eqCanvas" width="180" height="82"></canvas>
-                </div>
+                        <div class="Column pair">
+                            <div class="label" style="margin-top: 8px;">{s('equalizer')}{!processConfig.eq.enable? `  (${s('disabled')})`: ''}</div>
+                            <canvas style="align-self: flex-start; margin-bottom: 8px;" bind:this={eqCanvas} id="eqCanvas" width="180" height="82"></canvas>
+                        </div>
 
-                <div class="Row pair">
-                    <div class="label">{s('dynamic_compressor')}</div>
-                    <em><div class="link">{processConfig.dynamicsCompressor? s('enabled'): s('disabled')}</div></em>
-                </div>
-            </TunnerTile>
+                        <div class="Row pair">
+                            <div class="label">{s('dynamic_compressor')}</div>
+                            <em><div class="link">{processConfig.dynamicsCompressor? s('enabled'): s('disabled')}</div></em>
+                        </div>
+                    </TunnerTile>
 
-            <TunnerTile
-                hideLine={true}
-                title={s('output')}
-                icon={'\ue61e'}>
-                {#await getDevice() then device}
-                <div class="Row pair">
-                    <div class="label">{s('device')}</div>
-                    <em><div class="link" on:click={() => {
-                        rem.emit('tunnerClose')
-                        window.Pager.openNew('$settings', Settings)
-                    }}>{device.label}</div></em>
+                    <TunnerTile
+                        hideLine={true}
+                        title={s('output')}
+                        icon={'\ue61e'}>
+                        {#await getDevice() then device}
+                        <div class="Row pair">
+                            <div class="label">{s('device')}</div>
+                            <em><div class="link" on:click={() => {
+                                rem.emit('tunnerClose')
+                                window.Pager.openNew('$settings', Settings)
+                            }}>{device.label}</div></em>
+                        </div>
+                        {/await}
+                    </TunnerTile>
                 </div>
-                {/await}
-            </TunnerTile>
-            </div>
-        </ScrollView>
+            </ScrollView>
         </div>
     </div>
 

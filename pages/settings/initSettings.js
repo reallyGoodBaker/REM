@@ -1,6 +1,7 @@
 import { store } from "../../utils/stores/base"
 import { Lang } from '../../utils/lang/lang.js'
 import { setClearFont } from "../../utils/style/font"
+import { rem } from "../../utils/rem"
 
 function lang(key) {
     return langMapping.s(key)
@@ -71,6 +72,11 @@ export function initSettings() {
     init('AppSettings/theme', {
         colors: [2, 39, 148, 210, 270, 292, 322],
         selected: 3,
+    }, ({ colors, selected }) => {
+        console.log(colors, selected)
+        const setColor = color => document.body.style.setProperty('--controlHue', color)
+        setColor(colors[selected])
+        rem.on('changeControlColor', setColor)
     })
 
     init('AppSettings/font', {

@@ -38,6 +38,7 @@ export function initCrossThreadNotification() {
         })
 
         notif.onCancel = () => handler(-1)
+        notif.onConfig = () => handler(-2)
 
         notify(notif)
     })

@@ -25,13 +25,16 @@
     export let clickable = true;
     export let useAvatar = true;
     export let breakLine = false;
+    export let padding = 8;
 </script>
 
 
 <style>
 
     .c {
-        padding: 8px 0px;
+        --padding: 8px;
+        box-sizing: border-box;
+        padding: 8px var(--padding);
         width: 100%;
         justify-content: flex-start;
         overflow: hidden;
@@ -57,7 +60,7 @@
 </style>
 
 <RippleLayer cssStyle="width: 100%" rippleColor={clickable?"gray":"transparent"}>
-<div class="column c{clickable? ' cl': ''}" on:click={handleClick} on:mousedown={handleMouseDown}>
+<div style="--padding: {padding}px;" class="column c{clickable? ' cl': ''}" on:click={handleClick} on:mousedown={handleMouseDown}>
     {#if useAvatar}
     <div class="column leading">
         <Avatar

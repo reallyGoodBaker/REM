@@ -28,6 +28,8 @@ function fresh() {
 }
 
 onMount(async () => {
+    Pager.setSearchPlaceholder('搜索设置')
+
     rem.once('langChange', fresh)
 
     const {save} = Pager.getContext()
@@ -46,25 +48,10 @@ onMount(async () => {
         align-items: flex-start;
     }
 
-    .grid-margin {
-        margin: 0px 24px;
-    }
-
-    h1 {
-        font-weight: normal;
-    }
-
 </style>
 
 
 <ScrollView bind:this={scrollv}><div class="row c">
-    <div class="column grid-margin" style="justify-content: space-between; width: calc(100% - 48px)">
-        <h1>{lang('settings')}</h1>
-        <Input
-            placeholder={'\ue6a8  ' + lang('settings_search')}
-            fullBorder={true}
-        />
-    </div>
 
     <SettingBeta/>
     <SettingTheme/>

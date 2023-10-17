@@ -69,14 +69,10 @@ onMount(async() => {
     })
 
     rem.on('pageContentChange', update)
-    rem.on('scroll', controllerScrollTo)
-    rem.on('scroll-up', scrollup)
 })
 
 onDestroy(() => {
     rem.off('pageContentChange', update)
-    rem.off('scroll-up', scrollup)
-    rem.off('scroll', controllerScrollTo)
 })
 
 function controllerScrollTo(offset) {

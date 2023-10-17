@@ -307,6 +307,8 @@
         }
     }
 
+    onMount(() => Pager.setSearchPlaceholder(`在${header.title}中搜索`))
+
 </script>
 
 
