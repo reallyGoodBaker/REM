@@ -37,7 +37,7 @@ const next = {
 const sendNotif = async () => {
     const { name } = (await player.audioData()) ?? { name: '' }
     const notifBody = {
-        timeout: 500,
+        timeout: 600,
         channel: 'mini-control',
         title: name,
         message: `${Math.round(await player.seek())} / ${Math.round(await player.duration())}`,

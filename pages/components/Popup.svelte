@@ -2,10 +2,10 @@
     import { createEventDispatcher, setContext } from "svelte"
     import { fade } from "svelte/transition"
 
-    const emit = createEventDispatcher('layerClick')
+    const emit = createEventDispatcher()
 
     function handleOnLayerClick() {
-        emit('layerClick');
+        emit('layerClick')
     }
 
     setContext('close', handleOnLayerClick)

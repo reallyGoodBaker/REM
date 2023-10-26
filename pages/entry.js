@@ -9,6 +9,7 @@ import { initExtensionList } from '../extension/initExtensionList.js'
 import { initCrossThreadNotification } from '../utils/notification/browser.js'
 import { initSettings } from './settings/initSettings.js'
 import { initHighLevelApi } from '../utils/high-level/browser'
+import { loadExtensionUI } from '../extension/host/ui-loader'
 
 initHighLevelApi()
 
@@ -19,10 +20,12 @@ rem.isBeta = true
 
 initSettings()
 initExtensionList()
+loadExtensionUI()
 initNetworkWatcher()
 initAudioDevicesFind()
 watchAudioDeviceChange()
 initCrossThreadNotification()
+
 
 export default new App({
     target: document.body

@@ -1,13 +1,13 @@
 <script>
     import ScrollView2 from '../pages/components/ScrollView2.svelte'
     import ExtensionListTile from './ExtensionListTile.svelte'
-    import Input from '../pages/components/Input.svelte'
+    import { rem } from '../utils/rem'
 
-    import {getManifests} from './initExtensionList'
-    import { onMount } from 'svelte';
+    import { getManifests } from './initExtensionList'
+    import { onMount } from 'svelte'
 
     const s = v => langMapping.s(v)
-    const manifests = getManifests()
+    let manifests = getManifests()
 
     function isUrl(icon) {
         if (!icon) {
@@ -49,16 +49,25 @@
     }
 
     .inner {
-        width: 100%;
+        box-sizing: border-box;
+        padding: 24px;
+        display: grid;
+        grid-template-rows: max-content;
+        grid-template-columns: repeat(auto-fill, 400px);
+        grid-gap: 10px 10px;
+        width: 100vw;
+        justify-items: center;
+        align-items: start;
+        justify-content: center;
     }
 </style>
 
 <div class="outer">
     <ScrollView2>
-        <div class="Column inner"><div style="width: 400px;">
+        <div class="Row inner">
             {#each manifests as {
                 name, desc, ver, components, icon, id, folderName,
-                activated
+                activated, needRelaunch,
             }}
             <ExtensionListTile
                 isUrl={isUrl(icon)}
@@ -72,6 +81,6 @@
                 checked={activated}
             />
             {/each}
-        </div></div>
+        </div>
     </ScrollView2>
 </div>

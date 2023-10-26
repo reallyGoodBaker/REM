@@ -1,3 +1,5 @@
+import { rem } from "../utils/rem"
+
 const extensionManifests = []
 
 export function initExtensionList() {
@@ -7,8 +9,14 @@ export function initExtensionList() {
 
     const onActivationChange = (_, m) => {
         extensionManifests.forEach((manifest, i) => {
-            if (manifest.id === m.id) {
-                extensionManifests[i] = m
+            if (manifest.id !== m.id) {
+                return
+            }
+
+            extensionManifests[i] = m
+
+            if (m.uiEntry) {
+                rem.emit('extension:need-relaunch', m)
             }
         })
     }

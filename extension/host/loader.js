@@ -78,6 +78,12 @@ class ExtensionLoader {
 
 }
 
+/**
+ * 
+ * @param {*} folder 
+ * @param {BrowserWindow} bw 
+ * @returns 
+ */
 function loadExtensions(folder, bw) {
     const loader = new ExtensionLoader(folder, bw)
     const config = loader.config.clone()
@@ -87,6 +93,10 @@ function loadExtensions(folder, bw) {
             loader.start(id)
         }
     }
+
+    ipcMain.on('extension-ui:config?', e => {
+        e.sender.send('extension-ui:config', config)
+    })
 
     return loader
 }

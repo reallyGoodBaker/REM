@@ -12,6 +12,7 @@ interface NotificationOptions {
     controls?: NotificationControlOptions[]
     channel?: string,
     onCancel?: () => void
+    onConfig?: () => void
 }
 
 interface Notification {

@@ -1,7 +1,7 @@
 <script>
     import Progress from '../Progress.svelte'
     import Input from '../Input.svelte'
-    import { createEventDispatcher } from 'svelte';
+    import { createEventDispatcher } from 'svelte'
 
     export let label = ''
     export let comment = ''

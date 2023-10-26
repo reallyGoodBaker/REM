@@ -18,8 +18,12 @@ module.exports = {
     async send(n) {
         const active = await invoke('notification:send', toClonableNotification(n))
 
-        if (!~active) {
+        if (active === -1) {
             return NotNull(n.onCancel).call(n), undefined
+        }
+
+        if (active === -2) {
+            return NotNull(n.onConfig).call(n), undefined
         }
 
         let btn

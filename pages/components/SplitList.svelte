@@ -5,7 +5,6 @@
     import SplitTileArtist from './SplitTileArtist.svelte'
     import SplitTileAlbum from "./SplitTileAlbum.svelte"
     import SplitTileTitle from "./SplitTileTitle.svelte"
-    import VirtualList from "./VirtualList.svelte"
     import RecyclerScrollView from "./RecyclerScrollView.svelte";
 
     let emit = createEventDispatcher();

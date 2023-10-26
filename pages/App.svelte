@@ -24,8 +24,8 @@ let selections = [
 ]
 
 let tabs = [
-    '$mine',
-    '$explorer',
+    '#$mine',
+    '#$explorer',
 ]
 
 let searchPlaceholder = ''

@@ -17,12 +17,14 @@ export class Lang {
         const langPair = this.langs[lang] || this.langs.zh_cn
         let returnVal = langPair[format]
 
-        args.forEach((val, i) => {
-            const str = String(val)
-            const index = `$${i + 1}`
-
-            returnVal = returnVal.replace(index, str)
-        })
+        if (returnVal) {
+            args.forEach((val, i) => {
+                const str = String(val)
+                const index = `$${i + 1}`
+    
+                returnVal = returnVal.replace(index, str)
+            })
+        }
 
         return returnVal ?? format
     }

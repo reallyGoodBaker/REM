@@ -46,12 +46,13 @@ onMount(async () => {
     .c {
         justify-content: flex-start;
         align-items: flex-start;
+        margin: 24px 12px;
     }
 
 </style>
 
 
-<ScrollView bind:this={scrollv}><div class="row c">
+<ScrollView><div class="row c">
 
     <SettingBeta/>
     <SettingTheme/>

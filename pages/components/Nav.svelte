@@ -4,6 +4,10 @@
     import { rem } from '../../utils/rem.js'
 
     const s = (f, ...args) => {
+        if (f.startsWith('#')) {
+            f = f.slice(1)
+        }
+
         if (f.startsWith('$')) {
             return langMapping.s(f.slice(1), ...args)
         }
@@ -12,8 +16,8 @@
     }
 
     export let tabs = [
-        '$mine',
-        '$explorer'
+        '#$mine',
+        '#$explorer'
     ]
 
     $: oneThirdVw = visualViewport.width/3
@@ -177,6 +181,7 @@
     }
 
     .cross {
+        font-family: 'Material Symbols Round';
         opacity: 1;
         font-size: 10px;
         line-height: 10px;
@@ -224,19 +229,19 @@
         <div class="Row c" bind:this={inner}>
             {#each tabs as tab, i}
                 {#if i === selected}
-                    {#if tab === '$mine' || tab === '$explorer'}
+                    {#if tab.startsWith('#')}
                         <div id="nav_selected" class="tab selected tab-text" on:click={() => onClick(i)}>{s(tab)}</div>
                     {:else}
                         <div id="nav_selected" class="tab selected column" style="padding-right: 2px;" on:click={() => onClick(i)}>
                             <span class="tab-text">{s(tab)}</span>
-                            <div class="column cross" on:click={() => delTab()}>⨉</div>
+                            <div class="column cross" on:click={() => delTab()}>{'\ue5cd'}</div>
                         </div>
                     {/if}
                 {:else}
                     <div class="tab tab-text Row" on:click={() => onClick(i)}>
                         <span>{s(tab)}</span>
-                        {#if !(tab === '$mine' || tab === '$explorer')}
-                            <div class="Row cross closeable" on:click={() => delTab(i)}>⨉</div>
+                        {#if !tab.startsWith('#')}
+                            <div class="Row cross closeable" on:click={() => delTab(i)}>{'\ue5cd'}</div>
                         {/if}
                     </div>
                 {/if}

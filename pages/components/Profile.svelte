@@ -2,16 +2,16 @@
     import ListTile from "./ListTile.svelte"
     import Login from '../Login.svelte'
     import { getContext } from 'svelte'
-    import Settings from "../Settings.svelte"
-    import {defaultWizard} from '../../utils/wizard/edit-profile/index.js'
-    import {store} from '../../utils/stores/base.js'
-    import ExtensionList from '../../extension/ExtensionList.svelte'
+    import { defaultWizard } from '../../utils/wizard/edit-profile/index.js'
+    import { store } from '../../utils/stores/base.js'
+    import { rem } from "../../utils/rem"
+    import { homeOptions } from '../../utils/home/browser'
 
     function login() {
         Pager.openNew('登录', Login)
     }
 
-    let close = getContext('close');
+    let close = getContext('close')
     const s = (f, ...args) => {
         return langMapping.s(f, ...args) || f
     }
@@ -38,52 +38,39 @@
         defaultWizard.display(true)
     }
 
-    function showSettings() {
-        close();
-        Pager.openNew('$settings', Settings, {})
-    }
+    let options = homeOptions
 
-    function showExtensionsPage() {
-        close()
-        Pager.openNew('$extensions', ExtensionList, {})
-    }
+    rem.on('refreshHomeOptions', () => {
+        options = options
+    })
 
-    const options = [
-        {
-            isUrl: false,
-            avatar: '\ue6aa',
-            title: s('settings'),
-            onClick: showSettings,
-        },
-        {
-            avatar: '\ue666',
-            title: s('download_manager'),
-            onClick: Function.prototype,
-        },
-        {
-            avatar: '\ue68b',
-            title: s('extensions'),
-            onClick: showExtensionsPage,
-        },
-    ]
+    function avatarFromExt(path, folder) {
+        if (path.startsWith('./')) {
+            return `${AppPaths.Extensions}/${folder}/${path.slice(2)}`
+        }
+
+        return `${AppPaths.Extensions}/${folder}/${path}`
+    }
 </script>
 
 
 <style>
-    .row {
+    .Column {
         width: 100%;
         align-items: flex-start;
+        flex-wrap: nowrap;
     }
 
     .c {
-        contain: paint;
         border-radius: 16px;
         width: 300px;
+        max-height: calc(100vh - 96px);
         padding: 12px 0px;
         background-color: var(--controlWhite);
+        overflow: auto;
     }
 
-    header.row {
+    header.Column {
         contain: paint;
         width: calc(100% - 20px);
         margin: 4px 10px 0;
@@ -93,8 +80,8 @@
 </style>
 
 
-<div class="row c">
-    <header class="row">
+<div class="Column c scrollable">
+    <header class="Column">
         <ListTile
             isUrl={user.avatarUrl}
             avatar={user.avatarUrl || '\ue6bb'}
@@ -116,7 +103,7 @@
             style={"font-size: small"}
             isUrl={false}
             size={'small'}
-            avatar={'\ue68f'}
+            avatar={'\ue16f'}
             data={s('logout')}
             on:click={logOut}/>
         {:else}
@@ -124,23 +111,27 @@
             isUrl={false}
             style={"font-size: small"}
             size={'small'}
-            avatar={'\ue610'}
+            avatar={'\ue157'}
             data={s('login')}
             on:click={login}/>
         {/if}
 
     </header>
 
-    <div class="article row">
-        {#each options as { title, avatar, onClick, isUrl }}
+    <div class="article Column">
+        {#each options as { title, avatar, onClick, isUrl, extFolder }}
             <ListTile
-                on:click={onClick}
+                on:click={() => {
+                    onClick()
+                    close()
+                }}
                 isUrl={!!isUrl}
-                padding={16}
+                padding={18}
                 style={"font-size: small"}
                 size={'small'}
-                avatar={avatar}
-                data={title}/>
+                width={24}
+                avatar={extFolder ? avatarFromExt(avatar, extFolder) : avatar}
+                data={s(title)}/>
         {/each}
     </div>
 </div>

@@ -3,6 +3,7 @@
     import Image from '../pages/components/Image.svelte'
     import RippleLayer from '../pages/components/RippleLayer.svelte'
     import Toggle from '../pages/components/Toggle.svelte'
+    import { rem } from '../utils/rem'
 
     const s = v => langMapping.s('$' + v) || v
     export let ver = '1.0'
@@ -15,6 +16,7 @@
 
     export let checked
 
+    let needRelaunch = false
     const emit = createEventDispatcher()
 
     function onToggle() {
@@ -29,17 +31,25 @@
         onToggle()
     }
 
+    rem.on('extension:need-relaunch', m => {
+        if (m.id === id) {
+            needRelaunch = true
+        }
+    })
+
+    function relaunch() {
+        hooks.send('app:relaunch')
+    }
 </script>
 
 <style>
     .outer {
-        margin: 4px;
+        width: 400px;
         box-sizing: border-box;
         border: solid 1px var(--controlGray);
         border-radius: 10px;
         overflow: hidden;
         background-color: var(--controlBrighter);
-        margin-bottom: 8px;
     }
 
     .i {
@@ -152,9 +162,16 @@
             </ul>
         </div>
         <div class="Row btnGroup">
-            <RippleLayer rippleColor='var(--fadeDark)' cssStyle="border-radius: 50%;">
-                <div class="iconfont i _btn">{'\ue6aa'}</div>
-            </RippleLayer>
+            <div class="Row">
+                <RippleLayer rippleColor='var(--fadeDark)' cssStyle="border-radius: 50%;">
+                    <div class="iconfont i _btn">{'\ue6aa'}</div>
+                </RippleLayer>
+                {#if needRelaunch}
+                    <RippleLayer rippleColor='var(--fadeDark)' cssStyle="border-radius: 50%;">
+                        <div class="icon-round i _btn" on:click={relaunch}>{'\ue5d5'}</div>
+                    </RippleLayer>
+                {/if}
+            </div>
 
             <Toggle on:toggle={onToggle} bind:checked={checked}/>
         </div>

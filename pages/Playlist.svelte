@@ -27,14 +27,14 @@
         (a, b) => b.name > a.name || -1,
         (a, b) => b.ar[0].name > a.ar[0].name || -1,
         (a, b) => b.al.name > a.al.name || -1,
-    ];
+    ]
 
-    export let listData = [];
-    export let sortBy = 0;
-    export let forwards = true;
+    export let listData = []
+    export let sortBy = 0
+    export let forwards = true
 
-    let _listData = [], splitterContainer;
-    let backup;
+    let _listData = [], splitterContainer
+    let backup
 
     function renderList(data) {
         backup = [...data]

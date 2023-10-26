@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const {Data} = require('../utils/appPath/main')
+const { Data } = require('../utils/appPath/main')
 
 const DataNodeModules = path.join(Data, 'node_modules')
 const ExtensionRuntime = path.join(DataNodeModules, 'extension')

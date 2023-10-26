@@ -91,12 +91,7 @@
 
     function changeHeight() {
         collectionFolded = !collectionFolded
-        meter.measure(({height}) => {
-            container.style.setProperty('--height', height + 160 + 'px')
-            requestAnimationFrame(() => {
-                scrollv.update()
-            })
-        })
+        meter.measure(({ height }) => container.style.setProperty('--height', height + 160 + 'px'))
     }
 
     function clearPlaylist(id) {
@@ -527,7 +522,7 @@
             on:click={async () => {
                 let id = al.id
                 const {album, songs} = await getAlbumDetail(id)
-                
+
                 onClick(al.name, async() => {
                     return {
                         header: {

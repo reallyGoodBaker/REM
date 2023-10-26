@@ -73,7 +73,6 @@ export function initSettings() {
         colors: [2, 39, 148, 210, 270, 292, 322],
         selected: 3,
     }, ({ colors, selected }) => {
-        console.log(colors, selected)
         const setColor = color => document.body.style.setProperty('--controlHue', color)
         setColor(colors[selected])
         rem.on('changeControlColor', setColor)

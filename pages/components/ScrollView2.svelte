@@ -51,7 +51,7 @@ function updateScrollPosition() {
     }
 }
 
-export function update() {
+function update() {
     updateValues()
     emit('afterUpdated')
 }
@@ -139,6 +139,10 @@ function dragScrollThumb(ev) {
 
 const emit = createEventDispatcher()
 
+/**
+ * @type {MutationObserver}
+ */
+let observer = new MutationObserver(update)
 let updater
 onMount(() => {
     window.addEventListener('resize', update)
@@ -147,6 +151,12 @@ onMount(() => {
     document.addEventListener('mouseup', releaseScrollThumb)
     document.addEventListener('mousemove', dragScrollThumb)
     updater = vsync(updateScrollPosition)
+
+    observer.observe(meter, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+    })
 })
 
 onDestroy(() => {

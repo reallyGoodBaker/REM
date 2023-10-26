@@ -1,74 +1,75 @@
 <script>
-    import { onMount, setContext } from "svelte";
-    import { EventEmitter } from "../../utils/events.js";
+    import { onMount, setContext } from "svelte"
+    import { EventEmitter } from "../../utils/events.js"
     import Popup from './Popup.svelte'
     import { store } from '../../utils/stores/base.js'
     import { rem } from '../../utils/rem.js'
 
-    let layer = false;
+    let layer = false
 
-    const layerEvents = new EventEmitter();
+    const layerEvents = new EventEmitter()
 
     export function activeLayer() {
-        layer = true;
+        layer = true
     }
 
     export function disableLayer() {
-        layer = false;
-        cmDisplay = false;
+        layer = false
+        cmDisplay = false
     }
 
-    layerEvents.on("active", activeLayer);
-    layerEvents.on("disable", disableLayer);
+    layerEvents.on("active", activeLayer)
+    layerEvents.on("disable", disableLayer)
 
-    import ContextMenu from "./ContextMenu.svelte";
-    import VirtualCursor from "./VirtualCursor.svelte";
+    import ContextMenu from "./ContextMenu.svelte"
+    import VirtualCursor from "./VirtualCursor.svelte"
 
-    let cmDisplay, cmX, cmY, cmData;
+    let cmDisplay, cmX, cmY, cmData
 
     function showContextMenu(x, y, path) {
-        cmX = visualViewport.width - x > 200 ? x : x - 200;
+        cmX = visualViewport.width - x > 200 ? x : x - 200
 
-        cmY = y;
+        cmY = y
 
         let _cmData = [];
         for (const k of contextMap.keys()) {
             if (path.includes(k)) {
-                _cmData.push(contextMap.get(k));
+                _cmData.push(contextMap.get(k))
             }
         }
 
         if (_cmData.length) {
-            activeLayer();
-            cmData = _cmData;
-            cmDisplay = true;
+            activeLayer()
+            cmData = _cmData
+            cmDisplay = true
         }
     }
 
     window.addEventListener("mousedown", (ev) => {
         if (ev.button === 2) {
-            const { pageX, pageY, path } = ev;
+            const { pageX, pageY, path } = ev
 
             if (cmDisplay) {
-                layerEvents.emit("disable");
+                layerEvents.emit("disable")
                 return requestIdleCallback(() =>
                     showContextMenu(pageX, pageY, path)
-                );
+                )
             }
 
-            ev.preventDefault();
-            showContextMenu(pageX, pageY, path);
+            ev.preventDefault()
+            showContextMenu(pageX, pageY, path)
         }
     });
 
-    setContext("layerEvents", layerEvents);
+    setContext("layerEvents", layerEvents)
 
     import { connectNotif } from '../../utils/controller-support/base/index.js'
-    import { xboxControllerMouseSupporter } from "../../utils/controller-support/xbox/controllerSupport.js";
-    import { init } from "../../utils/wizard/edit-profile/index.js";
+    import { xboxControllerMouseSupporter } from "../../utils/controller-support/xbox/controllerSupport.js"
+    import { init } from "../../utils/wizard/edit-profile/index.js"
     import { WillCreateLayerWidget } from '../../utils/widget/layer.js'
 
-    let layerElement;
+    let layerElement,
+        contentLayerElement
 
     let virtCursor,
         vcEnable,
@@ -126,12 +127,24 @@
     })
 
     import TunnerWindow from './TunnerWindow.svelte'
-    import NotificationList from "../../utils/notification/NotificationList.svelte";
+    import NotificationList from "../../utils/notification/NotificationList.svelte"
     let showTunnerWindow = false
     rem.on('tunnerOpen', () => showTunnerWindow = true)
     rem.on('tunnerClose', () => showTunnerWindow = false)
 </script>
 
+<div
+    bind:this={contentLayerElement}
+    on:click={() => layerEvents.emit("disable")}
+    class="container contentLayer {layer ? 'layer' : ''}"
+>
+    <Popup
+        bind:showPopupWindow={showTunnerWindow}
+        shadowBlurRadius={24}>
+        <TunnerWindow/>
+    </Popup>
+    <NotificationList/>
+</div>
 <div
     class="container {layer ? 'layer' : ''}"
     on:click={() => layerEvents.emit("disable")}
@@ -143,12 +156,6 @@
         bind:y={cmY}
         bind:data={cmData}
     />
-    <Popup
-        bind:showPopupWindow={showTunnerWindow}
-        shadowBlurRadius={24}>
-        <TunnerWindow/>
-    </Popup>
-    <NotificationList/>
     <slot />
     <VirtualCursor
         bind:enable={vcEnable}
@@ -174,5 +181,9 @@
     .container.layer {
         -webkit-app-region: no-drag;
         pointer-events: all;
+    }
+
+    .container.contentLayer {
+        height: calc(100vh - 72px);
     }
 </style>

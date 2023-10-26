@@ -89,6 +89,10 @@ body {
     cursor: pointer;
 }
 
+.btn.new-icon {
+    font-family: 'Material Symbols Round';
+}
+
 .btn.margin {
     margin: 4px;
 }

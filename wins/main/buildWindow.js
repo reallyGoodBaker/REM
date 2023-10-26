@@ -130,6 +130,11 @@ function initMainWin(browserWindow) {
         ev.returnValue = remStore.get(k)
     })
 
+    ipcMain.on('app:relaunch', () => {
+        app.relaunch()
+        app.quit()
+    })
+
     browserWindow.on('focus', () => {
         browserWindow.webContents.send('win:focus')
     })

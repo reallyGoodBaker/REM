@@ -20,7 +20,7 @@
 <style>
     .btn {
         margin: 8px 8px 0 0;
-        border-color: #888;
+        border-color: var(--controlGray);
     }
 
     .container {
