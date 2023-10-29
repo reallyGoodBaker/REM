@@ -143,7 +143,7 @@
             on:click={show}
             size={'big'}
             isUrl={avatarUrl}
-            avatar={avatarUrl || '\ue6bb'}
+            avatar={avatarUrl || '\ue7fd'}
             width={32}
             height={32}
         />

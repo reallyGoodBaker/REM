@@ -9,6 +9,7 @@
 
     function login() {
         Pager.openNew('登录', Login)
+        close()
     }
 
     let close = getContext('close')
@@ -84,7 +85,7 @@
     <header class="Column">
         <ListTile
             isUrl={user.avatarUrl}
-            avatar={user.avatarUrl || '\ue6bb'}
+            avatar={user.avatarUrl || '\ue7fd'}
             data={s(user.name)}
             width={28}
             height={28}

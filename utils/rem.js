@@ -14,9 +14,9 @@ const remEventWatcher = {
         console.log('emit', type, ...args);
     },
 
-    add(arg) {
-        console.log('add', arg);
-    }
+    // add(arg) {
+    //     console.log('add', arg);
+    // }
 }
 
 // rem.connectWatcher(remEventWatcher)

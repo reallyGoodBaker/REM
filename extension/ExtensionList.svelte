@@ -1,7 +1,6 @@
 <script>
     import ScrollView2 from '../pages/components/ScrollView2.svelte'
     import ExtensionListTile from './ExtensionListTile.svelte'
-    import { rem } from '../utils/rem'
 
     import { getManifests } from './initExtensionList'
     import { onMount } from 'svelte'
@@ -67,7 +66,7 @@
         <div class="Row inner">
             {#each manifests as {
                 name, desc, ver, components, icon, id, folderName,
-                activated, needRelaunch,
+                activated,
             }}
             <ExtensionListTile
                 isUrl={isUrl(icon)}

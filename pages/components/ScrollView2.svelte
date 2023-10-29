@@ -52,8 +52,10 @@ function updateScrollPosition() {
 }
 
 function update() {
-    updateValues()
-    emit('afterUpdated')
+    try {
+        updateValues()
+        emit('afterUpdated')
+    } catch { }
 }
 
 let isHoverScrollTrack = false
