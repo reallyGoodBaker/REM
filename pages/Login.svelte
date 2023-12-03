@@ -7,9 +7,10 @@
     const s = (f, ...args) => langMapping.s(f, ...args) || f
 
     const performClick = getContext('close') || (() => {
-        rem.emit('__openMinePage');
-        rem.emit('__updateLoginAvatar');
-    });
+        rem.emit('__openMinePage')
+        rem.emit('__updateLoginAvatar')
+        Pager.removeCurrent()
+    })
 
     let phone, passwd, error = false;
 
@@ -145,8 +146,8 @@
         }}>{s('switch_to')}{s(loginTypeEnum[loginType? 0: 1])}</span> -->
     </h3>
     {#if !loginType}
-        <input type="text" class="{error&&'error'}" bind:value={phone} placeholder={s('phone_number')}>
-        <input type="password" class="{error&&'error'}" bind:value={passwd} placeholder={s('password')}>
+        <input type="text" class="{error ? 'error' : ''}" bind:value={phone} placeholder={s('phone_number')}>
+        <input type="password" class="{error ? 'error' : ''}" bind:value={passwd} placeholder={s('password')}>
         <div style="padding: 24px 0px 12px 0px;">
             <RippleLayer
                 rippleColor={'#000'}

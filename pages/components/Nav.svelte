@@ -85,7 +85,7 @@
     }
 
     .btn {
-        font-size: 8px;
+        font-size: normal;
         justify-content: center;
         border-radius: 4px;
         padding: 0;
@@ -121,9 +121,14 @@
         height: 34px;
         border-bottom: solid 1px transparent;
         flex-wrap: nowrap;
+        gap: 4px;
     }
 
     .tab {
+        display: flex;
+        /* justify-content: center; */
+        align-items: center;
+        height: 22px;
         border-radius: 17px;
         position: relative;
         font-size: small;
@@ -131,7 +136,6 @@
         max-width: 160px;
         min-width: 28px;
         padding: 0px 8px;
-        margin: 2px 0;
         cursor: pointer;
         transition: all 0.2s;
     }
@@ -158,7 +162,6 @@
     }
 
     .selected {
-        margin: 2px;
         padding: 0px 8px;
         color: var(--controlNight);
         animation: sel forwards 0.12s;
@@ -221,9 +224,9 @@
 
 <div class="Column stretch {overflowed? 'overflowed': ''}">
     <div
-        class="btn light left Column"
+        class="btn new-icon light left Column"
         on:click={() => scroll(-oneThirdVw)}
-        >{'◀'}</div>
+        >{'\ue5de'}</div>
 
     <div class="Column stretch" bind:this={outer}>
         <div class="Row c" bind:this={inner}>
@@ -250,7 +253,7 @@
     </div>
 
     <div
-        class="btn light right Column"
+        class="btn new-icon light right Column"
         on:click={() => scroll(oneThirdVw)}
-        >{'▶'}</div>
+        >{'\ue5df'}</div>
 </div>

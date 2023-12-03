@@ -5,8 +5,9 @@ const fs = require('fs')
 function download(url, onDataTransfer = (chunk, size)=>{}) {
     return new Promise((resolve, reject) => {
         http.get(url, res => {
-            onDataTransfer.call(null, undefined, res.headers['content-length'])
-            res.on('data', chunk => onDataTransfer.call(null, chunk))
+            const size = res.headers['content-length']
+            onDataTransfer.call(null, undefined, size)
+            res.on('data', chunk => onDataTransfer.call(null, chunk, size))
             res.on('end', () => resolve())
             res.on('error', er => reject(er))
         })
@@ -26,7 +27,10 @@ function saveTo(from, to, onMetadataLoaded) {
             
             res.pipe(stream)
             res.on('end', () => resolve())
-            res.on('error', er => reject(er))
+            res.on('error', er => {
+                fs.rmSync(to, { force: true })
+                reject(er)
+            })
         })
     })
 }

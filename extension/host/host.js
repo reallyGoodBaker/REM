@@ -93,15 +93,27 @@ class ExtensionHost {
         ipcMain.on('win:show-main', () => this.request('ready'))
     }
 
+    sameId(m) {
+        return m.id === this.manifest.id
+    }
+
     _registerActivationChange = bw => {
         const web = bw.webContents
 
         ipcMain.once('extension:activated', m => {
+            if (!this.sameId(m)) {
+                return
+            }
+
             m.activated = true
             web.send('extension:activated', m)
         })
 
         ipcMain.once('extension:deactivated', m => {
+            if (!this.sameId(m)) {
+                return
+            }
+
             this.components.clear()
             this.events.eventNames()
                 .forEach(name => this.events.removeAllListeners(name))

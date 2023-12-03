@@ -2,11 +2,10 @@
     import ScrollView2 from '../pages/components/ScrollView2.svelte'
     import ExtensionListTile from './ExtensionListTile.svelte'
 
-    import { getManifests } from './initExtensionList'
+    import { extensionManifests } from './initExtensionList'
     import { onMount } from 'svelte'
 
     const s = v => langMapping.s(v)
-    let manifests = getManifests()
 
     function isUrl(icon) {
         if (!icon) {
@@ -64,7 +63,7 @@
 <div class="outer">
     <ScrollView2>
         <div class="Row inner">
-            {#each manifests as {
+            {#each Array.from(extensionManifests.values()) as {
                 name, desc, ver, components, icon, id, folderName,
                 activated,
             }}

@@ -14,7 +14,7 @@ class ExtensionLoader {
      * @param {string} folder 
      * @param {BrowserWindow} bw 
      */
-       constructor(folder, bw) {
+    constructor(folder, bw) {
         this.root = folder
         this.bw = bw
 
@@ -43,6 +43,9 @@ class ExtensionLoader {
     }
 
     start = id => {
+        /**
+         * @type {ExtensionHost}
+         */
         let host
         if (host = this.extensions.get(id)) {
             if (host.extension) {

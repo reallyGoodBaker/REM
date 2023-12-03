@@ -1,19 +1,19 @@
 import { rem } from "../utils/rem"
 
-const extensionManifests = []
+export const extensionManifests = new Map()
 
 export function initExtensionList() {
     hooks.on('extension:loaded', (_, manifest) => {
-        extensionManifests.push(manifest)
+        extensionManifests.set(manifest.id, manifest)
     })
 
     const onActivationChange = (_, m) => {
-        extensionManifests.forEach((manifest, i) => {
+        extensionManifests.forEach(manifest => {
             if (manifest.id !== m.id) {
                 return
             }
 
-            extensionManifests[i] = m
+            extensionManifests.set(manifest.id, manifest)
 
             if (m.uiEntry) {
                 rem.emit('extension:need-relaunch', m)
@@ -23,8 +23,4 @@ export function initExtensionList() {
 
     hooks.on('extension:activated', onActivationChange)
     hooks.on('extension:deactivated', onActivationChange)
-}
-
-export function getManifests() {
-    return extensionManifests
 }

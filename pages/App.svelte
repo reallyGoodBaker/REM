@@ -194,12 +194,16 @@ window.Pager = (() => {
         return selected
     }
 
+    function removeCurrent() {
+        return removeByIndex(selected)
+    }
+
     return {
         add, select, remove, has, openNew,
         getContext, beforeSwitch, size, index,
         removeByIndex: i => {
             if(i > 1) removeByIndex(i)
-        },
+        }, removeCurrent,
         setOnSearch, setOnSearchInput, setSearchPlaceholder,
         performSearch, performSearchInput,
     }
@@ -210,12 +214,11 @@ window.Pager = (() => {
 let settings = store.getSync('sys-settings')
 
 rem.on('__openMinePage', () => {
-    window.Pager.openNew('$mine', Mine, {}, true)
+    window.Pager.openNew('#$mine', Mine, {}, true)
 })
 
 hooks.on('win:max', Function.prototype)
 hooks.on('win:unmax', Function.prototype)
-hooks.send('winbind:move')
 
 
 //==================================================================

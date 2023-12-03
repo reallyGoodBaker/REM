@@ -1,7 +1,7 @@
 {
     "name": "rem",
-    "version": "0.1.12",
-    "description": "Quina",
+    "version": "0.1.13",
+    "description": "Raspberry",
     "main": "./main.js",
     "scripts": {
         "build-app": "rollup -c && electron-builder",
