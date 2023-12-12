@@ -3,7 +3,7 @@
     import { EventEmitter } from "../../utils/events.js"
     import Popup from './Popup.svelte'
     import { store } from '../../utils/stores/base.js'
-    import { rem } from '../../utils/rem.js'
+    import { LifeCycle, rem } from '../../utils/rem.js'
 
     let layer = false
 
@@ -137,6 +137,7 @@
     bind:this={contentLayerElement}
     on:click={() => layerEvents.emit("disable")}
     class="container contentLayer {layer ? 'layer' : ''}"
+    id="surface-layer"
 >
     <Popup
         bind:showPopupWindow={showTunnerWindow}

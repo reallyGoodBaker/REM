@@ -20,7 +20,7 @@ module.exports = function parse(filePath) {
         throwError('Illegal Manifest JSON.')
     }
 
-    ['name', 'ver', 'entry', 'components', 'id'].forEach(field => {
+    ['name', 'ver', 'components', 'id'].forEach(field => {
         if (!(field in manifest)) {
             if (field !== 'name') {
                 throwError(`Field "${field}" is required.`, manifest.name)
@@ -30,9 +30,18 @@ module.exports = function parse(filePath) {
         }
     })
 
-    const entryPath = path.join(root, manifest.entry)
-    if (!fs.existsSync(entryPath)) {
-        throwError('Entry file not found.', manifest.name)
+    if (manifest.entry) {
+        const entryPath = path.join(root, manifest.entry)
+        if (!fs.existsSync(entryPath)) {
+            throwError('Entry file not found.', manifest.name)
+        }
+    }
+
+    if (manifest.uiEntry) {
+        const uiEntryPath = path.join(root, manifest.uiEntry)
+        if (!fs.existsSync(uiEntryPath)) {
+            throwError('Entry file not found.', manifest.name)
+        }
     }
 
     const components = manifest.components

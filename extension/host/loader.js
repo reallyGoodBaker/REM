@@ -67,11 +67,6 @@ class ExtensionLoader {
     _deactiveExtension = id => {
         let host
         if (host = this.extensions.get(id)) {
-
-            if (!host.extension) {
-                return
-            }
-
             host.kill()
 
             this.config.assign({ [id]: false })

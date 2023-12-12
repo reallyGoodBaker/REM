@@ -80,9 +80,11 @@ class ExtensionHost {
      */
     initExtension(bw) {
         //const extWorker = 
-        this._registerExtensionWorker()
-        this._connectComponents(bw)
-        this._registerComponents()
+        if (this.manifest.entry) {
+            this._registerExtensionWorker()
+            this._connectComponents(bw)
+            this._registerComponents()
+        }
         this._registerActivationChange(bw)
 
         this.events.on('@@@ready', ({ id }) => {
@@ -90,7 +92,7 @@ class ExtensionHost {
         })
 
         ipcMain.emit('extension:activated', this.manifest)
-        ipcMain.on('win:show-main', () => this.request('ready'))
+        ipcMain.once('win:show-main', () => this.request('ready'))
     }
 
     sameId(m) {
@@ -162,14 +164,16 @@ class ExtensionHost {
     }
 
     async kill(reason) {
-        await this.request('beforeDisable')
-        await this.request('clearTimers')
+        if (this.extension) {
+            await this.request('beforeDisable')
+            await this.request('clearTimers')
 
-        const code = await this.extension.terminate()
-        this.events.emit('kill', reason)
-        this.events.emit('exit', code)
-        this.events.emit('-service')
-        this.extension = null
+            const code = await this.extension.terminate()
+            this.events.emit('kill', reason)
+            this.events.emit('exit', code)
+            this.events.emit('-service')
+            this.extension = null
+        }
 
         ipcMain.emit('extension:deactivated', this.manifest)
     }

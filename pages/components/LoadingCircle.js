@@ -186,7 +186,7 @@ export class LoadingCircle extends HTMLElement {
         this.ctx.strokeStyle = this.strokeStyle
         this.ctx.clearRect(0, 0, this.size, this.size)
         this.ctx.beginPath()
-        this.ctx.arc(this.size/2, this.size/2, (this.size - this.lineWidth) / 2, this.radStart, this.radEnd)
+        this.ctx.arc(this.size/2, this.size/2, this.size / 2 - this.lineWidth, this.radStart, this.radEnd)
         this.ctx.stroke()
         this.ctx.closePath()
         requestAnimationFrame(this.drawOneFrame)

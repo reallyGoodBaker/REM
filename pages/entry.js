@@ -35,6 +35,8 @@ async function initApp() {
     LifeCycle.fire('runtimeReady')
 
     hooks.on('win:focus', () => rem.emit('win:focus'))
+
+    document.addEventListener('load', () => LifeCycle.fire('ready'))
 }
 
 initApp()

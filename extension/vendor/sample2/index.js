@@ -1,6 +1,6 @@
 const {
     player, notification, playlist, interval, whenReady,
-} = require('../../runtime')
+} = require('../../runtime/index')
 
 
 const setup = () => {

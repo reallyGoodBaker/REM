@@ -1,3 +1,4 @@
+import { LifeCycle } from "../../utils/rem.js"
 import { home } from "./services/home-provider"
 
 const loadedUIExts = new Set()
@@ -45,6 +46,12 @@ async function loadModules(m) {
     __currentModule = null
 
     loadedUIExts.add(m.id)
+
+    LifeCycle
+        .when('controlsReady')
+        .then(() => {
+            call(uiExt.onReady, null)
+        })
 }
 
 export let __currentModule = null

@@ -8,17 +8,17 @@ export function initExtensionList() {
     })
 
     const onActivationChange = (_, m) => {
-        extensionManifests.forEach(manifest => {
-            if (manifest.id !== m.id) {
-                return
-            }
+        const manifest = extensionManifests.get(m.id)
 
-            extensionManifests.set(manifest.id, manifest)
+        if (!manifest) {
+            return
+        }
 
-            if (m.uiEntry) {
-                rem.emit('extension:need-relaunch', m)
-            }
-        })
+        extensionManifests.set(manifest.id, m)
+
+        if (m.uiEntry) {
+            rem.emit('extension:need-relaunch', m)
+        }
     }
 
     hooks.on('extension:activated', onActivationChange)

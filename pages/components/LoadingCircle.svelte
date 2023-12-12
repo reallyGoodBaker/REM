@@ -137,7 +137,7 @@
         ctx.strokeStyle = strokeStyle
         ctx.clearRect(0, 0, size, size)
         ctx.beginPath()
-        ctx.arc(size/2, size/2, (size - lineWidth) / 2, radStart, radEnd)
+        ctx.arc(size/2, size/2, size / 2 - lineWidth, radStart, radEnd)
         ctx.stroke()
         ctx.closePath()
         requestAnimationFrame(drawOneFrame)
