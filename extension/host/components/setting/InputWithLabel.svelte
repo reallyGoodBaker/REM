@@ -21,8 +21,8 @@
     <Input
         bind:value
         {...$$props}
-        on:blur={() => emit('blur', value)}
-        on:change={() => emit('change', value)}
-        on:focus={() => emit('focus', value)}
-        on:input={() => emit('input', value)}/>
+        on:blur={ev => emit('blur', ev.detail)}
+        on:change={ev => emit('change', ev.detail)}
+        on:focus={ev => emit('focus', ev.detail)}
+        on:input={ev => emit('input', ev.detail)}/>
 </div>

@@ -1,6 +1,4 @@
-import { currentEle, nextEle } from "./ui.vendor.js"
-
-const lyricsExtensionSettings = {
+export const lyricsExtensionSettings = {
     currentFontSize: 'x-large',
     nextFontSize: 'larger',
     showRomaLyric: false,
@@ -25,7 +23,6 @@ export async function onSetting({ safeStore }) {
             listeners: {
                 change: ({ detail }) => {
                     lyricsExtensionSettings.currentFontSize = detail
-                    currentEle.style.fontSize = detail
                     safeStore.set(lyricsExtensionSettings)
                 }
             }
@@ -39,10 +36,8 @@ export async function onSetting({ safeStore }) {
             },
             listeners: {
                 change: (ev) => {
-                    console.log(ev)
                     const { detail } = ev
                     lyricsExtensionSettings.nextFontSize = detail
-                    nextEle.style.fontSize = detail
                     safeStore.set(lyricsExtensionSettings)
                 }
             }

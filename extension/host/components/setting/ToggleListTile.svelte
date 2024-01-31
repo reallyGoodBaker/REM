@@ -18,5 +18,5 @@
 
 <div class="Row container">
     <div>{label}</div>
-    <Toggle bind:checked on:toggle={() => emit('toggle', checked)}/>
+    <Toggle bind:checked on:toggle={ev => emit('toggle', ev.detail)}/>
 </div>

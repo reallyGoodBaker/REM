@@ -1,16 +1,14 @@
-export { onSetting } from "./settings.js"
+import { onSetting, lyricsExtensionSettings } from "./settings.js"
+export { onSetting }
 
-let safeStore
-
-export function onLoad({ AudioPlayer, Playlist, store, safeStore: sf }) {
+export function onLoad({ AudioPlayer, Playlist, store }) {
     globalThis.AudioPlayer = AudioPlayer
     globalThis.Playlist = Playlist
     globalThis.store = store
-    safeStore = sf
 }
 
 export async function onReady() {
-    addCustomUI(await safeStore.get())
+    addCustomUI()
     await requestLyrics()
     setupLoop()
 
@@ -49,7 +47,7 @@ function parseLyrics(txt) {
 
     return lines.map(line => {
         const [ _, timeStamp, lyric ] = regExp.exec(line)
-        let [ m, s, rad ] = timeStamp.split(':')
+        let [ m, s, rad ] = timeStamp.split(/[:\.]/)
         
         m = parseInt(m) || 0
         s = parseInt(s) || 0
@@ -70,12 +68,12 @@ const topBottom = document.createElement('div')
 
 let attachBottom = true
 
-function addCustomUI({
-    currentFontSize,
-    nextFontSize,
-    showRomaLyric,
-    showTranslatedLyric,
-}) {
+function addCustomUI() {
+    const {
+        currentFontSize,
+        nextFontSize,
+    } = lyricsExtensionSettings
+
     div.style.cssText = `
     box-sizing: border-box;
     position: fixed;
@@ -157,21 +155,45 @@ function renderLyrics(lyrics) {
 
     let _currentLyric = ''
         ,_nextLyric = ''
+        ,_i = 0 
 
     for (let i = 0; i < lyrics.length; i++) {
         const { time, lyric } = lyrics[i]
         const { time: nextTime, lyric: nextLyric } = lyrics[i + 1] || { time: Infinity, lyric: '' }
 
+        if (i === 0 && _time < time) {
+            _nextLyric = lyric
+            _i = -1
+            break
+        }
+
         if (_time >= time && _time < nextTime) {
             _currentLyric = lyric
             _nextLyric = nextLyric
+            _i = i
             break
         }
     }
 
+    const {
+        currentFontSize,
+        nextFontSize,
+        showRomaLyric,
+        showTranslatedLyric,
+    } = lyricsExtensionSettings
+
     if (currentEle.innerText !== _currentLyric) {
-        currentEle.innerText = _currentLyric
-        nextEle.innerText = _nextLyric
+        currentEle.style.fontSize = currentFontSize
+        currentEle.innerText = (showRomaLyric ? (romalrc[_i].lyric || '') + '\n' : '')
+            +  _currentLyric
+            + (showTranslatedLyric ? ('\n' + tlrc[_i].lyric || '') : '')
+    }
+
+    if (nextEle.innerText !== _nextLyric) {
+        nextEle.style.fontSize = nextFontSize
+        nextEle.innerText = (showRomaLyric ? (romalrc[_i+1].lyric || '') + '\n' : '')
+            + _nextLyric
+            + (showTranslatedLyric ? ('\n' + tlrc[_i+1].lyric || '') : '')
     }
 }
 
