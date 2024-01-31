@@ -114,4 +114,14 @@ export default {
     font: '字体设置',
     font_clear: '使用清晰字体',
     font_clear_extra: '低分辨率屏幕推荐打开',
+
+    permissions: '权限',
+    info: '信息',
+    desc: '介绍',
+    author: '作者',
+    unknown: '未知',
+    relaunch: '重新启动',
+    need_to_do: '需要$1',
+
+    $store: '操作存储',
 }

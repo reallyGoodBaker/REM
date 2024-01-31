@@ -9,9 +9,8 @@
 
     "components": [
         "audio_player",
-        "notification",
-        "new_page",
-        "playlist"
+        "playlist",
+        "store"
     ]
 
 }

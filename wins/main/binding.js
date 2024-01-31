@@ -8,6 +8,7 @@ const {
 } = require('../../utils/api/playlist.js')
 const { getSongDetail, getSongUrl, getSongDownload, getSongUrlX } = require('../../utils/api/song.js')
 const { getArtistDetail, getArtistSongs, getArtistAlbums } = require('../../utils/api/artist')
+const { getLyrics } = require('../../utils/api/lyrics.js')
 
 
 module.exports = () => {
@@ -33,6 +34,7 @@ createFuncBinding(getSongUrlX)
 createFuncBinding(getArtistDetail)
 createFuncBinding(getArtistSongs)
 createFuncBinding(getArtistAlbums)
+createFuncBinding(getLyrics)
 
 
 }

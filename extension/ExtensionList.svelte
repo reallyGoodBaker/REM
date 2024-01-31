@@ -65,7 +65,7 @@
         <div class="Row inner">
             {#each Array.from(extensionManifests.values()) as {
                 name, desc, ver, components, icon, id, folderName,
-                activated,
+                activated, author,
             }}
             <ExtensionListTile
                 isUrl={isUrl(icon)}
@@ -76,6 +76,7 @@
                 {desc}
                 {ver}
                 {components}
+                {author}
                 checked={activated}
             />
             {/each}

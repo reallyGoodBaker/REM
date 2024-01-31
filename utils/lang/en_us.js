@@ -115,4 +115,14 @@ export default {
     font: 'Font',
     font_clear: 'Use clear fonts',
     font_clear_extra: 'recommended for low-resolution screens',
+
+    permissions: 'Permissions',
+    info: 'Info',
+    desc: 'Desc',
+    author: 'Author',
+    unknown: 'Unknown',
+    relaunch: 'Relaunch',
+    need_to_do: 'need $1',
+
+    $store: 'Store',
 }

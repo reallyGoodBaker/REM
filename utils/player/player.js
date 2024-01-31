@@ -71,6 +71,7 @@ export class AudioPlayer {
             AudioPlayer.metadata = metadata
             // console.log(metadata)
             rem.emit('metadata', metadata)
+            this.em.emit('metadata', metadata)
         }
 
         AudioPlayer.audioData = audioData

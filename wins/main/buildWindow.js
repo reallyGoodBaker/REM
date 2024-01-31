@@ -39,8 +39,9 @@ module.exports = function buildWindow() {
         webPreferences: {
             preload: path.resolve(__dirname, './preload.js'),
         }
-    });
+    })
 
+    browserWindow.store = remStore
 
     browserWindow.loadFile(path.resolve(__dirname, './index.html'))
     // browserWindow.webContents.openDevTools({ mode: 'detach' })

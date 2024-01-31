@@ -57,6 +57,11 @@
         align-items: flex-start;
     }
 
+    .extra {
+        opacity: 0.9;
+        font-size: small;
+        color: var(--controlBlack36);
+    }
 </style>
 
 <RippleLayer cssStyle="width: 100%" rippleColor={clickable?"gray":"transparent"}>
@@ -81,7 +86,7 @@
     <div class="row align" style="width: {useAvatar? 'calc(100% - 84px)': 'calc(100% - 28px)'};{style}">
         {#if extra}
             <span>{data}</span>
-            <span style="font-size: small; color: #888">{extra}</span>
+            <span class="extra">{extra}</span>
         {:else}
             <span>{data}</span>
         {/if}
@@ -94,7 +99,7 @@
         <div class="row align" {style}>
             {#if extra}
                 <span>{data}</span>
-                <span style="font-size: small; color: #888">{extra}</span>
+                <span class="extra">{extra}</span>
             {:else}
                 <span>{data}</span>
             {/if}
