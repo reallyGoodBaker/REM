@@ -4,11 +4,13 @@ const { Data } = require('../../utils/appPath/main')
 const path = require('path')
 const { open } = require('../../utils/stores/configurator')
 const fs = require('fs')
+const crypto = require('crypto')
 
 class ExtensionLoader {
 
     config = open(path.join(Data, 'extensions.json'))
     extensions = new Map()
+    failed = new Set()
 
     /**
      * @param {string} folder 
@@ -25,14 +27,31 @@ class ExtensionLoader {
             }
 
             const host = new ExtensionHost(filePath)
-            this.extensions.set(host.manifest.id, host)
+            
+            if (!host.error) {
+                this.extensions.set(host.manifest.id, host)
 
-            const m = host.manifest
-            m.folderName = extFolder
+                const m = host.manifest
+                m.folderName = extFolder
 
-            ipcMain.on('win:loaded', () => {
-                bw.webContents.send('extension:loaded', m)
-            })
+                ipcMain.on('win:loaded', () => {
+                    bw.webContents.send('extension:loaded', m)
+                })
+            } else {
+                host.kill(0)
+                this.failed.add(extFolder)
+
+                ipcMain.on('win:loaded', () => {
+                    bw.webContents.send('notification:send', {
+                        uuid: crypto.randomUUID(),
+                        title: '加载错误',
+                        message: `${extFolder} 加载失败:\n${host.error.toString()}`,
+                        channel: crypto.randomUUID(),
+                        timeout: -1,
+                        icon: '\ue000',
+                    })
+                })
+            }
         })
 
         this._listenExtensionsChange()

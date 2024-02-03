@@ -5,7 +5,7 @@
 
     export let title = ''
     export let message = ''
-    export let icon = '\ue758'
+    export let icon = ''
     export let controls = []
     export let timeout = 10000
     export let onCancel = () => {}
@@ -70,7 +70,7 @@
     .icon {
         margin-right: 4px;
         align-self: center;
-        font-family: iconfont, Roboto;
+        font-family: 'Material Symbols Round', Roboto;
         width: 24px;
         height: 100%;
     }
@@ -93,6 +93,7 @@
     }
 
     .message {
+        white-space: pre-wrap;
         box-sizing: border-box;
         padding: 8px 10px;
         width: 100%;
@@ -111,6 +112,7 @@
 <div class="Column container" bind:this={container}>
     <div class="Row header">
         <div class="Row">
+            {#if icon}
             <div class="icon">
                 {#if !isFontIcon(icon)}
                     <Image src={icon} alt={icon} width={24} height={24}/>
@@ -118,6 +120,7 @@
                     {icon}
                 {/if}
             </div>
+            {/if}
             <div class="title-message">{title}</div>
         </div>
 

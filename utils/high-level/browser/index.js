@@ -1,3 +1,4 @@
+import { vsync } from "../../core/vsync"
 import { addListener, eventListeners, globalGetEventListeners, removeListener } from "./html-element"
 import { inject, intercept } from "./inject"
 import { promiseResolvers } from "./promise"
@@ -15,4 +16,6 @@ export function initHighLevelApi() {
     inject(globalThis, {
         getEventListeners: globalGetEventListeners
     })
+
+    inject(globalThis, { vsync })
 }

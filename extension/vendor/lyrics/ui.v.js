@@ -12,7 +12,7 @@ export async function onReady() {
     await requestLyrics()
     setupLoop()
 
-    AudioPlayer.on('metadata', requestLyrics)
+    AudioPlayer.on('loadedContent', requestLyrics)
 }
 
 let currentLyricsBody = null
@@ -27,6 +27,9 @@ async function requestLyrics() {
     )
 
     if (lyricsReq.status !== 200) {
+        lyrics = []
+        tlrc = []
+        romalrc = []
         return
     }
 
@@ -39,13 +42,13 @@ async function requestLyrics() {
 
 function parseLyrics(txt) {
     if (!txt.trim()) {
-        return []
+        return [{ time: Infinity, lyric: '' }]
     }
 
     const lines = txt.trim().split('\n')
     const regExp = /\[(.*)\](.*)/
 
-    return lines.map(line => {
+    const lyrics = lines.map(line => {
         const [ _, timeStamp, lyric ] = regExp.exec(line)
         let [ m, s, rad ] = timeStamp.split(/[:\.]/)
         
@@ -54,10 +57,14 @@ function parseLyrics(txt) {
         rad = parseInt(rad) || 0
 
         return {
-            time: m * 60 + s + rad / 100,
+            time: m * 60 + s + rad / 1000,
             lyric: lyric.trim()
         }
-    }).filter(({ lyric }) => lyric.trim())
+    })
+
+    lyrics.push({ time: Infinity, lyric: '' })
+
+    return lyrics
 }
 
 const layer = document.getElementById('surface-layer')
@@ -94,18 +101,24 @@ function addCustomUI() {
     `
 
     currentEle.style.cssText = `
+    display: flex;
+    flex-direction: column;
     padding: 4px 56px 8px;
     padding-left: 0;
     font-size: ${currentFontSize || 'x-large'};
     font-weight: bold;
     align-self: flex-start;
+    min-height: 32px;
     `
 
     nextEle.style.cssText = `
+    display: flex;
+    flex-direction: column;
     font-size: ${nextFontSize || 'larger'};
     padding-left: 56px;
     align-self: flex-end;
     color: var(--controlBlack52);
+    min-height: 20px;
     `
 
     topBottom.style.cssText = `
@@ -150,30 +163,31 @@ function addCustomUI() {
     layer.appendChild(div)
 }
 
-function renderLyrics(lyrics) {
-    const _time = AudioPlayer.seek()
-
+function findSuitableLyrics(_time, lyrics) {
     let _currentLyric = ''
         ,_nextLyric = ''
-        ,_i = 0 
 
-    for (let i = 0; i < lyrics.length; i++) {
+    for (let i = 0; i < lyrics.length - 1; i++) {
         const { time, lyric } = lyrics[i]
-        const { time: nextTime, lyric: nextLyric } = lyrics[i + 1] || { time: Infinity, lyric: '' }
+        const { time: nextTime, lyric: nextLyric } = lyrics[i + 1]
 
         if (i === 0 && _time < time) {
             _nextLyric = lyric
-            _i = -1
             break
         }
 
         if (_time >= time && _time < nextTime) {
             _currentLyric = lyric
             _nextLyric = nextLyric
-            _i = i
             break
         }
     }
+
+    return [ _currentLyric, _nextLyric ]
+}
+
+function renderLyrics() {
+    const _time = AudioPlayer.seek()
 
     const {
         currentFontSize,
@@ -182,23 +196,38 @@ function renderLyrics(lyrics) {
         showTranslatedLyric,
     } = lyricsExtensionSettings
 
-    if (currentEle.innerText !== _currentLyric) {
-        currentEle.style.fontSize = currentFontSize
-        currentEle.innerText = (showRomaLyric ? (romalrc[_i].lyric || '') + '\n' : '')
-            +  _currentLyric
-            + (showTranslatedLyric ? ('\n' + tlrc[_i].lyric || '') : '')
+    currentEle.style.fontSize = currentFontSize
+    nextEle.style.fontSize = nextFontSize
+
+    const [ currentLyric, nextLyric ] = findSuitableLyrics(_time, lyrics)
+
+    let currentEleHtml = ''
+        ,nextEleHtml = ''
+
+    if (showRomaLyric) {
+        const [ currentRomaLyric, nextRomaLyric ] = findSuitableLyrics(_time, romalrc)
+        currentEleHtml += `<div style="font-size: 0.8em;">${currentRomaLyric}</div>`
+        nextEleHtml += `<div style="font-size: 0.8em;">${nextRomaLyric}</div>`
     }
 
-    if (nextEle.innerText !== _nextLyric) {
-        nextEle.style.fontSize = nextFontSize
-        nextEle.innerText = (showRomaLyric ? (romalrc[_i+1].lyric || '') + '\n' : '')
-            + _nextLyric
-            + (showTranslatedLyric ? ('\n' + tlrc[_i+1].lyric || '') : '')
+    currentEleHtml += `<div>${currentLyric}</div>`
+    nextEleHtml += `<div>${nextLyric}</div>`
+
+    if (showTranslatedLyric) {
+        const [ currentRomaLyric, nextRomaLyric ] = findSuitableLyrics(_time, tlrc)
+        currentEleHtml += `<div style="font-size: 0.8em;">${currentRomaLyric}</div>`
+        nextEleHtml += `<div style="font-size: 0.8em;">${nextRomaLyric}</div>`
+    }
+
+    if (currentEle.innerHTML !== currentEleHtml) {
+        currentEle.innerHTML = currentEleHtml
+    }
+
+    if (nextEle.innerHTML !== nextEleHtml) {
+        nextEle.innerHTML = nextEleHtml
     }
 }
 
 function setupLoop() {
-    return setInterval(() => {
-        renderLyrics(lyrics)
-    }, 100)
+    return vsync(renderLyrics)
 }

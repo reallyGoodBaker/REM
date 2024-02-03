@@ -52,7 +52,7 @@ async function loadModules(m) {
     }
 
     const uiExt = await import(
-        `file://${path.endsWith('.vendor.js')
+        `file://${path.endsWith('.v.js')
             ? AppPaths.ExtVendor
             : AppPaths.Extensions}/${m.folderName}/${path}`) 
 

@@ -40,7 +40,14 @@ module.exports = function parse(filePath) {
     if (manifest.uiEntry) {
         const uiEntryPath = path.join(root, manifest.uiEntry)
         if (!fs.existsSync(uiEntryPath)) {
-            throwError('Entry file not found.', manifest.name)
+            throwError('UI Entry file not found.', manifest.name)
+        }
+    }
+
+    if (manifest.settings) {
+        const settingsPath = path.join(root, manifest.settings)
+        if (!fs.existsSync(settingsPath)) {
+            throwError('Settings file not found.', manifest.name)
         }
     }
 

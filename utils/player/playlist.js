@@ -135,6 +135,7 @@ export class MainPlaylist {
             .then(async () => {
                 await AudioPlayer.play()
                 rem.emit('loadedContent')
+                AudioPlayer.em.emit('loadedContent')
             })
 
         rem.emit('setControlsContent', ad)

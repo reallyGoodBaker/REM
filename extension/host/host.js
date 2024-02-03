@@ -10,6 +10,7 @@ const serviceMap = require('./serviceMap')
 class ExtensionHost {
     events = new EventEmitter()
     components = new Map()
+    error = null
 
     /**
      * @param {string} folder
@@ -17,12 +18,17 @@ class ExtensionHost {
     constructor(folder) {
         this.root = folder
         const manifestPath = path.join(folder, 'manifest.json')
-        this.manifest = requireManifest(manifestPath)
+        try {
+            this.manifest = requireManifest(manifestPath)
 
-        this.events.setMaxListeners(Infinity)
-        this.events.on('internal-error', err => {
-            console.error(err)
-        })
+            this.events.setMaxListeners(Infinity)
+            this.events.on('internal-error', err => {
+                console.error(err)
+            })
+        } catch (err) {
+            ipcMain.emit('extension:error', manifestPath, err)
+            this.error = err
+        }
     }
 
     _registerExtensionWorker = () => {

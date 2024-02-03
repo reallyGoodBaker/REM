@@ -38,6 +38,7 @@
         flex-direction: column-reverse;
         flex-wrap: nowrap;
         flex: none;
+        z-index: 1;
     }
 </style>
 

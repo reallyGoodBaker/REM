@@ -1,11 +1,12 @@
 {
-    "name": "歌词插件",
+    "name": "歌词",
     "ver": "1.0.0",
     "desc": "这是一个测试插件",
     "author": "RGB",
     "icon": "icon.v.png",
     "id": "23dc60bf-4621-4ab3-92f7-50baf8c6ca1b",
-    "uiEntry": "./ui.vendor.js",
+    "uiEntry": "./ui.v.js",
+    "settings": "./settings.js",
 
     "components": [
         "audio_player",

@@ -15,6 +15,10 @@ function appDataJoin(...paths) {
 
 module.exports = class RemStore {
 
+    static safeStore = constKey => {
+        
+    }
+
     get(k) {
         if (stores.has(k)) {
             return stores.get(k)

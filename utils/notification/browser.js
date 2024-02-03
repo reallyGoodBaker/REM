@@ -1,6 +1,6 @@
 import {rem} from '../rem.js'
 
-export function notification(title='', message='', icon='\ue758', timeout=10000, channel='', controls=[]) {
+export function notification(title='', message='', icon='', timeout=10000, channel='', controls=[]) {
     return {
         title,
         message,
