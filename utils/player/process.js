@@ -138,7 +138,6 @@ export function setEqEnable(bool = true) {
  * @param {AudioDestinationNode} destNode 
  */
 export function initProcessor(ctx, srcNode, destNode) {
-
     audioCtx = ctx
     delay = ctx.createDelay()
     gain = ctx.createGain()
@@ -156,9 +155,10 @@ export function initProcessor(ctx, srcNode, destNode) {
     delay.connect(fader)
     fader.connect(destNode)
 
-    setEqEnable()
-
     initProcessorConfig()
+
+    setEqEnable(processConfig.eq.enable)
+    dynamicsCompressorEnable(processConfig.dynamicsCompressor)
 }
 
 function initProcessorConfig() {
