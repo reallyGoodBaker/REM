@@ -3,7 +3,7 @@ import { MainPlaylist } from "../../utils/player/playlist.js"
 import { LifeCycle } from "../../utils/rem.js"
 import { safeStore, store } from "../../utils/stores/base.js"
 import { home } from "./services/home-provider"
-import { registerCustomSetting } from "./setting-element.js"
+import { loadExtensionSettings } from "./setting/settings-loader.js"
 
 const loadedUIExts = new Set()
 
@@ -11,12 +11,14 @@ export function loadExtensionUI() {
     let loaded = null
 
     hooks.on('extension-ui:config', (_, m) => loaded = m)
-    hooks.on('extension:loaded', (_, m) => {
-        if (!loaded[m.id]) {
-            return
-        }
-
+    hooks.on('extension:loaded', async (_, m) => {
         if (!loadedUIExts.has(m.id)) {
+            await loadExtensionSettings(m)
+
+            if (!loaded[m.id]) {
+                return
+            }
+
             loadModules(m)
         }
     })
@@ -54,18 +56,17 @@ async function loadModules(m) {
     const uiExt = await import(
         `file://${path.endsWith('.v.js')
             ? AppPaths.ExtVendor
-            : AppPaths.Extensions}/${m.folderName}/${path}`) 
+            : AppPaths.Extensions}/${m.folderName}/${path}`)
+    const settings = safeStore(`ExtensionSettings/${m.id}`)
 
     __currentModule = m
 
     let loadArgs = {
-        home,
-        safeStore: safeStore(`ExtensionSafeStore/${m.id}`)
+        home, settings
     }
     
     mixinAllComponents(loadArgs, m)
     await call(uiExt.onLoad, null, loadArgs)
-    registerCustomSetting(m.id, await call(uiExt.onSetting, null, loadArgs))   
 
     __currentModule = null
 
@@ -74,7 +75,7 @@ async function loadModules(m) {
     LifeCycle
         .when('controlsReady')
         .then(() => {
-            call(uiExt.onReady, null)
+            call(uiExt.onReady, null, mixinAllComponents({ settings }, m))
         })
 }
 

@@ -1,8 +1,8 @@
-import Progress from "../../pages/components/Progress.svelte"
-import SelectListTile from "../../pages/components/SelectListTile.svelte"
-import ToggleListTile from "./components/setting/ToggleListTile.svelte"
-import ProgressWithInput from "../../pages/components/TunnerComponents/ProgressWithInput.svelte"
-import InputWithLabel from "./components/setting/InputWithLabel.svelte"
+import Progress from "../../../pages/components/Progress.svelte"
+import SelectListTile from "../../../pages/components/SelectListTile.svelte"
+import ToggleListTile from "../components/setting/ToggleListTile.svelte"
+import ProgressWithInput from "../../../pages/components/TunnerComponents/ProgressWithInput.svelte"
+import InputWithLabel from "../components/setting/InputWithLabel.svelte"
 
 const mapping = {
     select: SelectListTile,

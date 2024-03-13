@@ -13,6 +13,7 @@
 
 <ToggleListTile
     clickable={false}
+    bold={false}
     data={s('dynamic_compressor')}
     useAvatar={false}
     bind:checked={enable}

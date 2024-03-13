@@ -1,4 +1,4 @@
-import { onSetting, lyricsExtensionSettings } from "./settings.js"
+import { onSetting, lyricsExtensionSettings } from "./settings.v.js"
 export { onSetting }
 
 export function onLoad({ AudioPlayer, Playlist, store }) {
@@ -9,10 +9,10 @@ export function onLoad({ AudioPlayer, Playlist, store }) {
 
 export async function onReady() {
     addCustomUI()
-    await requestLyrics()
+    await tryRequestLyrics()
     setupLoop()
 
-    AudioPlayer.on('loadedContent', requestLyrics)
+    AudioPlayer.on('loadedContent', tryRequestLyrics)
 }
 
 let currentLyricsBody = null
@@ -38,6 +38,17 @@ async function requestLyrics() {
     lyrics = parseLyrics(currentLyricsBody.lrc.lyric)
     tlrc = parseLyrics(currentLyricsBody.tlyric.lyric)
     romalrc = parseLyrics(currentLyricsBody.romalrc.lyric)
+}
+
+async function tryRequestLyrics() {
+    try {
+        await requestLyrics()
+    } catch {
+        currentLyricsBody = null
+        lyrics = []
+        tlrc = []
+        romalrc = []
+    }
 }
 
 function parseLyrics(txt) {

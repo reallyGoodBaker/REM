@@ -117,8 +117,8 @@
         hooks.send('win:show-main')
     })
 
-    function onClick() {
-        if(!AudioPlayer.load()) return
+    async function onClick() {
+        if(!(await AudioPlayer.load())) return
 
         if (playing) {
             return AudioPlayer.pause()
@@ -173,7 +173,9 @@
         isSeeking = false
         try {
             AudioPlayer.seek((ev.detail/100)*duration)
-        } catch (e) {}
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     function seekMove(ev) {

@@ -43,3 +43,5 @@ export function initCrossThreadNotification() {
         notify(notif)
     })
 }
+
+export const globalNotifications = new Map()

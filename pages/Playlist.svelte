@@ -157,7 +157,7 @@
         }
     });
     document.addEventListener('keyup', ev => {
-        if (ev.ctrlKey) {
+        if (!ev.ctrlKey) {
             multiMode = false;
         }
     });

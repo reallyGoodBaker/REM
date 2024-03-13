@@ -20,6 +20,10 @@ class InvokerServer {
         })
     }
 
+    handle(channel, listener) {
+        return this.on(channel, listener)
+    }
+
 }
 
 export const invoker = new InvokerServer()

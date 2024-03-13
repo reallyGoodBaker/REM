@@ -18,6 +18,8 @@ const {
     saveToPlaylist,
     getPlaylist,
     getMetadata,
+    clearAllCache,
+    clearCache,
 } = require('../../utils/server/media-cache')(AppCache)
 
 
@@ -29,6 +31,8 @@ new Binder('server')
     getPlaylist,
     saveToPlaylist,
     getMetadata,
+    clearAllCache,
+    clearCache,
 })
 
 new Binder('hooks')

@@ -26,7 +26,7 @@ function init(name, defaultValue, init) {
 export function initSettings() {
     init('AppSettings/beta_features', {
         showDevTools: false,
-        extensions: false,
+        useBufferOutput: false,
     }, ({ showDevTools }) => {
         hooks.send(`devtools:${
             showDevTools ? 'open': 'close'
@@ -43,7 +43,7 @@ export function initSettings() {
             { label: '高', value: 'higher' },
             { label: '普通', value: 'standard' }
         ],
-        selected: 0,
+        selected: 5,
     })
 
     init('AppSettings/lang', {

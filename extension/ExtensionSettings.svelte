@@ -6,13 +6,16 @@
     import { rem } from '../utils/rem'
     import ScrollView from '../pages/components/ScrollView2.svelte'
     import { extensionManifests } from './initExtensionList'
-    import { getCustomSettings } from './host/setting-element';
+    import { setExtSetting, getExtSetting, getExtensionSettings } from './host/setting/settings-loader';
+    import ToggleListTile from './host/components/setting/ToggleListTile.svelte';
+    import InputWithLabel from './host/components/setting/InputWithLabel.svelte';
 
     export let id = ''
     export let isUrl = false
     export let icon = '\ue68b'
 
-    const customSettings = getCustomSettings(id)
+    const customSettings = getExtensionSettings(id)
+    console.log(customSettings)
     const extension = extensionManifests.get(id)
 
     const s = (f, ...args) => langMapping.s(f, ...args) || f
@@ -50,6 +53,10 @@
 
     function relaunch() {
         hooks.send('app:relaunch')
+    }
+
+    function setExtensionSettings() {
+        rem.emit('ext.settings:set', id, customSettings)
     }
 </script>
 
@@ -247,10 +254,10 @@
             <div>{s('settings')}</div>
         </div>
         <div class="card_list">
-        {#each customSettings as { ctor, props, listeners }}
-            <div class="card_list_tile" icon={props.icon ?? ''}>
+        {#each customSettings as { type, defaultValue, min, max, label, name }}
+            <div class="card_list_tile" icon={icon ?? ''}>
                 <!-- svelte-ignore missing-declaration -->
-                <svelte:component
+                <!-- <svelte:component
                     this={ctor}
                     {...props}
                     on:click={listeners.click ?? Function.prototype}
@@ -262,7 +269,14 @@
                     on:input={listeners.input ?? Function.prototype}
                     on:change={listeners.change ?? Function.prototype}
                     on:progressChange={listeners.progressChange ?? Function.prototype}
-                    on:inputChange={listeners.inputChange ?? Function.prototype}/>
+                    on:inputChange={listeners.inputChange ?? Function.prototype}/> -->
+                    {#await getExtSetting(id, name) then value}
+                    {#if type === 'boolean'}
+                        <ToggleListTile {label} checked={value || defaultValue} on:toggle={e => setExtSetting(id, name, e.detail)}/>
+                    {:else if type === 'string'}
+                        <InputWithLabel {label} value={value || defaultValue} on:change={e => setExtSetting(id, name, e.detail)}/>
+                    {/if}
+                    {/await}
             </div>
         {/each}
     </div>

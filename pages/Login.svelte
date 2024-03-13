@@ -1,15 +1,16 @@
 <script>
-    import { getContext, onMount } from 'svelte'
+    import { getContext, onMount, tick } from 'svelte'
     import RippleLayer from './components/RippleLayer.svelte'
     import {store} from '../utils/stores/base.js'
     import { rem } from '../utils/rem.js'
 
     const s = (f, ...args) => langMapping.s(f, ...args) || f
 
-    const performClick = getContext('close') || (() => {
+    const performClick = getContext('close') || (async () => {
+        Pager.removeCurrent()
+        await tick()
         rem.emit('__openMinePage')
         rem.emit('__updateLoginAvatar')
-        Pager.removeCurrent()
     })
 
     let phone, passwd, error = false;
@@ -132,18 +133,14 @@
         color: red;
     }
 
-    .img {
-        border: none;
-        outline: none;
-    }
 </style>
 
 <div class="row c">
     <h3>{s('login_type', s(loginTypeEnum[loginType]))}
-        <!-- <span class="span" on:click={() => {
+        <span class="span" on:click={() => {
             loginType = loginType? 0: 1
             loginType && getQRLoginInfo()
-        }}>{s('switch_to')}{s(loginTypeEnum[loginType? 0: 1])}</span> -->
+        }}>{s('switch_to')}{s(loginTypeEnum[loginType? 0: 1])}</span>
     </h3>
     {#if !loginType}
         <input type="text" class="{error ? 'error' : ''}" bind:value={phone} placeholder={s('phone_number')}>

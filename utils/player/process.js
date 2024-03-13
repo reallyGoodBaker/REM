@@ -134,7 +134,7 @@ export function setEqEnable(bool = true) {
 /**
  * 
  * @param {AudioContext} ctx 
- * @param {MediaElementAudioSourceNode} srcNode 
+ * @param {AudioNode} srcNode 
  * @param {AudioDestinationNode} destNode 
  */
 export function initProcessor(ctx, srcNode, destNode) {

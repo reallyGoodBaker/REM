@@ -20,7 +20,7 @@
 <style>
     .btn {
         margin: 8px 8px 0 0;
-        border-color: var(--controlGray);
+        border-color: var(--controlDarker);
     }
 
     .container {
@@ -40,7 +40,7 @@
 </style>
 
 
-<ListTile {...$$props} breakLine={true}>
+<ListTile {...$$props} bold={true} breakLine={true}>
     <div class="Row container">
         {#each dataList as data, i}
         <div class="btn outlined{i === 0? ' first-child': ''}{selected === i? ' selected':''}" on:click={ev => onClick(ev, i)} on:mousedown={ev => ev.stopPropagation()}>

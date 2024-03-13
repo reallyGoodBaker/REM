@@ -2,20 +2,20 @@
     import { onDestroy, onMount } from "svelte"
     import Notification from "./Notification.svelte"
     import { rem } from "../rem.js"
+    import { globalNotifications } from "./browser"
 
-    let notifications = {}
     let container
 
     function addNotification(notification) {
         /**@type {Notification}*/
-        const oldNotif = notifications[notification.channel]
+        const oldNotif = globalNotifications[notification.channel]
 
         if (oldNotif) {
             oldNotif.close()
         }
 
         const notif = new Notification({ target: container, props: notification })
-        notifications[notification.channel] = notif
+        globalNotifications[notification.channel] = notif
     }
 
     onMount(() => {

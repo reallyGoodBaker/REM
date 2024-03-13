@@ -7,6 +7,7 @@
     let emit = createEventDispatcher();
     let t;
     export let checked = false;
+    export let bold = true
 
     function onToggle(ev) {
         let checked = ev.detail;
@@ -30,6 +31,6 @@
 
 </style>
 
-<ListTile {...$$props} on:click={onClick}>
+<ListTile {...$$props} {bold} on:click={onClick}>
     <Toggle bind:checked bind:this={t} on:toggle={onToggle}/>
 </ListTile>

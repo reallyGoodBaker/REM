@@ -343,6 +343,7 @@
                 <div class="tunnerCard">
                     <ToggleListTile
                         clickable={false}
+                        bold={false}
                         data={s('enable_eq')}
                         useAvatar={false}
                         bind:checked={processConfig.eq.enable}

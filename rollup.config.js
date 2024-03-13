@@ -31,7 +31,7 @@ function serve() {
 export default {
 	input: 'pages/entry.js',
 	output: {
-		sourcemap: false,
+		sourcemap: true,
 		format: 'iife',
 		name: 'app',
 		file: 'bundle/bundle.js'

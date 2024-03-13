@@ -5,8 +5,6 @@
     export let cssStyle = ''
     export let width = 100
     export let thumbWidth = 12
-    export let step = 0.01
-    export let max = 1
 
     $: dispalyWidth = ((width - thumbWidth) * value / (width * 100)) * width + thumbWidth / 2
 
@@ -97,8 +95,6 @@
 
 <input type="range"
     style="{cssStyle}; --progress: {value}%; --rail-width: {width}px; --thumb-width: {thumbWidth}px; --display-progress: {dispalyWidth}px;"
-    {step}
-    {max}
     bind:value
     on:mousedown={mouseDown}
     on:mousemove={mouseMove}

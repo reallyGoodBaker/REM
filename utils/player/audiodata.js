@@ -1,4 +1,4 @@
-import {store} from '../stores/base.js'
+import { store } from '../stores/base.js'
 
 export class AudioData {
     constructor(data) {
@@ -7,8 +7,12 @@ export class AudioData {
 
     urls = {}
 
+    /**
+     * @returns { string | Uint8Array }
+     */
     getPlayUrlAsync = async () => {
         const quality = await store.get('AppSettings/cache')
+        const { useBufferOutput } = await store.get('AppSettings/beta_features')
         const qualityStr = quality.qualities[quality.selected].value
         const res = this.urls[quality] = await NeteaseApi.getSongUrlX(
             this.data.id,
@@ -21,13 +25,17 @@ export class AudioData {
         const media = await server.getMedia(`${this.data.id}-${qualityStr}.${type}`, this.onLoadMetadata)
 
         if (!media) {
-            server.saveToCache(url, `${this.data.id}-${qualityStr}.${type}`, this.onLoadMetadata)
-            return url
+            const data = server.saveToCache(url, `${this.data.id}-${qualityStr}.${type}`, this.onLoadMetadata)
+            return useBufferOutput
+                ? await data
+                : url
         }
-        
-        return URL.createObjectURL(
-            new Blob([media])
-        )
+
+        const source = useBufferOutput
+            ? media
+            : URL.createObjectURL(new Blob([media]))
+
+        return source
     }
 
     onLoadMetadata() {}

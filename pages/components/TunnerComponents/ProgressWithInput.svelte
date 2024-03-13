@@ -8,8 +8,6 @@
 
     export let inputValue
     export let progressValue
-    export let step
-    export let max
 
     const emit = createEventDispatcher()
 
@@ -45,6 +43,6 @@
     <div class="Row">{label}<pre class="comm">{comment}</pre></div>
     <div class="Row">
         <Input containerStyle='{style}; margin-right: 8px;' cssText={style} on:change={emitInputChange} bind:value={inputValue}/>
-        <Progress bind:max bind:step on:mousemove={emitProgressChange} on:mouseup={emitProgressChange} bind:value={progressValue}/>
+        <Progress on:mousemove={emitProgressChange} on:mouseup={emitProgressChange} bind:value={progressValue}/>
     </div>
 </div>
