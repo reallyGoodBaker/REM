@@ -34,7 +34,7 @@
     .size-small {
         width: 20px;
         height: 20px;
-        font-size: 16px;
+        font-size: 18px;
         line-height: 20px;
     }
 
@@ -70,6 +70,6 @@
         {width} {height}>
     {/await}
 {:else}
-    <span class="avatar iconfont size-{size? size: 'normal'}">{avatar}</span>
+    <span class="avatar icon-round size-{size? size: 'normal'}">{avatar}</span>
 {/if}
 </div>

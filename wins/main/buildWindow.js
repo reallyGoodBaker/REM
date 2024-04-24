@@ -3,8 +3,9 @@ const {
     Menu,
 } = require('electron')
 const path = require('path')
-const RemStore = require('../../utils/server/rem-store.js')
+const RemStore = require('../../utils/stores/rem-store.js')
 const {watchNetworkChange} = require('../../utils/network/server.js')
+const {initExtRuntime} = require('../../extension/initExtensionHost')
 
 const remStore = new RemStore()
 
@@ -20,7 +21,6 @@ function scaleDisplayProp(num, scale=0.7) {
 }
 
 module.exports = function buildWindow() {
-
     const {width: rawW, height: rawH} = screen.getPrimaryDisplay().bounds
 
     const width = scaleDisplayProp(rawW),
@@ -39,11 +39,12 @@ module.exports = function buildWindow() {
         webPreferences: {
             preload: path.resolve(__dirname, './preload.js'),
         }
-    });
+    })
 
+    browserWindow.store = remStore
 
     browserWindow.loadFile(path.resolve(__dirname, './index.html'))
-    // browserWindow.webContents.openDevTools()
+    // browserWindow.webContents.openDevTools({ mode: 'detach' })
 
     browserWindow.on('closed', () => {
         browserWindow = null;
@@ -58,13 +59,19 @@ module.exports = function buildWindow() {
     })
 
     ipcMain.once('win:show-main', () => {
+        globalThis.playerReady = true
+
         if (process.platform === 'win32') {
             setThumbarButtons(browserWindow)
         }
+
+        ipcMain.emit('win:loaded')
     })
 
+    initExtRuntime()
     initMainWin(browserWindow)
     activeAppBarBtns(browserWindow)
+    initExtensions(browserWindow)
 
     browserWindow.show()
 
@@ -97,7 +104,7 @@ function initMainWin(browserWindow) {
     })
 
     ipcMain.on('devtools:open', () => {
-        browserWindow.webContents.openDevTools()
+        browserWindow.webContents.openDevTools({ mode: 'detach' })
     })
 
     ipcMain.handle('store:get', (_, name) => {
@@ -122,6 +129,11 @@ function initMainWin(browserWindow) {
 
     ipcMain.on('store:getSync', (ev, k) => {
         ev.returnValue = remStore.get(k)
+    })
+
+    ipcMain.on('app:relaunch', () => {
+        app.relaunch()
+        app.quit()
     })
 
     browserWindow.on('focus', () => {
@@ -158,8 +170,8 @@ function activeAppBarBtns(browserWindow) {
         ev.sender.send('win:screenSize', screen.getPrimaryDisplay().bounds)
     })
 
-    browserWindow.on('will-move', (ev, bounds) => {
-        browserWindow.webContents.executeJavaScript(`window.__changeBgPos && window.__changeBgPos(${bounds.x}, ${bounds.y})`)
+    browserWindow.on('will-move', (_, bounds) => {
+        browserWindow.webContents.send('pos-change', bounds)
     })
 
 }
@@ -214,4 +226,18 @@ function setThumbarButtons(win) {
     ipcMain.on('thumbar:pause', setPause)
 
     win.setThumbarButtons(playBtns)
+}
+
+
+const {loaderBuilder} = require('../../extension/host/loader')
+const {Extensions} = require('../../utils/appPath/main')
+
+/**
+ * @param {BrowserWindow} bw 
+ */
+function initExtensions(bw) {
+    const loader = loaderBuilder(bw)
+
+    loader(path.resolve(__dirname, '../../extension/vendor'))
+    loader(Extensions)
 }

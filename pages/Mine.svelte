@@ -1,22 +1,23 @@
 <script>
-    import { onDestroy, onMount } from "svelte";
-    import Measurable from "./components/Measurable.svelte";
-    import ScrollView from "./components/ScrollView2.svelte";
-    import Playlist from "./Playlist.svelte";
-    import { getImgSrc } from '../utils/stores/img.js'
-    import {store} from '../utils/stores/base.js'
-    import {getColor} from '../utils/style/imageBasicColor.js'
-    import Image from "./components/Image.svelte";
+    import { onDestroy, onMount } from "svelte"
+    import Measurable from "./components/Measurable.svelte"
+    import ScrollView from "./components/ScrollView2.svelte"
+    import Playlist from "./Playlist.svelte"
+    import { NETEASE_IMG_LARGE, getImgSrc } from '../utils/stores/img.js'
+    import { store } from '../utils/stores/base.js'
+    import { getColor } from '../utils/style/imageBasicColor.js'
+    import Image from "./components/Image2.svelte"
+    import Artist from "./Artist.svelte"
 
     const s = (str, ...args) => langMapping.s(str, ...args)
 
-    export let playlists = [];
+    export let playlists = []
 
-    let container, imgBgc;
+    let container, imgBgc
 
     let desktopUrl
     async function getOneDayDesktop() {
-        let data = await store.get('dailyDesktop');
+        let data = await store.get('dailyDesktop')
 
         imgBgc.onload = () => {
             container.style.setProperty('--color', getColor(imgBgc, 1))
@@ -24,12 +25,12 @@
         }
 
         if(data && new Date().getTime() - data.timeStamp < 57600000) {
-            return (desktopUrl = await getImgSrc(data.url));
+            return (desktopUrl = await getImgSrc(data.url))
         }
 
-        data = await server.fetchJson('https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1');
-        const url = 'https://www.bing.com' + data.images[0].url;
-        desktopUrl = await getImgSrc(url);
+        data = await server.fetchJson('https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1')
+        const url = 'https://www.bing.com' + data.images[0].url
+        desktopUrl = await getImgSrc(url)
 
         store.set('dailyDesktop', {
             timeStamp: new Date().getTime(), url
@@ -40,31 +41,31 @@
 
     let pageStore = Pager.getContext().save
     async function getUserPlaylist() {
-        if(pageStore.__playlists) return playlists = pageStore.__playlists;
+        if(pageStore.__playlists) return playlists = pageStore.__playlists
 
         const cookie = await store.get('cookie'),
-        uid = (await store.get('profile')).userId;
+        uid = (await store.get('profile')).userId
 
-        const _playlist = await NeteaseApi.getUserPlaylist(uid, cookie);
+        const _playlist = await NeteaseApi.getUserPlaylist(uid, cookie)
 
-        if(_playlist.status != 200) return;
+        if(_playlist.status != 200) return
         
-        pageStore.__playlists = playlists = _playlist.body.playlist;
+        pageStore.__playlists = playlists = _playlist.body.playlist
 
     }
 
-    getUserPlaylist();
+    getUserPlaylist()
 
 
     async function onClick(name, props) {
         props = await props()
-        Pager.openNew(name, Playlist, props);
+        Pager.openNew(name, Playlist, props)
     }
     
 
     export async function getDetailX(id) {
-        let data = await store.get('playlist'+id);
-        if (data) return data;
+        let data = await store.get('playlist'+id)
+        if (data) return data
 
         return await getDetailXAsync(id)
     }
@@ -73,37 +74,32 @@
         let cookie = await store.get('cookie'),
             data = await store.get('playlist'+id)
         
-        const list = (await NeteaseApi.getPlaylistDetail(id, cookie)).body.playlist.trackIds;
+        const list = (await NeteaseApi.getPlaylistDetail(id, cookie)).body.playlist.trackIds
         
         let ids = list.reduce((pre, cur) => {
-            return [...pre, cur.id];
-        }, []);
+            return [...pre, cur.id]
+        }, [])
 
-        data = (await NeteaseApi.getSongDetail(ids, cookie)).body.songs;
+        data = (await NeteaseApi.getSongDetail(ids, cookie)).body.songs
 
-        store.setCache('playlist'+id, data);
+        store.setCache('playlist'+id, data)
         
-        return data;
+        return data
     }
 
-    let meter, collectionFolded = true;
+    let meter, collectionFolded = true
 
     function changeHeight() {
-        collectionFolded = !collectionFolded;
-        meter.measure(({height}) => {
-            container.style.setProperty('--height', height + 160 + 'px')
-            requestAnimationFrame(() => {
-                scrollv.update()
-            })
-        });
+        collectionFolded = !collectionFolded
+        meter.measure(({ height }) => container.style.setProperty('--height', height + 160 + 'px'))
     }
 
     function clearPlaylist(id) {
-        store.rm('playlist'+id);
+        store.rm('playlist'+id)
     }
 
     function clearAlbum(id) {
-        store.rm('al'+id);
+        store.rm('al'+id)
     }
 
     Pager.beforeSwitch(() => {
@@ -185,7 +181,7 @@
     async function fastPlay(id, type=0) {
         let list = type === 0
             ? await getDetailX(id)
-            : await getAlbumDetail(id)
+            : (await getAlbumDetail(id)).songs
         
         const cur = MainPlaylist.getCurrentData()
 
@@ -216,7 +212,7 @@
         let al = await store.get('al' + id)
  
         if (!al) {
-            al = (await NeteaseApi.getAlbumDetail(id, await store.get('cookie'))).body.songs
+            al = (await NeteaseApi.getAlbumDetail(id, await store.get('cookie'))).body
             store.set('al'+id, al)
         }
 
@@ -234,6 +230,10 @@
     onMount(() => {
         const {save} = Pager.getContext()
         requestIdleCallback(() => scrollv.setOffsetRatio(save.offsetRatio))
+
+        Pager.setSearchPlaceholder('搜索我喜好的')
+        Pager.setOnSearchInput(v => console.log(v))
+        Pager.setOnSearch(v => console.log(v))
     })
 
 </script>
@@ -323,27 +323,24 @@
     .card-container {
         flex-wrap: wrap;
         justify-content: flex-start;
+        contain: paint;
     }
 
     .toggle.unfold {
         transform: rotate(180deg);
     }
 
-    .avatar {
-        position: relative;
-        border-radius: 4px;
-        width: 160px;
-        height: 160px;
-        background-size: 160px 160px;
-        transition: 0.1s;
+
+    .pic {
+        transition: box-shadow 0.04s;
     }
 
-    .avatar:hover {
-        box-shadow: 0px 6px 8px rgba(0,0,0,0.2);
+    .card:hover > .pic {
+        box-shadow: 0px 2px 24px rgba(0, 0, 0, 0.6);
     }
 
-    .card:hover {
-        transform: translateY(-2px);
+    .card:active > .pic {
+        box-shadow: unset;
     }
 
     .artist-c {
@@ -435,7 +432,7 @@
                     header: {
                         imgUrl: list.coverImgUrl,
                         title: list.name,
-                        subtitle: s('created_by', list.creator.nickname),
+                        artists: [list.creator],
                         playCount: list.playCount,
                         trackCount: list.trackCount,
                     },
@@ -449,12 +446,9 @@
             });
             
         }}>
-            {#await getImgSrc(list.coverImgUrl)}
-            <div class="avatar" style="background-color: var(--controlGray);"></div>
-            {:then url} 
-            <Image width={160} height={160} radius={'4px'} src={url} borderWidth={'0px'}/>
-            <!-- <div class="avatar" style="background-image: url({url});"></div> -->
-            {/await}
+            <div class="pic">
+                <Image fit={true} width={160} height={160} radius={'4px'} src={list.coverImgUrl + NETEASE_IMG_LARGE} borderWidth={'0px'}/>
+            </div>
             <div class="btn light FAB"
                 on:click|stopPropagation={() => {fastPlay(list.id)}}
                 on:mouseenter|stopPropagation={dullParent}
@@ -472,7 +466,7 @@
 
 {#if artistSublist.length}
 <div class="Row" row-title="{s('favorite_artists')}" style="--item-height: 200px; --item-width: 200px; align-self: flex-start;">
-    <div class="btn light dynamic"
+    <div class="btn light"
         style="position: absolute; left: 200px; top: 0px; border-radius: 6px;"
         on:click={() => {
             if (!pageStore.showAllArtists) {
@@ -489,17 +483,14 @@
         artistSublist.count
     )}</div>
     {#each artistSublist as artist, i}
-        <div class="Column artist-c active">
-            <div class="btn light FAB"
-                on:click|stopPropagation={() => {}}
-                on:mouseenter|stopPropagation={dullParent}
-                on:mouseleave|stopPropagation={activeParent}
-            >{'\ue615'}</div>
+        <div class="Column artist-c active" on:click={() => {
+            window.Pager.openNew(artist.name, Artist, artist)
+        }}>
             <Image
                 width={140}
                 height={140}
                 radius={'50%'}
-                src={artist.picUrl}
+                src={artist.picUrl + NETEASE_IMG_LARGE}
                 alt={artist.name}/>
             <div class="name title">{artist.name}</div>
             <div class="name">{artist.alias.length? artist.alias[0]: ''}</div>
@@ -510,7 +501,7 @@
 
 {#if albumSublist.length}
 <div class="Row" row-title="{s('favorite_albums')}" style="--item-height: 200px; --item-width: 200px; align-self: flex-start;">
-    <div class="btn light dynamic"
+    <div class="btn light"
         style="position: absolute; left: 200px; top: 0px; border-radius: 6px;"
         on:click={() => {
             if (!pageStore.showAllAlbums) {
@@ -528,19 +519,20 @@
     )}</div>
     {#each albumSublist as al, i}
         <div class="Column artist-c al active"
-            on:click={() => {
-                let id = al.id;
-                
+            on:click={async () => {
+                let id = al.id
+                const {album, songs} = await getAlbumDetail(id)
+
                 onClick(al.name, async() => {
                     return {
                         header: {
-                            imgUrl: al.picUrl,
-                            title: al.name,
-                            subtitle: `${al.artists.reduce((pre, cur) => [...pre, cur.name], []).join(' ')}`,
-                            playCount: al.playCount,
-                            trackCount: al.size,
+                            imgUrl: album.picUrl,
+                            title: album.name,
+                            artists: album.artists,
+                            trackCount: album.size,
+                            desc: album.description,
                         },
-                        listData: getAlbumDetail(id),
+                        listData: songs,
                         sortBy: await store.get('playlist/sortBy'),
                         forwards: await store.get('playlist/forwards'),
                         onTabDestroy() {
@@ -559,7 +551,7 @@
                 width={140}
                 height={140}
                 radius={'8px'}
-                src={al.picUrl} alt={al.name}/>
+                src={al.picUrl + '?param=140y140'} alt={al.name}/>
             <div class="name title" style="width: calc(100% - 16px);">{al.name}</div>
         </div>
     {/each}

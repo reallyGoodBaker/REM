@@ -1,0 +1,16 @@
+{
+    "name": "hello",
+    "ver": "1.0.0",
+    "desc": "这是一个测试插件",
+    "author": "RGB",
+    "entry": "index.js",
+    "id": "23dc60bf-4621-4ab3-92f7-50baf8c6ea1a",
+
+    "components": [
+        "audio_player",
+        "notification",
+        "new_page",
+        "playlist"
+    ]
+
+}

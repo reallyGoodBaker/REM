@@ -1,5 +1,5 @@
 import { LifeCycle } from "../rem";
-import {store} from './base.js'
+import { store } from './base.js'
 
 let storeLoaded = false
 
@@ -13,6 +13,8 @@ export async function saveImg(url) {
 
     index.push(url)
     store.set('ThumbNails/index', index)
+
+    return buf
 }
 
 export async function getImg(url) {
@@ -25,6 +27,18 @@ export async function getImg(url) {
     }
 
     return store.getRaw(`ThumbNails/${uri}`)
+}
+
+export async function getImageBitmap(url, opt) {
+    let index = await store.get('ThumbNails/index') || []
+    const uri = index.indexOf(url)
+    let binary = await store.getRaw(`ThumbNails/${uri}`)
+    
+    if (!binary) {
+        binary = await saveImg(url)
+    }
+
+    return createImageBitmap(new Blob([binary]), opt)
 }
 
 const imgUriCache = new Map()
@@ -45,10 +59,15 @@ export async function getImgSrc(url) {
         return data
     }
 
-    const val =  URL.createObjectURL(new Blob([data]))
+    const val = URL.createObjectURL(new Blob([data]))
     imgUriCache.set(url, val)
 
     return val
+}
+
+
+export function removeImageCache(url) {
+    URL.revokeObjectURL(url)
 }
 
 export class ImageStore {
@@ -82,45 +101,80 @@ export class ImageStore {
 
     handleLastUrls() {
 
-
     }
 }
 
 export class ImageDecodeQueue {
+
+    _callbacks = new WeakMap()
+    _watched = new WeakSet()
     _queue = []
-    _callbacks = []
-    size
+    _size
+    _taskCount
 
-    constructor(size=4) {
-        this.size = size
-        requestIdleCallback(this.handleOnce)
+    constructor(size=40, taskCount=5) {
+        this._size = size
+        this._taskCount = taskCount
+
+        this._handleQueue()
     }
 
-    add(img) {
-        this._queue.push(img)
+    _handleQueue = async () => {
+        const tasks = this._queue.splice(0, this._taskCount)
+
+        for (const task of tasks) {
+            await task.call(null)
+        }
+
+        requestIdleCallback(this._handleQueue)
     }
 
-    handleOnce = async () => {
-        const imgs = await this._decodeQueue()
-        const callbacks = this._callbacks.splice(0, this.size)
+    observer = new IntersectionObserver(entries => {
+        entries.forEach(v => {
+            const callbacks = this._callbacks.get(v.target)
 
-        imgs.forEach((img, i) => {
-            callbacks[i].call(null, img)
+            if (!callbacks) {
+                return
+            }
+
+            if (this._queue.length === this._size) {
+                this._queue.shift()
+            }
+
+            if (v.isIntersecting) {
+                this._watched.add(v.target)
+                this._queue.push(callbacks.onVisible)
+            } else {
+                if (!this._watched.has(v.target)) {
+                    return
+                }
+                this._watched.delete(v.target)
+                callbacks.onInvisible()
+            }
         })
+    })
 
-        requestIdleCallback(this.handleOnce)
+    watch(el, onVisible=Function.prototype, onInvisible=Function.prototype) {
+        try {
+            this._callbacks.set(el, {
+                onVisible, onInvisible
+            })
+
+            this.observer.observe(el)
+        } catch (_) {}
     }
-
-    async _decodeQueue() {
-        return await Promise.all(this._queue.splice(0, this.size).map(img => img.decode()))
-    }
-
-    decode(img) {
-        this.add(img)
-        return new Promise(res => {
-            this._callbacks.push(el => res(el))
-        })
+    
+    unwatch(el) {
+        this.observer.unobserve(el)
     }
 }
 
 export const imageDecodeQueue = new ImageDecodeQueue()
+
+export const neteaseImgSizeParam = (h, w) => `?param=${h}y${w}`
+
+export const NETEASE_IMG_SMALLER = neteaseImgSizeParam(20, 20)
+export const NETEASE_IMG_SMALL = neteaseImgSizeParam(56, 56)
+export const NETEASE_IMG_MEDIUM = neteaseImgSizeParam(96, 96)
+export const NETEASE_IMG_LARGE = neteaseImgSizeParam(140, 140)
+export const NETEASE_IMG_LARGER = neteaseImgSizeParam(200, 200)

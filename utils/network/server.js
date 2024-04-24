@@ -1,13 +1,14 @@
-const {ipcMain} = require('electron')
-const child_process = require('child_process')
+const { ipcMain } = require('electron')
+const http = require('https')
+const { promiseResolvers } = require('../high-level/node/promise')
 
 async function checkIsOnline(timeout=3000) {
-    return new Promise(res => {
-        const p = child_process.exec('ping www.bing.com', er => {
-            res(!er)
-            p.kill(0)
-        })
-    })
+    const { promise, resolve } = promiseResolvers()
+    setTimeout(() => resolve(false), timeout);
+    http.request('https://captive.apple.com/hotspot-detect.html')
+        .on('response', () => resolve(true))
+        .on('error', () => resolve(false))
+    return promise
 }
 
 async function watchNetworkChange() {

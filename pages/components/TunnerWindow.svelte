@@ -3,7 +3,7 @@
     import {getAudioDevices} from '../../utils/devices/browser/find.js'
     import {indexOfOutputDevice} from '../../utils/devices/browser/output.js'
     import ScrollView from './ScrollView2.svelte'
-    import {onDestroy, onMount} from 'svelte'
+    import {onDestroy, onMount, tick} from 'svelte'
     import {AudioPlayer} from '../../utils/player/player.js'
     import Settings from '../Settings.svelte'
     import Gain from './TunnerComponents/Gain.svelte'
@@ -28,7 +28,7 @@
         rem.emit('tunnerClose')
     }
 
-    let metadata = globalPlayer.getMetadata()?.format
+    let metadata = AudioPlayer.getMetadata()?.format
 
     let processConfig = store.getSync('process')
 
@@ -42,9 +42,7 @@
         processConfig = data
     }
 
-    onMount(() => {
-        scrollv.update()
-        scrollContent.update()
+    onMount(async () => {
         rem.on('metadata', updateMetadata)
         rem.on('processUpdate', updateProcessConf)
     })
@@ -61,7 +59,7 @@
         ,eqH
         ,computed
     
-    onMount(() => {
+    onMount(async () => {
         eqCtx = eqCanvas.getContext('2d')
         eqH = eqCanvas.height
         eqW = eqCanvas.width
@@ -140,7 +138,7 @@
         eqCtx.closePath()
     }
 
-    function onEqEnableChange({detail}) {
+    async function onEqEnableChange({detail}) {
         setEqEnable(detail)
     }
 </script>
@@ -149,7 +147,6 @@
 <style>
     .outerWindow {
         contain: paint;
-        background-color: var(--controlBackground);
     }
 
     em {
@@ -200,6 +197,7 @@
         padding: 12px;
         border-radius: 12px;
         background-color: var(--controlBrighter);
+        transition: height 0.2s;
     }
 
     .marginBottom {
@@ -211,7 +209,6 @@
         height: 46px;
         width: 100%;
         justify-content: flex-end;
-        border-top: solid 1px var(--controlGray);
     }
 
     #eqCanvas {
@@ -221,95 +218,116 @@
         border-radius: 8px;
     }
 
+    .c {
+        height: 72vh;
+        width: 72vw;
+        border-radius: 12px;
+        contain: paint;
+    }
+
+    .Row, .Column {
+        box-sizing: border-box;
+    }
+
+    .tunnerOpt {
+        height: calc(72vh - 46px);
+        width: 100%;
+        position: relative;
+        border-radius: 12px 0 0 0;
+        background-color: var(--controlBackground);
+    }
 </style>
 
-<div class="Row" style="height: 72vh; width: 72vw;">
+<div class="Row c tunnerPanel">
 
-    <div class="Column outerWindow tunnerPanel" style="width: 300px;">
+    <div class="Column outerWindow" style="width: 300px;">
         <div class="Row" style="height: 72vh; margin-left: 12px;">
-        <ScrollView bind:this={scrollv} hoverToShow={true}>
-            <div class="Column" style="padding: 12px 0;">
-            <TunnerTile
-                title={s('input')}
-                icon={'\ue936'}>
-                {#if metadata}
-                <div>{s('codec')}<em>{metadata.codec}</em></div>
-                <div>{s('num_of_tracks')}<em>{metadata.numberOfChannels}</em></div>
-                {#if metadata.bitrate > 0}
-                <div>{s('bitrate')}<em>{~~(metadata.bitrate/10)/100} kBps</em></div>
-                {/if}
-                {#if metadata.bitsPerSample}
-                <div>{s('bit_length')}<em>{metadata.bitsPerSample} bit</em></div>
-                {/if}
-                <div style="margin-bottom: 8px;">{s('sample_rate')}<em>{metadata.sampleRate/1000} kHz</em></div>
-                <div>{s('decoder')}<em>{`${s('builtin')} FFmpeg ${s('decoder')}`}</em></div>
-                {:else}
-                {s('none')}
-                {/if}
-            </TunnerTile>
+            <ScrollView bind:this={scrollv} hoverToShow={true} cssText='height: 498px;'>
+                <div class="Column" style="box-sizing: border-box; padding: 20px 0;">
+                    <TunnerTile
+                        title={s('input')}
+                        icon={'\ue936'}>
+                        {#if metadata}
+                        <div>{s('codec')}<em>{metadata.codec}</em></div>
+                        <div>{s('num_of_tracks')}<em>{metadata.numberOfChannels}</em></div>
+                        {#if metadata.bitrate > 0}
+                        <div>{s('bitrate')}<em>{~~(metadata.bitrate/10)/100} kBps</em></div>
+                        {/if}
+                        {#if metadata.bitsPerSample}
+                        <div>{s('bit_length')}<em>{metadata.bitsPerSample} bit</em></div>
+                        {/if}
+                        <div style="margin-bottom: 8px;">{s('sample_rate')}<em>{metadata.sampleRate/1000} kHz</em></div>
+                        <div>{s('decoder')}<em>{`${s('builtin')} FFmpeg ${s('decoder')}`}</em></div>
+                        {:else}
+                        {s('none')}
+                        {/if}
+                    </TunnerTile>
 
-            <TunnerTile
-                title={s('processing')}>
-                <div>{s('bit_length')}<em>Float 32bit</em></div>
-                <div>{s('frequency')}<em>{AudioPlayer.audioCtx.sampleRate/1000} kHz</em></div>
-                <div class="Row pair">
-                    <div class="label">{s('gain')}</div>
-                    <em><div class="link">{
-                    processConfig.gain.gain > 1? '+': processConfig.gain.gain < 1? '-': ''
-                    }{processConfig.gain.gain.toFixed(2)}</div></em>
-                </div>
+                    <TunnerTile
+                        title={s('processing')}>
+                        <div>{s('bit_length')}<em>Float 32bit</em></div>
+                        <div>{s('frequency')}<em>{AudioPlayer.audioCtx.sampleRate/1000} kHz</em></div>
+                        <div class="Row pair">
+                            <div class="label">{s('gain')}</div>
+                            <em><div class="link">{
+                            processConfig.gain.gain > 1? '+': processConfig.gain.gain < 1? '-': ''
+                            }{processConfig.gain.gain.toFixed(2)}</div></em>
+                        </div>
 
-                <div class="Row pair">
-                    <div class="label">{s('stereo_pan')}</div>
-                    <em><div class="link">{processConfig.stereoPanner.pan.toFixed(2)} ({
-                        ((1 - processConfig.stereoPanner.pan) / 2).toFixed(2)
-                    }/{
-                        ((processConfig.stereoPanner.pan + 1) / 2).toFixed(2)
-                    })</div></em>
-                </div>
+                        <div class="Row pair">
+                            <div class="label">{s('stereo_pan')}</div>
+                            <em><div class="link">{processConfig.stereoPanner.pan.toFixed(2)} ({
+                                ((1 - processConfig.stereoPanner.pan) / 2).toFixed(2)
+                            }/{
+                                ((processConfig.stereoPanner.pan + 1) / 2).toFixed(2)
+                            })</div></em>
+                        </div>
 
-                <div class="Row pair">
-                    <div class="label">{s('delay')}</div>
-                    <em><div class="link">{(processConfig.delay.delayTime).toFixed(2)}s</div></em>
-                </div>
+                        <div class="Row pair">
+                            <div class="label">{s('delay')}</div>
+                            <em><div class="link">{(processConfig.delay.delayTime).toFixed(2)}s</div></em>
+                        </div>
 
-                <div class="Row pair">
-                    <div class="label">{s('fade_in_and_out')}</div>
-                    <em><div class="link">{(processConfig.fader.fadeIn).toFixed(2)}s / {(processConfig.fader.fadeOut).toFixed(2)}s</div></em>
-                </div>
+                        <div class="Row pair">
+                            <div class="label">{s('fade_in_and_out')}</div>
+                            <em><div class="link">{(processConfig.fader.fadeIn).toFixed(2)}s / {(processConfig.fader.fadeOut).toFixed(2)}s</div></em>
+                        </div>
 
-                <div class="Column pair">
-                    <div class="label" style="margin-top: 8px;">{s('equalizer')}{!processConfig.eq.enable? `  (${s('disabled')})`: ''}</div>
-                    <canvas style="align-self: flex-start; margin-bottom: 8px;" bind:this={eqCanvas} id="eqCanvas" width="180" height="82"></canvas>
-                </div>
+                        <div class="Column pair">
+                            <div class="label" style="margin-top: 8px;">{s('equalizer')}{!processConfig.eq.enable? `  (${s('disabled')})`: ''}</div>
+                            <canvas style="align-self: flex-start; margin-bottom: 8px; height: 82px;" bind:this={eqCanvas} id="eqCanvas" width="180" height="82"></canvas>
+                        </div>
 
-                <div class="Row pair">
-                    <div class="label">{s('dynamic_compressor')}</div>
-                    <em><div class="link">{processConfig.dynamicsCompressor? s('enabled'): s('disabled')}</div></em>
-                </div>
-            </TunnerTile>
+                        <div class="Row pair">
+                            <div class="label">{s('dynamic_compressor')}</div>
+                            <em><div class="link">{processConfig.dynamicsCompressor? s('enabled'): s('disabled')}</div></em>
+                        </div>
+                    </TunnerTile>
 
-            <TunnerTile
-                hideLine={true}
-                title={s('output')}
-                icon={'\ue61e'}>
-                {#await getDevice() then device}
-                <div class="Row pair">
-                    <div class="label">{s('device')}</div>
-                    <em><div class="link" on:click={() => {
-                        rem.emit('tunnerClose')
-                        window.Pager.openNew('$settings', Settings)
-                    }}>{device.label}</div></em>
+                    <TunnerTile
+                        hideLine={true}
+                        title={s('output')}
+                        icon={'\ue61e'}>
+                        {#await getDevice() then device}
+                        <div class="Row pair">
+                            <div class="label">{s('device')}</div>
+                            <em><div class="link" on:click={() => {
+                                rem.emit('tunnerClose')
+                                window.Pager.openNew('$settings', Settings)
+                            }}>{device.label}</div></em>
+                        </div>
+                        {/await}
+                    </TunnerTile>
                 </div>
-                {/await}
-            </TunnerTile>
-            </div>
-        </ScrollView>
+            </ScrollView>
         </div>
     </div>
 
     <div class="Column outerWindow" style="height: 100%; width: calc(72vw - 300px);">
-        <div class="Column" style="height: calc(72vh - 48px); width: 100%; position: relative;">
+        <div class="Row bottomGroup" style="padding: 0 12px;">
+            <div class="btn new-icon text radius px4" on:click={closeTunner}>{'\ue5cd'}</div>
+        </div>
+        <div class="Column tunnerOpt">
             <ScrollView bind:this={scrollContent} hoverToShow={true}>
                 
                 <div class="tunnerCard">
@@ -325,14 +343,17 @@
                 <div class="tunnerCard">
                     <ToggleListTile
                         clickable={false}
+                        bold={false}
                         data={s('enable_eq')}
                         useAvatar={false}
                         bind:checked={processConfig.eq.enable}
                         on:toggle={onEqEnableChange}
                     />
+                    {#if processConfig.eq.enable}
                     <div class="Row">
                         <Equalizer bind:enable={processConfig.eq.enable}/>
                     </div>
+                    {/if}
                 </div>
 
                 <div class="tunnerCard">
@@ -342,9 +363,6 @@
                 <div class="marginBottom"></div>
 
             </ScrollView>
-        </div>
-        <div class="Row bottomGroup" style="padding: 0 12px;">
-            <div class="btn big radius px4 accent" on:click={closeTunner}>{s('done')}</div>
         </div>
     </div>
 

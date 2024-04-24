@@ -1,33 +1,8 @@
 const {app} = require('electron')
-const path = require('path')
-const fs = require('fs')
-
-
-function mkdir(paths) {
-    for (const filename of paths) {
-        if (!fs.existsSync(filename)) {
-            fs.mkdirSync(filename)
-        }
-    }
-}
-
-const AppRoot = path.resolve(app.getPath('appData'), 'rem')
-
-function pathResolve(name) {
-    return path.resolve(AppRoot, name)
-}
-
-const paths = [
-    AppRoot,
-    pathResolve('Data'),
-    pathResolve('AppCache'),
-    pathResolve('Download'),
-]
-
-mkdir(paths)
+const {savePath} = require('./utils/appPath/main')
 
 //将主要路径写入Path供preload使用
-fs.writeFileSync('./Path', paths.join('\n'))
+savePath()
 
 
 app.on('window-all-closed', function () {

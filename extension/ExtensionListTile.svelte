@@ -3,21 +3,27 @@
     import Image from '../pages/components/Image.svelte'
     import RippleLayer from '../pages/components/RippleLayer.svelte'
     import Toggle from '../pages/components/Toggle.svelte'
+    import { rem } from '../utils/rem'
+    import ExtensionSettings from './ExtensionSettings.svelte'
 
-    const s = v => langMapping.s(v) || v
+    const s = v => langMapping.s('$' + v) || v
     export let ver = '1.0'
     export let desc = ''
     export let isUrl = false
     export let icon = '\ue68b'
     export let name = langMapping.s('extensions')
-    export let permissions = []
-
+    export let id = ''
     export let checked
+    export let author = ''
 
+    let needRelaunch = false
     const emit = createEventDispatcher()
 
     function onToggle() {
         emit('toggle', checked)
+        hooks.send(`extension:${
+            checked? 'active': 'deactive'
+        }`, id)
     }
 
     export function toggle() {
@@ -25,17 +31,33 @@
         onToggle()
     }
 
+    const refreshLaunchIcon = m => {
+        if (m.id === id) {
+            needRelaunch = true
+        }
+    }
+
+    rem.on('extension:need-relaunch', refreshLaunchIcon)
+
+    Pager.beforeSwitch(() => rem.off('extension:need-relaunch', refreshLaunchIcon))
+
+    function relaunch() {
+        hooks.send('app:relaunch')
+    }
+
+    function setting() {
+        Pager.openNew(name, ExtensionSettings, { id, isUrl, icon })
+    }
 </script>
 
 <style>
     .outer {
-        margin: 4px;
+        width: 400px;
         box-sizing: border-box;
         border: solid 1px var(--controlGray);
         border-radius: 10px;
         overflow: hidden;
         background-color: var(--controlBrighter);
-        margin-bottom: 8px;
     }
 
     .i {
@@ -108,8 +130,15 @@
         color: var(--controlBlack52);
     }
 
-    ul {
-        padding-left: 24px;
+    .author {
+        width: calc(100% - 22px);
+        margin-left: 14px;
+        font-size: small;
+    }
+
+    .id {
+        margin-top: 40px;
+        font-size: small;
     }
 </style>
 
@@ -138,18 +167,24 @@
 
     <div class="Row right-content">
         <div class="name">{name}<span class="ver">{ver}</span></div>
+        {#if author}
+            <div class="author">{author}</div>
+        {/if}
         <div class="content">
             {desc}
-            <ul>
-                {#each permissions as perm}
-                    <li>{s(perm)}</li>
-                {/each}
-            </ul>
+            <div class="id">ID: {id}</div>
         </div>
         <div class="Row btnGroup">
-            <RippleLayer rippleColor='var(--fadeDark)' cssStyle="border-radius: 50%;">
-                <div class="iconfont i _btn">{'\ue6aa'}</div>
-            </RippleLayer>
+            <div class="Row">
+                <RippleLayer rippleColor='var(--fadeDark)' cssStyle="border-radius: 50%;">
+                    <div class="iconfont i _btn" on:click={setting}>{'\ue6aa'}</div>
+                </RippleLayer>
+                {#if needRelaunch}
+                    <RippleLayer rippleColor='var(--fadeDark)' cssStyle="border-radius: 50%;">
+                        <div class="icon-round i _btn" on:click={relaunch}>{'\ue5d5'}</div>
+                    </RippleLayer>
+                {/if}
+            </div>
 
             <Toggle on:toggle={onToggle} bind:checked={checked}/>
         </div>

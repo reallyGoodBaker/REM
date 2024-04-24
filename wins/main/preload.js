@@ -1,13 +1,16 @@
-const { ipcRenderer, webFrame } = require('electron');
-const Binder = require('../../utils/jsBinder');
-const { createFuncBinding } = require('../../utils/api/funcBinder');
-const fs = require('fs')
+require('../../utils/main-invoker/preload')
 
+const { ipcRenderer, webFrame } = require('electron')
+const Binder = require('../../utils/jsBinder')
+const { createFuncBinding } = require('../../utils/api/funcBinder')
 
 const { fetchJson } = require('../../utils/server/fetch')
-const [
-    _, AppData, AppCache
-] = fs.readFileSync('./Path').toString().split('\n')
+const { readPath } = require('../../utils/appPath/renderer')
+const AppPaths = readPath()
+
+const { AppCache } = AppPaths
+
+new Binder('AppPaths').use(AppPaths)
 
 const {
     saveToCache,
@@ -15,6 +18,8 @@ const {
     saveToPlaylist,
     getPlaylist,
     getMetadata,
+    clearAllCache,
+    clearCache,
 } = require('../../utils/server/media-cache')(AppCache)
 
 
@@ -26,6 +31,8 @@ new Binder('server')
     getPlaylist,
     saveToPlaylist,
     getMetadata,
+    clearAllCache,
+    clearCache,
 })
 
 new Binder('hooks')
@@ -35,24 +42,22 @@ new Binder('hooks')
     once: (...args) => ipcRenderer.once.apply(ipcRenderer, args),
     off: (...args) => ipcRenderer.removeListener.apply(ipcRenderer, args),
     rm: (...args) => ipcRenderer.removeListener.apply(ipcRenderer, args),
-    rmAll: (type) => ipcRenderer.removeAllListeners.call(ipcRenderer, type),
-    zoom: (ratio) => webFrame.setZoomFactor(ratio),
+    rmAll: type => ipcRenderer.removeAllListeners.call(ipcRenderer, type),
+    zoom: ratio => webFrame.setZoomFactor(ratio),
 })
 
-const { getWallpaper } = require('../../utils/Win11Wallpaper');
-new Binder('wallpaper').bind('getWallpaper', getWallpaper);
 
-
-
-const { login, loginViaQRCode, validQRLogin, getUserAccount } = require('../../utils/api/login');
-const { Search, suggest } = require('../../utils/api/search');
-const { checkIn } = require('../../utils/api/dailySignin');
+const { login, loginViaQRCode, validQRLogin, getUserAccount } = require('../../utils/api/login')
+const { Search, suggest } = require('../../utils/api/search')
+const { checkIn } = require('../../utils/api/dailySignin')
 const {
     getUserPlaylist, getPlaylistDetail, getArtistSublist, getAlbumSublist,
     getAlbumDetail,
-} = require('../../utils/api/playlist');
-const { getSongDetail, getSongUrl, getSongDownload, getSongUrlX } = require('../../utils/api/song');
-const { logout } = require('NeteaseCloudMusicApi');
+} = require('../../utils/api/playlist')
+const { getSongDetail, getSongUrl, getSongDownload, getSongUrlX } = require('../../utils/api/song')
+const { logout } = require('NeteaseCloudMusicApi')
+const { getArtistDetail, getArtistSongs, getArtistAlbums } = require('../../utils/api/artist')
+const { getLyrics } = require('../../utils/api/lyrics')
 
 
 new Binder('NeteaseApi')
@@ -73,7 +78,10 @@ new Binder('NeteaseApi')
 .bind('getAlbumSublist', createFuncBinding(getAlbumSublist))
 .bind('getArtistSublist', createFuncBinding(getArtistSublist))
 .bind('getAlbumDetail', createFuncBinding(getAlbumDetail))
+.bind('getArtistDetail', createFuncBinding(getArtistDetail))
+.bind('getArtistSongs', createFuncBinding(getArtistSongs))
+.bind('getArtistAlbums', createFuncBinding(getArtistAlbums))
+.bind('getLyrics', createFuncBinding(getLyrics))
 
 
 Binder.bindAll();
-fs.rmSync('./Path')

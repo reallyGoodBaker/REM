@@ -1,11 +1,11 @@
 <script>
 
-    import Avatar from "./components/Avatar.svelte";
-    import ScrollView from "./components/ScrollView2.svelte";
-    import SplitList from "./components/SplitList.svelte";
-    import Input from "./components/Input.svelte";
-    import {store} from '../utils/stores/base.js'
+    import Avatar from "./components/Avatar.svelte"
+    import SplitList from "./components/SplitList.svelte"
+    import Input from "./components/Input.svelte"
+    import { store } from '../utils/stores/base.js'
     import { rem } from '../utils/rem.js'
+    import Link from "./components/Link.svelte"
 
 
     export let header = null;
@@ -13,8 +13,8 @@
     const defaultSortFunc = () => 1;
     export let listSplitter = store.getSync('playlist/splitter') || {
         location: [0, 16, 44, 72],
-        names: ['功能', '歌曲名', '艺术家', '专辑'],
-    };
+        names: ['#', '歌曲名', '艺术家', '专辑'],
+    }
 
     let displayTypeLabels = ['\ue68e', '\ue600']
     let displayType = store.getSync('playlist/displayType') || 0
@@ -27,14 +27,14 @@
         (a, b) => b.name > a.name || -1,
         (a, b) => b.ar[0].name > a.ar[0].name || -1,
         (a, b) => b.al.name > a.al.name || -1,
-    ];
+    ]
 
-    export let listData = [];
-    export let sortBy = 0;
-    export let forwards = true;
+    export let listData = []
+    export let sortBy = 0
+    export let forwards = true
 
-    let _listData = [], splitterContainer;
-    let backup;
+    let _listData = [], splitterContainer
+    let backup
 
     function renderList(data) {
         backup = [...data]
@@ -88,17 +88,18 @@
 
 
     function loc2width(location) {
-        let loc = [...location];
-        let widths = new Array(location.length).fill(0);
-        loc.push(100);
+        let loc = [...location]
+        let widths = new Array(location.length).fill(0)
+        loc.push(100)
         widths.forEach((el, i, arr) => {
-            arr[i] = loc[i+1] - loc[i];
-        });
+            arr[i] = loc[i+1] - loc[i]
+        })
 
-        return widths;
+        return widths
     }
 
-    let widths = loc2width(listSplitter.location), location = listSplitter.location;
+    let widths = loc2width(listSplitter.location),
+        location = listSplitter.location;
 
     let dragging = false;
     let splitWindowWidth = 0, raw = 0, rx = 0, ox = 0, index, element;
@@ -156,7 +157,7 @@
         }
     });
     document.addEventListener('keyup', ev => {
-        if (ev.ctrlKey) {
+        if (!ev.ctrlKey) {
             multiMode = false;
         }
     });
@@ -174,23 +175,24 @@
 
     }
 
-    import {MainPlaylist} from '../utils/player/playlist.js'
-    import { onDestroy, onMount, tick } from "svelte";
+    import { MainPlaylist } from '../utils/player/playlist.js'
+    import { onDestroy, onMount, tick } from "svelte"
+    import Artist from "./Artist.svelte"
 
     async function dbClick(ev) {
-        const {listData, i} = ev.detail;
+        const { listData, i } = ev.detail
 
-        const matches = MainPlaylist.query({
-            name: listData[i].name
-        })
+        // const matches = MainPlaylist.query({
+        //     name: listData[i].name
+        // })
 
-        if (!matches.length) {
-            MainPlaylist.loadList(listData)
-            MainPlaylist.play(i)
-            return
-        }
+        // if (matches.length) {
+        //     MainPlaylist.play(matches[0])
+        //     return
+        // }
 
-        MainPlaylist.play(matches[0]);
+        MainPlaylist.loadList(listData)
+        MainPlaylist.play(i)
     }
 
     let container
@@ -305,19 +307,13 @@
         }
     }
 
+    onMount(() => Pager.setSearchPlaceholder(`在${header.title}中搜索`))
+
 </script>
 
 
 
 <style>
-    .c {
-        justify-content: flex-start;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        border-radius: 16px 16px 0px 0px;
-    }
-
     .header {
         --color: var(--controlBrighter);
         background: linear-gradient(to bottom, transparent 180px, var(--color) 292px, var(--color) 400px);
@@ -332,11 +328,10 @@
     .nav {
         padding-bottom: 12px;
         width: 100%;
-        height: 60px;
+        height: 92px;
         border-bottom: solid 1px rgba(0,0,0,0.12);
         justify-content: space-between;
         box-sizing: border-box;
-        padding: 0px 24px;
     }
 
     .splitter {
@@ -355,6 +350,8 @@
     }
 
     .subtitle {
+        display: flex;
+        gap: 8px;
         color: var(--controlNight);
     }
 
@@ -366,14 +363,6 @@
         justify-content: space-between;
         align-items: flex-start;
         color: var(--controlBlack);
-    }
-
-    .list {
-        box-sizing: border-box;
-        align-items: flex-start;
-        width: 100%;
-        flex-grow: 1;
-        flex-shrink: 1;
     }
 
     .splitterTab {
@@ -487,7 +476,9 @@
         background-color: var(--controlBrighter);
     }
 
-
+    .desc {
+        margin-top: 40px;
+    }
 </style>
 
 <div class="Row" style="width: 100%; height: 100%;">
@@ -502,9 +493,18 @@
     </div>
     <div class="bread-crumb">{header.trackCount} 首</div>
     <div class="Column rowl">
-        <div>
+        <div class="scrollable vertical flex" style="height: 160px;">
             <h3 class="title">{header.title}</h3>
-            <div class="subtitle">{header.subtitle}</div>
+            <div class="subtitle">
+                {#each (header.artists ?? []) as ar}
+                    <Link text={ar.name} cssText='font-size: normal;' on:click={() => {
+                        window.Pager.openNew(ar.name, Artist, ar)
+                    }}/>
+                {/each}
+            </div>
+            {#if header.desc}
+            <div class="desc">{header.desc}</div>
+            {/if}
         </div>
 
         <div class="Row">
@@ -514,58 +514,46 @@
     </div>
 </div>
 
-<div class="playlistContent" style="">
+<div class="playlistContent">
 
-    <div class="nav Row">
-        <Input
-            type="text"
-            placeholder={'\ue6a8  搜索列表'}
-            fullBorder={true}
-            on:input={ev => {
-                doSearch(ev.detail)
-            }}/>
+    <div class="nav">
+        <div class="Row" style="margin: 0 24px; height: 60px; align-items: center; justify-content: space-between;">
+            <Input
+                type="text"
+                placeholder={'\ue6a8  搜索列表'}
+                fullBorder={true}
+                on:input={ev => {
+                    doSearch(ev.detail)
+                }}/>
 
-    <div class="Row view-display" on:click={ev => {
-            displayType = (+ev.target.getAttribute('index')) ?? displayType
-        }}>
-            {#each displayTypeLabels as label, i}
-            <div index="{i}" class="{displayType === i? 'selected': ''}">{label}</div>
+            <div class="Row view-display" on:click={ev => {
+                    displayType = (+ev.target.getAttribute('index')) ?? displayType
+                }}>
+                {#each displayTypeLabels as label, i}
+                <div index="{i}" class="{displayType === i? 'selected': ''}">{label}</div>
+                {/each}
+            </div>
+        </div>
+        <div class="Row splitter"
+            style="width: calc(100% - 44px); margin: 0px 24px;"
+            bind:this={splitterContainer}
+            on:mousedown={startSplitDrag}
+        >
+            {#each listSplitter.names as name, i}
+            <div class="splitterTab{sortBy===i?!forwards?' forwards': ' backwards': ''}" style="width: {widths[i]}%" on:click={() => sortList(i)}>{name}</div>
             {/each}
         </div>
     </div>
-
     
-    <div style="height: calc(100% - 60px); ">
-        <ScrollView bind:this={scrollv}>
-            {#if displayType === 0}
-
-            <div class="Column c" bind:this={container}>
-            
-                <div class="Row splitter"
-                    style="width: calc(100% - 44px); margin: 0px 24px;"
-                    bind:this={splitterContainer}
-                    on:mousedown={startSplitDrag}
-                >
-                    {#each listSplitter.names as name, i}
-                    <div class="splitterTab{sortBy===i?!forwards?' forwards': ' backwards': ''}" style="width: {widths[i]}%" on:click={() => sortList(i)}>{name}</div>
-                    {/each}
-                </div>
-            
-                <div class="Column list">
-                    <SplitList
-                        on:update={onSplitListMounted}
-                        on:click={onClick}
-                        on:dbclick={dbClick}
-                        bind:listData={_listData}
-                        bind:location
-                        bind:selections
-                    ></SplitList>
-                </div>
-            
-            </div>
-
-            {/if}
-        </ScrollView>
+    <div style="height: calc(100% - 92px); ">
+        <SplitList
+            on:update={onSplitListMounted}
+            on:click={onClick}
+            on:dbclick={dbClick}
+            bind:listData={_listData}
+            bind:location
+            bind:selections
+        ></SplitList>
     </div>
 
 </div>

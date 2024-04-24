@@ -1,28 +1,28 @@
-import {LifeCycle, rem} from '../rem.js'
-import {store} from '../stores/base.js'
+import { rem } from '../rem.js'
+import { store } from '../stores/base.js'
 
 let processConfig
 
 let audioCtx
 
 let delay
-    ,gain
-    ,fader
-    ,stereoPanner
-    ,dynamicsCompressor
-    ,connectNode
+    , gain
+    , fader
+    , stereoPanner
+    , dynamicsCompressor
+    , connectNode
 
 let eq31
-    ,eq62
-    ,eq125
-    ,eq250
-    ,eq500
-    ,eq1k
-    ,eq2k
-    ,eq4k
-    ,eq8k
-    ,eq16k
-    ,eq
+    , eq62
+    , eq125
+    , eq250
+    , eq500
+    , eq1k
+    , eq2k
+    , eq4k
+    , eq8k
+    , eq16k
+    , eq
 
 
 /**
@@ -34,12 +34,12 @@ function biquadFilterCreator(ctx) {
      * @param {number} f
      * @param {number} q
      */
-    return function(type, f, q) {
+    return function (type, f, q) {
         const bq = ctx.createBiquadFilter()
         bq.type = type
         bq.frequency.value = f
         bq.gain.value = 0
-        
+
         if (q) {
             bq.Q.value = q
         }
@@ -115,7 +115,7 @@ export function setEq(f, gain) {
     saveConfig()
 }
 
-export function setEqEnable(bool=true) {
+export function setEqEnable(bool = true) {
     stereoPanner.disconnect()
     eq16k.disconnect()
 
@@ -134,11 +134,10 @@ export function setEqEnable(bool=true) {
 /**
  * 
  * @param {AudioContext} ctx 
- * @param {MediaElementAudioSourceNode} srcNode 
+ * @param {AudioNode} srcNode 
  * @param {AudioDestinationNode} destNode 
  */
 export function initProcessor(ctx, srcNode, destNode) {
-
     audioCtx = ctx
     delay = ctx.createDelay()
     gain = ctx.createGain()
@@ -156,19 +155,20 @@ export function initProcessor(ctx, srcNode, destNode) {
     delay.connect(fader)
     fader.connect(destNode)
 
-    setEqEnable()
-
     initProcessorConfig()
+
+    setEqEnable(processConfig.eq.enable)
+    dynamicsCompressorEnable(processConfig.dynamicsCompressor)
 }
 
 function initProcessorConfig() {
 
     if (!(processConfig = store.getSync('process'))) {
         processConfig = {
-            delay: {delayTime: 0.1},
-            gain: {gain: 1},
-            stereoPanner: {pan: 0},
-            fader: {fadeIn: 0.2, fadeOut: 0.2},
+            delay: { delayTime: 0.1 },
+            gain: { gain: 1 },
+            stereoPanner: { pan: 0 },
+            fader: { fadeIn: 0.2, fadeOut: 0.2 },
             eq: {
                 enable: true,
                 31: 0,
@@ -261,7 +261,7 @@ export function getStereoPan() {
     return processConfig.stereoPanner.pan
 }
 
-export function setFade(fadeIn=0.2, fadeOut=0.2) {
+export function setFade(fadeIn = 0.2, fadeOut = 0.2) {
     processConfig.fader.fadeIn = fadeIn
     processConfig.fader.fadeOut = fadeOut
 

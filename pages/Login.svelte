@@ -1,15 +1,17 @@
 <script>
-    import {getContext} from 'svelte';
-    import RippleLayer from './components/RippleLayer.svelte';
+    import { getContext, onMount, tick } from 'svelte'
+    import RippleLayer from './components/RippleLayer.svelte'
     import {store} from '../utils/stores/base.js'
     import { rem } from '../utils/rem.js'
 
     const s = (f, ...args) => langMapping.s(f, ...args) || f
 
-    const performClick = getContext('close') || (() => {
-        rem.emit('__openMinePage');
-        rem.emit('__updateLoginAvatar');
-    });
+    const performClick = getContext('close') || (async () => {
+        Pager.removeCurrent()
+        await tick()
+        rem.emit('__openMinePage')
+        rem.emit('__updateLoginAvatar')
+    })
 
     let phone, passwd, error = false;
 
@@ -29,7 +31,7 @@
     }
 
     let loginTypeEnum = ['phone_number', 'qr_code'];
-    let loginType = 0;
+    let loginType = 1;
     let img;
 
 
@@ -78,6 +80,12 @@
         performClick();
     }
 
+    getQRLoginInfo()
+
+    onMount(() => {
+        Pager.setSearchPlaceholder('')
+    })
+
 </script>
 
 <style>
@@ -125,20 +133,18 @@
         color: red;
     }
 
-    .img {
-        border: none;
-        outline: none;
-    }
 </style>
 
 <div class="row c">
-    <h3>{s('login_type', s(loginTypeEnum[loginType]))} <span class="span" on:click={() => {
-        loginType = loginType? 0: 1;
-        loginType && getQRLoginInfo();
-    }}>{s('switch_to')}{s(loginTypeEnum[loginType? 0: 1])}</span></h3>
+    <h3>{s('login_type', s(loginTypeEnum[loginType]))}
+        <span class="span" on:click={() => {
+            loginType = loginType? 0: 1
+            loginType && getQRLoginInfo()
+        }}>{s('switch_to')}{s(loginTypeEnum[loginType? 0: 1])}</span>
+    </h3>
     {#if !loginType}
-        <input type="text" class="{error&&'error'}" bind:value={phone} placeholder={s('phone_number')}>
-        <input type="password" class="{error&&'error'}" bind:value={passwd} placeholder={s('password')}>
+        <input type="text" class="{error ? 'error' : ''}" bind:value={phone} placeholder={s('phone_number')}>
+        <input type="password" class="{error ? 'error' : ''}" bind:value={passwd} placeholder={s('password')}>
         <div style="padding: 24px 0px 12px 0px;">
             <RippleLayer
                 rippleColor={'#000'}

@@ -4,14 +4,23 @@ import {initOutputAudio} from '../devices/browser/output.js'
 import {fadeBeforePause, fadeBeforePlay, initProcessor} from './process.js'
 import {initAncProcessor} from './anc.js'
 import {LifeCycle, rem} from '../rem.js'
+import { invoker } from '../main-invoker/browser.js'
+import { UrlPlayerAdapter } from './url-player-adapter.js'
+import { BufferPlayerAdapter } from './buffer-player-adapter.js'
 
 initAudioDevicesFind()
 
 export class AudioPlayer {
 
+    static bufferMode = false
     static audioCtx = new AudioContext()
-    static audioElement = new Audio()
+    static urlPlayer = new UrlPlayerAdapter(this.audioCtx)
+    static bufferPlayer = new BufferPlayerAdapter(this.audioCtx)
+    static audioElementSource = this.urlPlayer.outputNode()
+    static audioBufferSource = this.bufferPlayer.outputNode()
+    static virtualRoot = this.audioCtx.createGain()
     static em = new EventEmitter()
+
 
     static on(type, handler) {
         this.em.on(type, handler)
@@ -20,8 +29,16 @@ export class AudioPlayer {
         AudioPlayer.on(type, handler)
     }
 
+    static isPlayingIgnoreFade = false
+
+    static getAdapter() {
+        return this.bufferMode ? this.bufferPlayer : this.urlPlayer
+    }
+
     static async play() {
-        await this.audioElement.play(),
+        const adapter = this.getAdapter()
+        await adapter.play()
+        
         hooks.send('thumbar:pause')
         this.em.emit('play')
 
@@ -32,65 +49,92 @@ export class AudioPlayer {
     }
 
     static async pause() {
-        if (this.load()) {
+        if (await this.load()) {
             hooks.send('thumbar:play')
             this.em.emit('pause')
         }
 
         await fadeBeforePause()
-        this.audioElement.pause()
+        const adapter = this.getAdapter()
+        adapter.pause()
     }
     pause() {
         AudioPlayer.pause()
     }
 
     static seek(time) {
-        if (typeof time === 'number') this.audioElement.currentTime = time
-        else return this.audioElement.currentTime
+        const adapter = this.getAdapter()
+        if (typeof time === 'number') {
+            adapter.seek(time)
+        }
+        else return adapter.currentTime()
         this.em.emit('seek')
     }
     seek(time) {
         return AudioPlayer.seek(time)
     }
 
-    static load(source) {
-        if (source) {
-            this.audioElement.src = source
+    static switchTo(bufferMode=false) {
+        if (bufferMode) {
+            this.urlPlayer.stop()
+            this.audioBufferSource.connect(this.virtualRoot)
+        } else {
+            this.bufferPlayer.stop()
+            this.audioElementSource.connect(this.virtualRoot)
         }
-        return this.audioElement.src
+
+        this.bufferMode = bufferMode
+    }
+
+    /**
+     * @param {string|Uint8Array} [source] 
+     * @returns 
+     */
+    static async load(source) {
+        const adapter = this.getAdapter()
+        if (source === undefined) {
+            return await adapter.load()
+        }
+
+        if (typeof source === 'string') {
+            this.switchTo(false)
+            this.urlPlayer.load(source)
+            return true
+        }
+
+        if (source instanceof Uint8Array) {
+            this.switchTo(true)
+            await this.bufferPlayer.load(source)
+            return true
+        }
+
+        return false
     }
     load(source) {
         return AudioPlayer.load(source)
     }
 
-    async loadData(audioData) {
+    static async loadData(audioData, onload=Function.prototype) {
         audioData.onLoadMetadata = metadata => {
             AudioPlayer.metadata = metadata
             rem.emit('metadata', metadata)
+            this.em.emit('metadata', metadata)
         }
 
         AudioPlayer.audioData = audioData
     
-        this.load(await audioData.url())
-        this.onDataLoaded()
+        await this.load(await audioData.url())
+        onload.call(this)
     }
-
-    onDataLoaded() {
-
+    loadData(audioData, onload) {
+        AudioPlayer.loadData(audioData, onload)
     }
 
     static volume(number) {
-        if (typeof number === 'undefined') return this.audioElement.volume
+        if (typeof number === 'undefined') return this.virtualRoot.gain.value
 
         if (typeof number === 'number') {
-            
-            if (number > 0) {
-                this.audioElement.muted = false
-                this.audioElement.volume = number
-            } else {
-                this.audioElement.muted = true
-            }
-
+            this.virtualRoot.gain.value = number
             return
         }
 
@@ -100,47 +144,66 @@ export class AudioPlayer {
     }
 
     static duration() {
-        return this.audioElement.duration || (this.audioData?.data.dt / 1000) || 0
+        return (this.audioData?.data.dt / 1000) || 0
     }
     duration() {
         return AudioPlayer.duration()
     }
 
     static isPlaying() {
-        return !this.audioElement.paused
+        return this.bufferMode
+            ? this.bufferPlayer.playing()
+            : this.urlPlayer.playing()
     }
     isPlaying() {
         return AudioPlayer.isPlaying()
     }
 
     static metadata = {}
-    getMetadata() {
-        return Object.assign({}, AudioPlayer.metadata)
+    static getMetadata() {
+        return structuredClone(this.metadata)
     }
+    getMetadata() {
+        return AudioPlayer.getMetadata()
+    }
+
 }
 
 
 LifeCycle.when('runtimeReady').then(() => {
-    const srcNode = AudioPlayer.audioCtx.createMediaElementSource(AudioPlayer.audioElement)
+    const srcNode = AudioPlayer.virtualRoot
     const destNode = AudioPlayer.audioCtx.createMediaStreamDestination()
 
-    AudioPlayer.audioElement.addEventListener('ended', () => {
+    AudioPlayer.urlPlayer.onended =
+    AudioPlayer.bufferPlayer.onended =
+    () => {
         AudioPlayer.em.emit('ended')
-    })
-    
-    AudioPlayer.audioElement.onloadedmetadata = () => {
-        rem.emit('setControlsContent', AudioPlayer.audioData)
     }
+    
+    // AudioPlayer.audioElement.onloadedmetadata = () => {
+    //     rem.emit('setControlsContent', AudioPlayer.audioData)
+    // }
 
     const globalPlayer = new AudioPlayer()
-    window.globalPlayer = globalPlayer
 
     initProcessor(AudioPlayer.audioCtx, srcNode, destNode)
     initAncProcessor(AudioPlayer.audioCtx, destNode)
     initOutputAudio(destNode.stream)
 
+    AudioPlayer.on('play', () => AudioPlayer.isPlayingIgnoreFade = true)
+    AudioPlayer.on('pause', () => AudioPlayer.isPlayingIgnoreFade = false)
+    AudioPlayer.on('ended', () => AudioPlayer.isPlayingIgnoreFade = false)
+
     navigator.mediaSession.setActionHandler('play', () => globalPlayer.play())
     navigator.mediaSession.setActionHandler('pause', () => globalPlayer.pause())
-    hooks.on('player:play', () => globalPlayer.play())
+    hooks.on('player:play', async () => await globalPlayer.play())
     hooks.on('player:pause', () => globalPlayer.pause())
+
+    invoker.on('player:play', async () => await globalPlayer.play())
+    invoker.on('player:pause', () => globalPlayer.pause())
+    invoker.on('player.isPlaying', () => AudioPlayer.isPlayingIgnoreFade)
+    invoker.on('player.duration', () => globalPlayer.duration())
+    invoker.on('player:seek', (_, t) => globalPlayer.seek(t))
+    invoker.on('player.metadata', () => globalPlayer.getMetadata())
+    invoker.on('player.audioData', () => structuredClone(AudioPlayer.audioData?.data))
 })

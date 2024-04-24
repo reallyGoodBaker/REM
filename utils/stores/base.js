@@ -98,3 +98,19 @@ export const store = {
         }
     }
 }
+
+const safeMethods = [ 'get', 'getRaw', 'getSync', 'set', 'setRaw', 'rm' ]
+
+export const safeStore = constKey => {
+    return new Proxy(store, {
+        get(t, p) {
+            if (!safeMethods.includes(p)) {
+                return undefined
+            }
+
+            return (...args) => t[p].call(t, constKey, ...args)
+        },
+
+        set() { return false }
+    })
+}

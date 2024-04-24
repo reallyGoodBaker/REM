@@ -1,7 +1,7 @@
 <script>
-    import { onDestroy, onMount } from 'svelte';
-    import { rem } from '../../utils/rem.js';
-    import { getImgSrc, imageDecodeQueue } from '../../utils/stores/img.js'
+    import { onDestroy, onMount } from 'svelte'
+    import { rem } from '../../utils/rem.js'
+    import { getImgSrc, removeImageCache, imageDecodeQueue } from '../../utils/stores/img.js'
 
     export const alt = ''
     export let src = ''
@@ -13,6 +13,8 @@
     export let skeletonColor = 'var(--controlGray)'
 
     let container
+
+    $: loadImage(src)
 
     const img = new Image(width, height)
     img.draggable = false
@@ -29,34 +31,48 @@
         })
     }
 
-    async function loadImage() {
-        img.src = await getImgSrc(src)
-
-        await imageDecodeQueue.decode(img)
-        if (container) {
-            container.appendChild(img)
-            await fadeInImage()
+    async function _showImage() {
+        try {
+            await img.decode()
+        } finally {
+            if (container) {
+                container.appendChild(img)
+                await fadeInImage()
+            }
         }
     }
 
-    const refreshImage = async () => {
-        img.remove()
-        await loadImage()
+    export async function loadImage(src) {
+        if (!src || !container) {
+            return
+        }
+
+        img.src = await getImgSrc(src)
+
+        imageDecodeQueue.watch(container, _showImage, () => img.remove())
     }
 
     onMount(async () => {
-        await loadImage()
-        rem.on('win:focus', refreshImage)
+        await loadImage(src)
+        rem.on('win:focus', loadImage)
     })
 
-    Pager.beforeSwitch(() => {
-        rem.off('win:focus', refreshImage)
-    })
+    const unobserve = () => {
+        removeImageCache(src)
+        if (container) {
+            imageDecodeQueue.unwatch(container)
+            rem.off('win:focus', () => loadImage(src))
+        }
+    }
+
+    Pager.beforeSwitch(unobserve)
+    onDestroy(unobserve)
 
 </script>
 
 <style>
     .c {
+        flex-shrink: 0;
         overflow: hidden;
     }
 </style>

@@ -1,6 +1,6 @@
 <script>
     import ProgressWithInput from './ProgressWithInput.svelte'
-    import {setGain, getGain} from '../../../utils/player/process.js'
+    import { setGain, getGain } from '../../../utils/player/process.js'
 
     const s = f => langMapping.s(f)
     

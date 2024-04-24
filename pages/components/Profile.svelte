@@ -1,50 +1,35 @@
 <script>
-    import ListTile from "./ListTile.svelte";
-    import Popup from './Popup.svelte';
-    import Login from '../Login.svelte';
-    import {getContext, onMount} from 'svelte';
-    import Settings from "../Settings.svelte";
-    import {defaultWizard} from '../../utils/wizard/edit-profile/index.js'
-    import {store} from '../../utils/stores/base.js'
-    import ExtensionList from '../../extension/ExtensionList.svelte'
+    import ListTile from "./ListTile.svelte"
+    import Login from '../Login.svelte'
+    import { getContext } from 'svelte'
+    import { defaultWizard } from '../../utils/wizard/edit-profile/index.js'
+    import { store } from '../../utils/stores/base.js'
+    import { rem } from "../../utils/rem"
+    import { homeOptions } from '../../utils/home/browser'
 
-    let close = getContext('close');
+    function login() {
+        Pager.openNew('登录', Login)
+        close()
+    }
+
+    let close = getContext('close')
     const s = (f, ...args) => {
         return langMapping.s(f, ...args) || f
     }
 
-    export let user;
+    export let user
 
-    let isLogedin = !!user.avatarUrl;
-
-    let pop = false, login
-
-    let hide = async () => {
-        pop = false;
-        const profile = await store.get('profile');
-        if (profile) {
-            user = {
-                avatarUrl: profile.avatarUrl,
-                name: profile.nickname,
-            }
-            isLogedin = !!user.avatarUrl;
-        }
-    }
-    let show = () => {
-        pop = true;
-        console.log(login);
-    }
-
+    let isLogedin = !!user.avatarUrl
 
     function logOut() {
         NeteaseApi.logout()
-        store.rm('profile');
-        store.rm('token');
+        store.rm('profile')
+        store.rm('token')
         user = {
             avatarUrl: '',
             name: 'not_login',
         }
-        isLogedin = !!user.avatarUrl;
+        isLogedin = !!user.avatarUrl
     }
 
 
@@ -54,64 +39,53 @@
         defaultWizard.display(true)
     }
 
-    function showSettings() {
-        close();
-        Pager.openNew('$settings', Settings, {});
-    }
+    let options = homeOptions
 
-    let showExtensions = false
-    onMount(async () => {
-        showExtensions = (await store.get('AppSettings/beta_features')).extensions
+    rem.on('refreshHomeOptions', () => {
+        options = options
     })
 
-    function showExtensionsPage() {
-        close()
-        Pager.openNew('$extensions', ExtensionList, {})
+    function avatarFromExt(path, folder) {
+        if (path.startsWith('./')) {
+            return `${AppPaths.Extensions}/${folder}/${path.slice(2)}`
+        }
+
+        return `${AppPaths.Extensions}/${folder}/${path}`
     }
-
-
 </script>
 
 
 <style>
-    .row {
+    .Column {
         width: 100%;
         align-items: flex-start;
+        flex-wrap: nowrap;
     }
 
     .c {
+        border-radius: 16px;
         width: 300px;
+        max-height: calc(100vh - 96px);
         padding: 12px 0px;
         background-color: var(--controlWhite);
+        overflow: auto;
     }
 
-    header, .article {
-        border-bottom: solid 1px #ddd;
-    }
-
-    footer {
-        width: 100%;
-        margin: 12px 0px 4px 0px;
-        font-size: x-small;
-        color: #bbb;
+    header.Column {
+        contain: paint;
+        width: calc(100% - 20px);
+        margin: 4px 10px 0;
+        background-color: var(--controlBackground2);
+        border-radius: 12px;
     }
 </style>
 
 
-<div class="row c">
-    <header class="row">
-        <Popup
-            bind:showPopupWindow={pop}
-            on:layerClick={hide}
-            
-            >
-            <div bind:this={login}>?????</div>
-            <Login/>
-        </Popup>
-
+<div class="Column c scrollable">
+    <header class="Column">
         <ListTile
             isUrl={user.avatarUrl}
-            avatar={user.avatarUrl || '\ue6bb'}
+            avatar={user.avatarUrl || '\ue7fd'}
             data={s(user.name)}
             width={28}
             height={28}
@@ -130,7 +104,7 @@
             style={"font-size: small"}
             isUrl={false}
             size={'small'}
-            avatar={'\ue68f'}
+            avatar={'\ue16f'}
             data={s('logout')}
             on:click={logOut}/>
         {:else}
@@ -138,41 +112,27 @@
             isUrl={false}
             style={"font-size: small"}
             size={'small'}
-            avatar={'\ue610'}
+            avatar={'\ue157'}
             data={s('login')}
-            on:click={show}/>
+            on:click={login}/>
         {/if}
 
     </header>
 
-    <div class="article row">
-        <ListTile
-            on:click={showSettings}
-            isUrl={false}
-            style={"font-size: small"}
-            size={'small'}
-            avatar={'\ue6aa'}
-            data={s('settings')}/>
-        <ListTile
-            isUrl={false}
-            style={"font-size: small"}
-            size={'small'}
-            avatar={'\ue666'}
-            data={s('download_manager')}/>
-        {#if showExtensions}
-        <ListTile
-            on:click={showExtensionsPage}
-            isUrl={false}
-            style={"font-size: small"}
-            size={'small'}
-            avatar={'\ue68b'}
-            data={s('extensions')}/>
-        {/if}
+    <div class="article Column">
+        {#each options as { title, avatar, onClick, isUrl, extFolder }}
+            <ListTile
+                on:click={() => {
+                    onClick()
+                    close()
+                }}
+                isUrl={!!isUrl}
+                padding={18}
+                style={"font-size: small"}
+                size={'small'}
+                width={24}
+                avatar={extFolder ? avatarFromExt(avatar, extFolder) : avatar}
+                data={s(title)}/>
+        {/each}
     </div>
-
-    <footer class="column">
-        REM
-    </footer>
-
-
 </div>

@@ -1,13 +1,17 @@
 <script>
     import Avatar from "./Avatar.svelte"
-    import Progress from "./Progress.svelte"
     import ProgressInset from "./ProgressInset.svelte"
-    import {globalMetadata} from '../../utils/player/metadata.js'
-    import {MainPlaylist} from '../../utils/player/playlist.js'
-    import {rem, LifeCycle} from '../../utils/rem.js'
-    import {vsync} from '../../utils/core/vsync.js'
-    import {store} from '../../utils/stores/base.js'
-    import {getColor} from '../../utils/style/imageBasicColor.js'
+    import { globalMetadata } from '../../utils/player/metadata.js'
+    import { MainPlaylist } from '../../utils/player/playlist.js'
+    import { rem, LifeCycle } from '../../utils/rem.js'
+    import { vsync } from '../../utils/core/vsync.js'
+    import { store } from '../../utils/stores/base.js'
+    import { getColor } from '../../utils/style/imageBasicColor.js'
+    import Link from "./Link.svelte"
+    import Artist from "../Artist.svelte"
+    import { NETEASE_IMG_SMALL } from "../../utils/stores/img.js"
+    import { AudioPlayer } from '../../utils/player/player.js'
+    import { onMount } from "svelte";
 
     let l = langMapping.getMapping()
     rem.on('langChange', lang => {
@@ -21,21 +25,26 @@
     let duration = 1
     let checker
 
-    globalMetadata.addObserver(function(rawMetadata) {
+    globalMetadata.addObserver(function(data) {
         this.apply()
-        content = rawMetadata
-    });
+        content = {
+            title: data.title(),
+            album: data.album().name,
+            artwork: [{
+                src: data.album().picUrl
+            }],
+            artist: data.artist(),
+        }
+    })
 
     async function setContent(audioData) {
-
         globalMetadata.title(audioData.title())
         globalMetadata.album(audioData.album().name)
         globalMetadata.artist(audioData.artist().reduce((pre, cur) => [...pre, cur.name], []).join('; '))
         globalMetadata.artwork(0, {
             src: audioData.album().picUrl
         })
-        globalMetadata.notifyObservers(globalMetadata.getMetadataConfig())
-
+        globalMetadata.notifyObservers(audioData)
     }
 
     let ctx, container
@@ -58,13 +67,13 @@
     const _progressUpdate = () => {
         if (isSeeking) return
 
-        let cur = globalPlayer.seek()
+        let cur = AudioPlayer.seek()
         seekValue = (cur/duration)*100
         currentTimeEle.innerText = s(cur)
     }
     rem.on('setControlsContent', setContent)
     rem.on('loadedContent', () => {
-        duration = globalPlayer.duration()
+        duration = AudioPlayer.duration()
         durationEle.innerText = s(duration)
         if (checker) {
             seekValue = 0
@@ -75,7 +84,7 @@
 
     let volume;
     async function restoreVolume() {
-        globalPlayer.volume((volume = await store.get('volume') || 50)/100)
+        AudioPlayer.volume((volume = await store.get('volume') || 50)/100)
     }
 
     let playerReady = false
@@ -86,33 +95,36 @@
             detailReady = true
         }
     })
+
     LifeCycle.when('playerReady').then(async () => {
-        const p = globalPlayer
-        p.on('play', () => playing = true)
-        p.on('pause', () => playing = false)
-        p.on('ended', () => MainPlaylist.playNext())
+        AudioPlayer.on('play', () => playing = true)
+        AudioPlayer.on('pause', () => playing = false)
+        AudioPlayer.on('ended', () => MainPlaylist.playNext())
 
         await restoreVolume()
 
         let listPlaying = await store.get('listPlaying'),
             playIndex = await store.get('listElementPlaying')
 
+        playerReady = true
+
         if (listPlaying && typeof playIndex === 'number') {
             MainPlaylist.loadList(listPlaying)
-            MainPlaylist.load(playIndex)
+            await MainPlaylist.load(playIndex)
         }
 
-        playerReady = true
+        LifeCycle.fire('controlsReady')
+        hooks.send('win:show-main')
     })
 
-    function onClick() {
-        if(!globalPlayer.load()) return
+    async function onClick() {
+        if(!(await AudioPlayer.load())) return
 
         if (playing) {
-            return globalPlayer.pause()
+            return AudioPlayer.pause()
         }
 
-        return globalPlayer.play()
+        return AudioPlayer.play()
     }
 
     window.addEventListener('keypress', ev => {
@@ -144,7 +156,7 @@
 
     function setVolume(ev) {
         const vol = +ev.detail
-        globalPlayer.volume(vol/100)
+        AudioPlayer.volume(vol/100)
     }
 
 
@@ -160,8 +172,10 @@
     function endSeek(ev) {
         isSeeking = false
         try {
-            globalPlayer.seek((ev.detail/100)*duration)
-        } catch (e) {}
+            AudioPlayer.seek((ev.detail/100)*duration)
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     function seekMove(ev) {
@@ -177,6 +191,9 @@
      */
     var btns = new Array(5)
 
+    onMount(() => {
+        LifeCycle.fire('playerReady')
+    })
 </script>
 
 
@@ -278,6 +295,7 @@
     .subtitle {
         font-size: small;
         color: #ddd;
+        gap: 6px;
     }
 
     .time {
@@ -335,7 +353,7 @@
         <div class="avatar-container">
             <Avatar
                 isUrl={!!content.album}
-                avatar={content.artwork? content.artwork[0].src: 'R'}
+                avatar={content.artwork? content.artwork[0].src + NETEASE_IMG_SMALL : 'R'}
                 width={56}
                 height={56}
                 radius={'4px'}
@@ -345,7 +363,15 @@
         </div>
         <div class="row txt">
             <div class="title">{content.title || l['no_song_playing']}</div>
-            <div class="subtitle">{content.artist || ''}</div>
+            <div class="Row subtitle">
+                {#each content.artist as artist}
+                    <Link text={artist.name} on:click={() => window.Pager.openNew(
+                        artist.name,
+                        Artist,
+                        { id: artist.id }
+                    )}/>
+                {/each}
+            </div>
         </div>
         {/if}
     </div>

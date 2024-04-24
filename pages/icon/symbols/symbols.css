@@ -1,0 +1,63 @@
+.symbols {
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 48
+}
+
+.symbols.fill {
+    font-variation-settings: 'FILL' 1
+}
+
+.symbols.weight-100 {
+    font-variation-settings: 'wght' 100
+}
+
+.symbols.weight-200 {
+    font-variation-settings: 'wght' 200
+}
+
+.symbols.weight-300 {
+    font-variation-settings: 'wght' 300
+}
+
+.symbols.weight-400 {
+    font-variation-settings: 'wght' 400
+}
+
+.symbols.weight-500 {
+    font-variation-settings: 'wght' 500
+}
+
+.symbols.weight-600 {
+    font-variation-settings: 'wght' 600
+}
+
+.symbols.weight-700 {
+    font-variation-settings: 'wght' 700
+}
+
+.symbols.grade-low {
+    font-variation-settings: 'GRAD' -25
+}
+
+.symbols.grade-high {
+    font-variation-settings: 'GRAD' 25
+}
+
+.symbols.size-tiny {
+    font-variation-settings: 'opsz' 20
+}
+
+.symbols.size-small {
+    font-variation-settings: 'opsz' 24
+}
+
+.symbols.size-normal {
+    font-variation-settings: 'opsz' 40
+}
+
+.symbols.size-big {
+    font-variation-settings: 'opsz' 48
+}

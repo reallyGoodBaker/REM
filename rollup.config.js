@@ -31,7 +31,7 @@ function serve() {
 export default {
 	input: 'pages/entry.js',
 	output: {
-		sourcemap: false,
+		sourcemap: true,
 		format: 'iife',
 		name: 'app',
 		file: 'bundle/bundle.js'
@@ -39,8 +39,9 @@ export default {
 	plugins: [
 		svelte({
 			compilerOptions: {
+                customElement: false,
 				// enable run-time checks when not in production
-				dev: !production
+				dev: true,
 			}
 		}),
 		// we'll extract any component CSS out into

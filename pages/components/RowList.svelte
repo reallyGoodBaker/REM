@@ -2,14 +2,14 @@
     export let marginHorizon = '10px';
     export let marginVertical = '6px';
     export let radius = '8px';
-    export let color = 'var(--dynamicControlLight)';
+    export let color = 'var(--controlBrighter)';
     export let title = '';
 </script>
 
 <style>
     .container {
         position: relative;
-        margin-top: 8px;
+        margin-top: 10px;
         width: 100%;
     }
 
@@ -22,7 +22,7 @@
 
 <div class="container">
     {#if title}
-    <div style="color: var(--controlDark); font-weight: bold; margin-bottom: 6px; margin-left: calc(14px + {marginHorizon})">{title}</div>
+    <div style="font-size: 0.9em; font-weight: bold; color: var(--controlDark); margin-bottom: 6px; margin-left: calc(22px + {marginHorizon})">{title}</div>
     {/if}
     <div class="tile" style="border-radius: {radius}; background-color: {color}; margin: {marginVertical} {marginHorizon}">
         <slot/>

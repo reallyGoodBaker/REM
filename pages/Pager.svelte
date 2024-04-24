@@ -1,8 +1,7 @@
 <script>
     import Blank from "./Blank.svelte"
-    import {anim} from '../utils/anims.js'
+    import { anim } from '../utils/anims.js'
     import { onMount } from "svelte"
-
     import { rem } from '../utils/rem.js'
 
 

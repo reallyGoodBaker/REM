@@ -1,5 +1,5 @@
 <script>
-import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
+import { createEventDispatcher, onDestroy, onMount } from 'svelte'
 import { rem } from '../../utils/rem.js'
 import { store } from '../../utils/stores/base.js'
 import { vsync } from '../../utils/core/vsync.js'
@@ -7,11 +7,14 @@ import { vsync } from '../../utils/core/vsync.js'
 let outerContainer
     ,meter
     ,scrollTrack
+    ,scrollTrackContainer
     ,content
     ,scrollThumb
 
 export let minThumbHeight = 12
 export let hoverToShow = false
+export let innerSize = 0
+export let cssText = ''
 
 let thumbHeight = 0
     ,hideTrack = false
@@ -48,32 +51,30 @@ function updateScrollPosition() {
     }
 }
 
-export function update() {
-    updateValues()
-    emit('afterUpdated')
+function update() {
+    try {
+        updateValues()
+        emit('afterUpdated')
+    } catch { }
 }
 
 let isHoverScrollTrack = false
 onMount(async() => {
-    scrollTrack.addEventListener('mouseenter', () => {
+    scrollTrackContainer.addEventListener('mouseenter', () => {
         isHoverScrollTrack = true
     })
 
-    scrollTrack.addEventListener('mouseleave', () => {
+    scrollTrackContainer.addEventListener('mouseleave', () => {
         if (!_draggingMode) {
             isHoverScrollTrack = false
         }
     })
 
     rem.on('pageContentChange', update)
-    rem.on('scroll', controllerScrollTo)
-    rem.on('scroll-up', scrollup)
 })
 
 onDestroy(() => {
     rem.off('pageContentChange', update)
-    rem.off('scroll-up', scrollup)
-    rem.off('scroll', controllerScrollTo)
 })
 
 function controllerScrollTo(offset) {
@@ -84,23 +85,23 @@ function controllerScrollTo(offset) {
 
 let thumbTop = 0
 
-async function scrollup(offset) {
+async function scrollup(offset, smooth) {
     if (!outerContainer) {
         return
     }
     const stickSpeedRatio = await store.get('stickScrollSpeedRatio')
     let ratio = !stickSpeedRatio? 0.6: stickSpeedRatio[stickSpeedRatio[0] + 1].value
     const scrollOffset = content.scrollTop + offset * ratio
-    fastScrollTo(scrollOffset)
+    fastScrollTo(scrollOffset, smooth)
     updateScrollPosition()
 }
 
 let fastScrolling = false
 
-function fastScrollTo(top) {
+function fastScrollTo(top, smooth=false) {
     top = Math.min(Math.max(0, top), contentHeight)
     content.scrollTo({
-        top,
+        top, behavior: smooth? 'smooth': 'auto'
     })
 }
 
@@ -108,11 +109,11 @@ let _mouseThumbOffset = 0
     ,_draggingMode = false
 
 function onClickScrollTrack(ev) {
-    _draggingMode = true
-    let offset = ev.offsetY
-    offset = ev.pageY - trackOffsetPage
+    let offset = ev.pageY - trackOffsetPage
     fastScrollTo((offset - thumbHeight/2)/trackHeight * contentHeight)
+    updateScrollPosition()
     _mouseThumbOffset = ev.offsetY - thumbTop
+    _draggingMode = true
 }
 
 function pressScrollThumb(ev) {
@@ -125,7 +126,7 @@ function pressScrollThumb(ev) {
 function releaseScrollThumb(ev) {
     _mouseThumbOffset = 0
     _draggingMode = false
-    if (!ev.path.includes(scrollTrack)) {
+    if (!ev.path.includes(scrollTrackContainer)) {
         isHoverScrollTrack = false
     }
 }
@@ -140,6 +141,10 @@ function dragScrollThumb(ev) {
 
 const emit = createEventDispatcher()
 
+/**
+ * @type {MutationObserver}
+ */
+let observer = new MutationObserver(update)
 let updater
 onMount(() => {
     window.addEventListener('resize', update)
@@ -148,6 +153,12 @@ onMount(() => {
     document.addEventListener('mouseup', releaseScrollThumb)
     document.addEventListener('mousemove', dragScrollThumb)
     updater = vsync(updateScrollPosition)
+
+    observer.observe(meter, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+    })
 })
 
 onDestroy(() => {
@@ -158,6 +169,10 @@ onDestroy(() => {
     document.removeEventListener('mousemove', dragScrollThumb)
     updater.cancel()
 })
+
+export function getViewport() {
+    return outerContainer
+}
 
 export function prepared() {
     return !!content
@@ -185,6 +200,7 @@ export function offsetTop() {
 
 <style>
     .out-container {
+        padding: 0;
         position: relative;
         height: 100%;
         width: 100%;
@@ -192,26 +208,48 @@ export function offsetTop() {
     }
 
     .restrict-container {
+        margin: 0 !important;
+        padding: 0 !important;
         position: relative;
         width: 100%;
         height: 100%;
         overflow: auto;
     }
 
+    .restrict-container.advance {
+        content-visibility: auto;
+        contain-intrinsic-size: var(--size);
+    }
+
     .restrict-container::-webkit-scrollbar {
         width: 0;
     }
 
-    .track {
+    .track_container {
         --top: 0;
         --height: 100%;
+
         position: absolute;
-        border-radius: 8px;
         right: 0;
         top: var(--top);
+
+        display: grid;
+        grid-template-rows: 16px 1fr 16px;
+        grid-template-columns: 1fr;
+
         height: var(--height);
-        min-height: 16px;
         width: 16px;
+        min-height: 48px;
+
+        border-radius: 8px;
+        background-color: transparent;
+        transition: all 0.12s;
+    }
+
+    .track {
+        position: relative;
+        min-height: 16px;
+        width: 100%;
         background-color: transparent;
         transition: all 0.12s;
     }
@@ -221,7 +259,7 @@ export function offsetTop() {
         transition: opacity 3s ease-in;
     }
 
-    .out-container:hover > .track.needHover {
+    .out-container:hover .track.needHover {
         opacity: 1;
         transition: opacity 0.2s;
     }
@@ -244,23 +282,27 @@ export function offsetTop() {
         width: 4px;
         border-radius: 6px;
         background-color: var(--fade);
-        transition: all 0.12s;
+        transition: all 0.06s;
     }
 
     .hide {
         opacity: 0;
     }
 
-    .track.hover {
+    .track_container.hover {
         background-color: var(--acrylicBackgroundColor);
     }
-    .track.hover > .thumb::before {
-        width: 12px;
+    .track_container.hover .thumb::before {
+        right: 3px;
+        width: 10px;
         border-radius: 6px;
         background-color: #555;
     }
 
     .meter {
+        position: relative;
+        display: flex;
+        flex-direction: column;
         box-sizing: border-box;
         width: fit-content;
         height: fit-content; 
@@ -270,22 +312,52 @@ export function offsetTop() {
         transition: height 0.2s;
     }
 
-
+    .arrow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 16px;
+        opacity: 0;
+        transition: all 0.12s;
+    }
+    .track_container.hover .arrow {
+        opacity: 0.5;
+        transition: all 0s;
+    }
+    .track_container.hover  .arrow:hover {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+    .track_container.hover .arrow:active {
+        transform: scale(0.9);
+    }
 </style>
 
 
 
 <div class="out-container" bind:this={outerContainer}>
-    <div class="restrict-container" bind:this={content}>
+    <div
+        class="restrict-container {innerSize ? 'advance' : ''}"
+        style="{innerSize ? `--size: ${innerSize}` : ''};{cssText}"
+        bind:this={content}
+    >
         <div class="meter" bind:this={meter} style="width: 100%;">
             <slot/>
         </div>
     </div>
 
-    <div class="track {hoverToShow? 'needHover': ''} {fastScrolling? 'fast-scrolling': ''} {isHoverScrollTrack? 'hover': ''} {hideTrack? 'hide': ''}" bind:this={scrollTrack}>
-        <div bind:this={scrollThumb}
-            class="thumb" 
-            style="--height: {thumbHeight}px; --top: {thumbTop}px; min-height: {minThumbHeight}px"
-        ></div>
+    <div class="track_container {isHoverScrollTrack? 'hover': ''}" bind:this={scrollTrackContainer}>
+        <div class="arrow" on:click={() => scrollup(-300, true)}>
+            <span class="icon-round">{'\ue5c7'}</span>
+        </div>
+        <div class="track {hoverToShow? 'needHover': ''} {fastScrolling? 'fast-scrolling': ''} {hideTrack? 'hide': ''}" bind:this={scrollTrack}>
+            <div bind:this={scrollThumb}
+                class="thumb" 
+                style="--height: {thumbHeight}px; --top: {thumbTop}px; min-height: {minThumbHeight}px"
+            ></div>
+        </div>
+        <div class="arrow" on:click={() => scrollup(300, true)}>
+            <span class="icon-round">{'\ue5c5'}</span>
+        </div>
     </div>
 </div>

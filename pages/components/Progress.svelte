@@ -1,8 +1,8 @@
 <script>
-    import { createEventDispatcher, onMount } from "svelte";
+    import { createEventDispatcher, onDestroy, onMount } from "svelte";
 
     export let value;
-    export let cssStyle = '';
+    export let cssStyle = ''
     export let width = 100
     export let thumbWidth = 12
 
@@ -26,13 +26,16 @@
         emit('mousemove', input.value);
     }
 
-    document.addEventListener('mouseup', () => {
+    const listener = () => {
         if (startMove) {
             startMove = false;
             emit('mouseup', input.value);
         }
-    });
+    }
 
+    document.addEventListener('mouseup', listener)
+
+    onDestroy(() => document.removeEventListener('mouseup', listener))
 </script>
 
 
@@ -46,7 +49,7 @@
         width: var(--rail-width);
         height: 10px;
         display: block;
-        -webkit-appearance: none;
+        appearance: none;
         border-radius: 10px;
     }
 
@@ -92,7 +95,6 @@
 
 <input type="range"
     style="{cssStyle}; --progress: {value}%; --rail-width: {width}px; --thumb-width: {thumbWidth}px; --display-progress: {dispalyWidth}px;"
-    step="0.001"
     bind:value
     on:mousedown={mouseDown}
     on:mousemove={mouseMove}

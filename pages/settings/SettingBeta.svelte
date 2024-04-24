@@ -1,5 +1,4 @@
 <script>
-    import { onMount } from "svelte";
     import RowList from "../components/RowList.svelte"
     import ToggleListTile from "../components/ToggleListTile.svelte"
     import {store} from '../../utils/stores/base.js'
@@ -7,10 +6,7 @@
 
     $: lang = window.langMapping
 
-    let betaFeatures = store.getSync('AppSettings/beta_features') || {
-        showDevTools: false,
-        extensions: false,
-    }
+    let betaFeatures = store.getSync('AppSettings/beta_features')
 
     function onToggleDevTools({detail}) {
         const show = detail
@@ -20,21 +16,12 @@
         hooks.send(`devtools:${show}`)
         betaFeatures.showDevTools = detail
 
-        store.set('AppSettings/beta_features', betaFeatures)
+        saveSettings()
     }
 
-    function onToggleExtensions({detail}) {
-        betaFeatures.extensions = detail
+    function saveSettings() {
         store.set('AppSettings/beta_features', betaFeatures)
-
-        rem.emit('showExtensionTab', detail)
     }
-
-    onMount(() => {
-        hooks.send(`devtools:${
-            betaFeatures.showDevTools ? 'open': 'close'
-        }`)
-    })
 
 </script>
 
@@ -48,14 +35,13 @@
         bind:checked={betaFeatures.showDevTools}
         on:toggle={onToggleDevTools}
     />
-
     <ToggleListTile
-        data={lang.s('extensions')}
-        extra={lang.s('extensions_extra')}
+        data={"基于Buffer的输出"}
+        extra={""}
         useAvatar={false}
         isUrl={false}
-        bind:checked={betaFeatures.extensions}
-        on:toggle={onToggleExtensions}
+        bind:checked={betaFeatures.useBufferOutput}
+        on:toggle={saveSettings}
     />
 </RowList>
 {/if}

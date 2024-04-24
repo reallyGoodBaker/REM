@@ -9,6 +9,7 @@ import SettingCache from './settings/SettingCache.svelte'
 import SettingStick from './settings/SettingStick.svelte'
 import SettingOutput from './settings/SettingOutput.svelte'
 import SettingLang from './settings/SettingLang.svelte'
+import SettingFont from './settings/SettingFont.svelte'
 
 import { rem } from '../utils/rem.js'
 
@@ -27,6 +28,8 @@ function fresh() {
 }
 
 onMount(async () => {
+    Pager.setSearchPlaceholder('搜索设置')
+
     rem.once('langChange', fresh)
 
     const {save} = Pager.getContext()
@@ -43,27 +46,13 @@ onMount(async () => {
     .c {
         justify-content: flex-start;
         align-items: flex-start;
-    }
-
-    .grid-margin {
-        margin: 0px 24px;
-    }
-
-    h1 {
-        font-weight: normal;
+        margin: 24px 12px;
     }
 
 </style>
 
 
-<ScrollView bind:this={scrollv}><div class="row c">
-    <div class="column grid-margin" style="justify-content: space-between; width: calc(100% - 48px)">
-        <h1>{lang('settings')}</h1>
-        <Input
-            placeholder={'\ue6a8  ' + lang('settings_search')}
-            fullBorder={true}
-        />
-    </div>
+<ScrollView><div class="row c">
 
     <SettingBeta/>
     <SettingTheme/>
@@ -71,5 +60,6 @@ onMount(async () => {
     <SettingStick/>
     <SettingOutput/>
     <SettingLang/>
+    <SettingFont/>
 
 </div></ScrollView>

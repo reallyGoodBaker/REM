@@ -1,19 +1,19 @@
 {
     "name": "rem",
-    "version": "0.1.9",
-    "description": "Nectarine",
+    "version": "0.1.15",
+    "description": "Tangerine",
     "main": "./main.js",
     "scripts": {
-        "build-app": "electron-builder",
+        "build-app": "rollup -c && electron-builder",
         "build": "rollup -c",
-        "start": "rollup -c && electron --trace-deprecation .",
+        "start": "rollup -c && electron .",
         "postinstall": "electron-builder install-app-deps"
     },
     "author": "RGB",
     "license": "GPLv2",
     "dependencies": {
         "music-metadata": "^7.12.6",
-        "NeteaseCloudMusicApi": "^4.8.2",
+        "NeteaseCloudMusicApi": "^4.13.6",
         "node-fetch": "^2.6.7"
     },
     "devDependencies": {
@@ -32,7 +32,8 @@
     "build": {
         "appId": "top.rgb39.rem",
         "files": [
-            "!pages/**/{*.svelte,*.js,*.d.ts}",
+            "!pages/**/*.js",
+            "!*/**/{*.svelte,*.d.ts}",
             "!build.*",
             "!*.md",
             "!rollup.config.js",

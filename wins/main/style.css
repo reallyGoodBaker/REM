@@ -4,11 +4,12 @@
     /* --acrylicBackgroundColor: transparent; */
     -webkit-app-region: no-drag;
     border-radius: 12px;
-    font-family: Roboto, sans-serif;
     user-select: none;
 }
 
 body {
+    font-family: 'Roboto', 'Misans', sans-serif;
+
     --color: #000;
     --controlHue: 210;
     --controlAcrylic: hsla(var(--controlHue, 210), 80%, 98%, 0.3);
@@ -26,6 +27,7 @@ body {
     --controlNight: hsl(var(--controlHue, 210), 80%, 14%);
     --controlWhite: hsl(var(--controlHue, 210), 80%, 98%);
     --controlBackground: hsl(var(--controlHue, 210), 80%, 96%);
+    --controlBackground2: hsl(var(--controlHue, 210), 80%, 93%);
     --controlBlack: hsl(var(--controlHue, 210), 20%, 6%);
     --controlBlack2: hsl(var(--controlHue, 210), 20%, 2%);
     --controlBlack4: hsl(var(--controlHue, 210), 20%, 4%);
@@ -55,7 +57,6 @@ body {
     color: var(--controlBlack);
 
     --acrylicTransparent: hsla(var(--controlHue, 210), 80%, 96%, 0.3);
-    zoom: var(--zoom, 1);
 }
 
 .column {
@@ -88,6 +89,10 @@ body {
     cursor: pointer;
 }
 
+.btn.new-icon {
+    font-family: 'Material Symbols Round';
+}
+
 .btn.margin {
     margin: 4px;
 }
@@ -98,7 +103,7 @@ body {
 .btn.outlined {
     height: 16px;
     padding: 2px 10px;
-    border: solid 1px #ddd;
+    border: solid 1px var(--controlGray);
     border-radius: 12px;
 }
 
@@ -290,7 +295,7 @@ progress.horizontal {
     background-color: transparent;
 }
 .scrollable::-webkit-scrollbar-thumb {
-    background-color: var(--controlGray);
+    background-color: var(--fade);
     border-radius: 2px;
 }
 .scrollable.horizontal {
@@ -300,4 +305,10 @@ progress.horizontal {
 .scrollable.vertical {
     overflow-y: auto;
     overflow-x: hidden;
+}
+.scrollable.flex::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+.scrollable.flex:hover::-webkit-scrollbar-thumb {
+    background-color: var(--fade);
 }
