@@ -15,7 +15,7 @@ npm start
 ### build
 
 ```bash
-electron-builder
+npm run build-qpp
 ```
 
 程序将会被打包到 ` ./dist `
