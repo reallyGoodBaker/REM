@@ -15,7 +15,7 @@ npm start
 ### build
 
 ```bash
-npm run build-qpp
+npm run build-app
 ```
 
 程序将会被打包到 ` ./dist `
