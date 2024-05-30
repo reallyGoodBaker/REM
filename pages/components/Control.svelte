@@ -12,6 +12,7 @@
     import { NETEASE_IMG_SMALL } from "../../utils/stores/img.js"
     import { AudioPlayer } from '../../utils/player/player.js'
     import { onMount } from "svelte";
+    import { interval } from "../../utils/core/interval";
 
     let l = langMapping.getMapping()
     rem.on('langChange', lang => {
@@ -70,6 +71,8 @@
         let cur = AudioPlayer.seek()
         seekValue = (cur/duration)*100
         currentTimeEle.innerText = s(cur)
+
+        hooks.send('win:playstate', playing, cur / duration, duration, cur)
     }
     rem.on('setControlsContent', setContent)
     rem.on('loadedContent', () => {
@@ -79,7 +82,7 @@
             seekValue = 0
             checker.cancel()
         }
-        checker = vsync(_progressUpdate)
+        checker = interval(_progressUpdate, 200)
     });
 
     let volume;

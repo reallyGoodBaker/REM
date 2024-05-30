@@ -108,6 +108,7 @@ export default {
     $notification: '发送通知',
     $new_page: '创建新的页面',
     $playlist: '控制你的播放列表',
+    $new_window: '打开一个新窗口',
     
     notification: '通知',
 

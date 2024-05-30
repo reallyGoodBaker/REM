@@ -4,14 +4,14 @@ const {
 } = require('electron')
 const path = require('path')
 const RemStore = require('../../utils/stores/rem-store.js')
-const {watchNetworkChange} = require('../../utils/network/server.js')
-const {initExtRuntime} = require('../../extension/initExtensionHost')
+const { watchNetworkChange } = require('../../utils/network/server.js')
+const { initExtRuntime } = require('../../extension/initExtensionHost')
+const initBroker = require('../../utils/ipc/main.js')
 
 const remStore = new RemStore()
 
 Menu.setApplicationMenu(null)
 watchNetworkChange()
-
 
 const appLock = app.requestSingleInstanceLock()
 if (!appLock) app.exit()
@@ -37,6 +37,7 @@ module.exports = function buildWindow() {
         minHeight: height,
 
         webPreferences: {
+            sandbox: false,
             preload: path.resolve(__dirname, './preload.js'),
         }
     })
@@ -69,6 +70,7 @@ module.exports = function buildWindow() {
     })
 
     initExtRuntime()
+    initBroker()
     initMainWin(browserWindow)
     activeAppBarBtns(browserWindow)
     initExtensions(browserWindow)

@@ -67,8 +67,8 @@
         }, 100)
     }
 
-    $: performSearch = () => suggests = window.Pager.performSearch(value) || []
-    $: performSearchInput = () => suggests = window.Pager.performSearchInput(value) || []
+    $: performSearch = () => suggests = window.Pager?.performSearch(value) || []
+    $: performSearchInput = () => suggests = window.Pager?.performSearchInput(value) || []
 
     onMount(() => {
         window.addEventListener('keydown', e => {

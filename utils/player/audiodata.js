@@ -25,10 +25,11 @@ export class AudioData {
         const media = await server.getMedia(`${this.data.id}-${qualityStr}.${type}`, this.onLoadMetadata)
 
         if (!media) {
-            const data = server.saveToCache(url, `${this.data.id}-${qualityStr}.${type}`, this.onLoadMetadata)
-            return useBufferOutput
-                ? await data
-                : url
+            server.saveToCache(url, `${this.data.id}-${qualityStr}.${type}`, this.onLoadMetadata)
+            // return useBufferOutput
+            //     ? await data
+            //     : url
+            return url
         }
 
         const source = useBufferOutput

@@ -21,7 +21,7 @@ export async function loadExtensionSettings(m) {
     }
 
     const settingEntry = await import(
-        `file://${path.endsWith('.v.js')
+        `file://${m.vendor
             ? AppPaths.ExtVendor
             : AppPaths.Extensions}/${m.folderName}/${path}`
     )

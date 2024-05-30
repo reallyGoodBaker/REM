@@ -67,3 +67,10 @@ export const provide: (name: InternalProvideKeys, handler: (...args: readonly Tr
 
 export const ready: () => Promise<boolean>
 export const whenReady: (cb: Function) => void
+
+interface Win {
+    openWindow(file: string, options: Electron.BrowserWindowConstructorOptions): Promise<string>
+    closeWindow(id: string): Promise<void>
+}
+
+export const win: Win

@@ -54,7 +54,7 @@ async function loadModules(m) {
     }
 
     const uiExt = await import(
-        `file://${path.endsWith('.v.js')
+        `file://${m.vendor
             ? AppPaths.ExtVendor
             : AppPaths.Extensions}/${m.folderName}/${path}`)
     const settings = safeStore(`ExtensionSettings/${m.id}`)

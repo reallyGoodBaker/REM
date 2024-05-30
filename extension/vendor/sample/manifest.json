@@ -5,6 +5,7 @@
     "author": "RGB",
     "entry": "index.js",
     "id": "23dc60bf-4621-4ab3-92f7-50baf8c6ea1b",
+    "vendor": true,
 
     "components": [
         "audio_player",

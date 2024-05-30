@@ -14,7 +14,7 @@ const SaveType = {
 }
 
 async function saveToCache(url, uri, callback) {
-    return await saveTo(url, path.resolve(cache, `${uri}`), callback)
+    await saveTo(url, path.resolve(cache, `${uri}`), callback)
 }
 
 function getMedia(uri, callback) {

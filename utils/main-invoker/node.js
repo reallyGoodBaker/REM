@@ -17,11 +17,6 @@ class NodeInvoker {
 
         this.#registerInvokeReceiver(invokeChannel, invokeId)
 
-        this.web.send(invokeChannel, {
-            id: invokeId,
-            args,
-        })
-
         return new Promise((resolve, reject) => {
             const invokeHandler = ({ val, err }) => {
                 if (err) return reject(err)
@@ -31,7 +26,7 @@ class NodeInvoker {
             }
 
             function removeInvokeHandler() {
-                NodeInvoker.invokes.delete(invokeId, invokeHandler)
+                NodeInvoker.invokes.delete(invokeId)
             }
 
             NodeInvoker.invokes.set(invokeId, invokeHandler)
@@ -40,6 +35,11 @@ class NodeInvoker {
                 removeInvokeHandler()
                 reject(new Error('Invoke timeout.'))
             }, 3000)
+
+            this.web.send(invokeChannel, {
+                id: invokeId,
+                args,
+            })
         })
     }
 

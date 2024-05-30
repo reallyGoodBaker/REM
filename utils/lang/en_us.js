@@ -109,6 +109,7 @@ export default {
     $notification: 'Send notifications to you',
     $new_page: 'Create new pages',
     $playlist: 'Control your Playlist',
+    $new_window: 'Open a new window',
 
     notification: 'Notification',
     
