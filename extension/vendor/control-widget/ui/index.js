@@ -10,11 +10,13 @@ const update = subscribe('playstate', ([ playing, progress ]) => {
         .removeClass(playing ? "fa-play" : "fa-pause")
         .addClass(playing ? "fa-pause" : "fa-play")
 })
+const playerUpdate = subscribe('player', render)
 
 win.beforeClose = () => {
     player.destroy()
     update.destroy()
     playlist.destroy()
+    playerUpdate.destroy()
 }
 
 render()
@@ -50,5 +52,5 @@ async function render() {
     $(".name").text(name)
     $(".singer-album").text(ar.map(a => a.name).join(', ') + " - " + al.name)
     $(".time").text(duration)
-    document.getElementById('img').src = al.picUrl
+    $("#img").attr("src", al.picUrl)
 }

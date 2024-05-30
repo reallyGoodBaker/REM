@@ -4,7 +4,6 @@
     import { globalMetadata } from '../../utils/player/metadata.js'
     import { MainPlaylist } from '../../utils/player/playlist.js'
     import { rem, LifeCycle } from '../../utils/rem.js'
-    import { vsync } from '../../utils/core/vsync.js'
     import { store } from '../../utils/stores/base.js'
     import { getColor } from '../../utils/style/imageBasicColor.js'
     import Link from "./Link.svelte"

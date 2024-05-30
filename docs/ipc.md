@@ -29,3 +29,15 @@ export const rem: EventEmitter
 ```
 
 
+
+
+
+### 插件窗口IPC服务器
+
+
+
+#### 服务器
+
+```ts
+```
+

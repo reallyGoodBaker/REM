@@ -193,6 +193,7 @@ LifeCycle.when('runtimeReady').then(() => {
     AudioPlayer.on('play', () => AudioPlayer.isPlayingIgnoreFade = true)
     AudioPlayer.on('pause', () => AudioPlayer.isPlayingIgnoreFade = false)
     AudioPlayer.on('ended', () => AudioPlayer.isPlayingIgnoreFade = false)
+    AudioPlayer.on('loadedContent', () => hooks.send('win:player', structuredClone(AudioPlayer.audioData?.data)))
 
     navigator.mediaSession.setActionHandler('play', () => globalPlayer.play())
     navigator.mediaSession.setActionHandler('pause', () => globalPlayer.pause())

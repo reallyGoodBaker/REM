@@ -3,15 +3,20 @@ const { ipcMain } = require('electron')
 
 let channels = new Map()
 
-module.exports = () => {
-    ipcMain.on('win:playstate', (e, ...args) => {
-        const channel = channels.get('playstate')
+function delegate(from, to) {
+    ipcMain.on(from, (e, ...args) => {
+        const channel = channels.get(to)
         if (channel) {
             channel.forEach(s => {
                 s.write(JSON.stringify(args) + '\0')
             })
         }
     })
+}
+
+module.exports = () => {
+    delegate('win:playstate', 'playstate')
+    delegate('win:player', 'player')
 
     provide('subscribe', s => {
         s.on('data', data => {
