@@ -110,6 +110,7 @@ export default {
     $new_page: 'Create new pages',
     $playlist: 'Control your Playlist',
     $new_window: 'Open a new window',
+    $replace_main_window: 'Replace the main window',
 
     notification: 'Notification',
     

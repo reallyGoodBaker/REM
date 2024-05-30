@@ -10,7 +10,7 @@
     "components": [
         "audio_player",
         "playlist",
-        "new_window"
+        "new_window",
+        "replace_main_window"
     ]
-
 }

@@ -256,7 +256,7 @@ class ExtensionHost {
         const ev = this.events
 
         ev.on('@win:open', ({ id, args: [ file, options ] }) => {
-            const uuid = openWindow(file, options)
+            const uuid = openWindow(file, options, this.manifest)
             this.extension.postMessage({ id, val: uuid })
         })
 

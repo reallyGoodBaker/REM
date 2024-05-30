@@ -14,10 +14,10 @@ const defaultOptions = {
 /**
  * @param {BrowserWindowConstructorOptions} options 
  */
-function openWindow(file, options) {
+function openWindow(file, options, manifest) {
     const extra = options.extra ?? {}
 
-    if (extra.replaceMain) {
+    if (manifest.components.includes('replace_main_window') && extra.replaceMain) {
         BrowserWindow.getAllWindows()[0].hide()
     }
 
@@ -25,7 +25,7 @@ function openWindow(file, options) {
     win.webContents.executeJavaScript(`win.init(globalThis.winId=${win.id})`)
 
     if (extra.main) {
-        eval(`(function(browserWindow){${fs.readFileSync(extra.main).toString()}})(win)`)
+        eval(`(function(browserWindow){\n${fs.readFileSync(extra.main).toString()}\n})(win)`)
     }
 
     if (extra.openDevTools) {

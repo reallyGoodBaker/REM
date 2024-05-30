@@ -7,7 +7,7 @@ browserWindow.setBounds({
     y: height - 220
 })
 
-ipcMain.on('win:restore', () => {
+function restoreWindows() {
     BrowserWindow.getAllWindows().forEach(w => {
         if (w.id === browserWindow.id) {
             w.hide()
@@ -15,4 +15,8 @@ ipcMain.on('win:restore', () => {
             w.show()
         }
     })
-})
+}
+
+ipcMain.on('win:restore', restoreWindows)
+
+browserWindow.on('close', restoreWindows)
