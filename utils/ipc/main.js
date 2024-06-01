@@ -14,7 +14,16 @@ function delegate(from, to) {
     })
 }
 
-module.exports = () => {
+exports.publish = function publish(channelName, ...args) {
+    const channel = channels.get(channelName)
+    if (channel) {
+        channel.forEach(s => {
+            s.write(JSON.stringify(args) + '\0')
+        })
+    }
+}
+
+exports.init = () => {
     delegate('win:playstate', 'playstate')
     delegate('win:player', 'player')
 

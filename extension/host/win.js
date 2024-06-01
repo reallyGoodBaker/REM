@@ -1,6 +1,7 @@
 const { BrowserWindowConstructorOptions, BrowserWindow } = require('electron')
 const path = require('path')
 const initInvoker = require('../../utils/main-invoker/node')
+const { record, deleteRecord } = require('../../utils/ipc/extmapping')
 
 const defaultOptions = {
     webPreferences: {
@@ -32,6 +33,8 @@ function openWindow(file, options, manifest) {
     const invoker = initInvoker(win)
     win.webContents.executeJavaScript(`win.init(globalThis.winId=${win.id})`)
 
+    record(win.id, manifest.id)
+
     if (extra.main) {
         const m = require(extra.main)
         tryInvoke(m, 'onReady', win, invoker)
@@ -57,6 +60,8 @@ function openWindow(file, options, manifest) {
         if (extra.replaceMain) {
             BrowserWindow.getAllWindows()[0].show()
         }
+
+        deleteRecord(win.id)
     })
 
     return win.id

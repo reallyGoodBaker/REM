@@ -6,8 +6,9 @@ const path = require('path')
 const RemStore = require('../../utils/stores/rem-store.js')
 const { watchNetworkChange } = require('../../utils/network/server.js')
 const { initExtRuntime } = require('../../extension/initExtensionHost')
-const initBroker = require('../../utils/ipc/main.js')
 const initMainInvoker = require('../../utils/main-invoker/node.js')
+const { publish, init: initBroker } = require('../../utils/ipc/main.js')
+const { getExtId } = require('../../utils/ipc/extmapping.js')
 
 const remStore = new RemStore()
 
@@ -63,10 +64,6 @@ module.exports = function buildWindow() {
     ipcMain.once('win:show-main', () => {
         globalThis.playerReady = true
 
-        if (process.platform === 'win32') {
-            setThumbarButtons(browserWindow)
-        }
-
         ipcMain.emit('win:loaded')
     })
 
@@ -74,7 +71,8 @@ module.exports = function buildWindow() {
     initBroker()
     initMainWin(browserWindow)
     activeAppBarBtns(browserWindow)
-    initExtensions(browserWindow)
+    const extLoader = initExtensions(browserWindow)
+    initComponents(browserWindow, extLoader)
 
     browserWindow.show()
 
@@ -83,10 +81,19 @@ module.exports = function buildWindow() {
 }
 
 /**
+ * @type {{ setPlay(): void, setPause(): void, update(): void }}
+ */
+let thumbButtonController = null
+
+/**
  * @param {BrowserWindow} browserWindow 
  */
 function initMainWin(browserWindow) {
     const invoker = initMainInvoker(browserWindow)
+
+    if (process.platform === 'win32') {
+        thumbButtonController = initThumbarButtons(browserWindow, invoker)
+    }
 
     browserWindow.on('maximize', () => {
         browserWindow.webContents.send('win:max')
@@ -155,12 +162,6 @@ function initMainWin(browserWindow) {
     ipcMain.handle('app?theme', async () => {
         return await invoker.invoke('app?theme')
     })
-
-    ipcMain.on('app:restoreMainWindow', () => {
-        browserWindow.show()
-        setThumbarButtons(browserWindow)
-    })
-
 }
 
 /**
@@ -168,7 +169,7 @@ function initMainWin(browserWindow) {
  */
 function activeAppBarBtns(browserWindow) {
     ipcMain.on('win:close', () => {
-        browserWindow.close()
+        app.quit()
     })
 
     ipcMain.on('win:min', () => {
@@ -197,7 +198,7 @@ function activeAppBarBtns(browserWindow) {
 
 }
 
-function setThumbarButtons(win) {
+function initThumbarButtons(win, invoker) {
 
     const playIcon = nativeImage.createFromPath(path.resolve(__dirname, '../icons/play.png')),
         pauseIcon = nativeImage.createFromPath(path.resolve(__dirname, '../icons/pause.png')),
@@ -210,22 +211,22 @@ function setThumbarButtons(win) {
             win.webContents.send('player:previous')
         }
     },
-        nextBtn = {
-            icon: nextIcon,
-            click() {
-                win.webContents.send('player:next')
-            }
-        },
-        playBtn = {
-            icon: playIcon,
-            click: onPlayBtn
-        },
-        pauseBtn = {
-            icon: pauseIcon,
-            click: onPauseBtn
-        },
-        playBtns = [preBtn, playBtn, nextBtn],
-        pauseBtns = [preBtn, pauseBtn, nextBtn]
+    nextBtn = {
+        icon: nextIcon,
+        click() {
+            win.webContents.send('player:next')
+        }
+    },
+    playBtn = {
+        icon: playIcon,
+        click: onPlayBtn
+    },
+    pauseBtn = {
+        icon: pauseIcon,
+        click: onPauseBtn
+    },
+    playBtns = [preBtn, playBtn, nextBtn],
+    pauseBtns = [preBtn, pauseBtn, nextBtn]
 
     function onPlayBtn() {
         win.webContents.send('player:play')
@@ -243,14 +244,27 @@ function setThumbarButtons(win) {
         win.setThumbarButtons(pauseBtns)
     }
 
+    async function update() {
+        const playing = await invoker.invoke('player.isPlaying')
+        if (playing) {
+            setPause()
+        } else {
+            setPlay()
+        }
+    }
+
     ipcMain.on('thumbar:play', setPlay)
     ipcMain.on('thumbar:pause', setPause)
 
     win.setThumbarButtons(playBtns)
+
+    return {
+        setPlay, setPause, update,
+    }
 }
 
 
-const { loaderBuilder } = require('../../extension/host/loader')
+const { loaderBuilder, ExtensionLoader } = require('../../extension/host/loader')
 const { Extensions } = require('../../utils/appPath/main')
 
 /**
@@ -259,5 +273,47 @@ const { Extensions } = require('../../utils/appPath/main')
 function initExtensions(bw) {
     const loader = loaderBuilder(bw)
 
-    loader(Extensions)
+    return loader(Extensions)
+}
+
+/**
+ * @param {BrowserWindow} bw 
+ * @param {ExtensionLoader} extLoader
+ */
+function initComponents(bw, extLoader) {
+    const extensions = extLoader.enumIds()
+
+    ipcMain.on('app:restoreMainWindow', () => {
+        bw.show()
+        thumbButtonController?.update()
+    })
+
+    ipcMain.on('app:hideMainWindow', (ev) => {
+        const winId = BrowserWindow.fromWebContents(ev.sender).id
+        const extId = getExtId(winId)
+
+        if (!extId || !extensions.includes(extId)) {
+            return
+        }
+
+        const ext = extLoader.extensions.get(extId)
+
+        if (!ext || !ext?.manifest?.components?.includes('replace_main_window')) {
+            return
+        }
+
+        bw.hide()
+    })
+
+    bw.on('hide', () => {
+        publish('mainWindowVisible', false)
+    })
+
+    bw.on('show', () => {
+        publish('mainWindowVisible', true)
+    })
+
+    ipcMain.handle('win:mainWindowVisible', () => {
+        return bw.isVisible()
+    })
 }
