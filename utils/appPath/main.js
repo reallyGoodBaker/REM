@@ -1,4 +1,4 @@
-const {app} = require('electron')
+const { app } = require('electron')
 const path = require('path')
 const fs = require('fs')
 
@@ -10,21 +10,28 @@ function pathResolve(name) {
 }
 
 const DownloadPath = path.join(app.getPath('downloads'), ProdPath)
-const ExtVendor = path.join(__dirname, '../../extension/vendor')
+const Logs = app.getPath('logs')
 
 const paths = [
     AppRoot,
+    Logs,
     pathResolve('Data'),
     pathResolve('AppCache'),
     DownloadPath,
     pathResolve('Data/Extensions'),
-    ExtVendor,
 ]
 
 function mkdir(paths) {
     for (const filename of paths) {
         if (!fs.existsSync(filename)) {
-            fs.mkdirSync(filename)
+            fs.mkdir(filename, err => {
+                if (err) {
+                    fs.writeFileSync(
+                        path.join(Logs, `${Date.now()}.log`),
+                        err.stack
+                    )
+                }
+            })
         }
     }
 }
@@ -42,7 +49,6 @@ module.exports = {
     AppCache: pathResolve('AppCache'),
     Downloads: DownloadPath,
     Extensions: pathResolve('Data/Extensions'),
-    ExtVendor,
 
     savePath
 }

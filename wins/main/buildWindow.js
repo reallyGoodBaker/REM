@@ -156,6 +156,11 @@ function initMainWin(browserWindow) {
         return await invoker.invoke('app?theme')
     })
 
+    ipcMain.on('app:restoreMainWindow', () => {
+        browserWindow.show()
+        setThumbarButtons(browserWindow)
+    })
+
 }
 
 /**
@@ -245,8 +250,8 @@ function setThumbarButtons(win) {
 }
 
 
-const {loaderBuilder} = require('../../extension/host/loader')
-const {Extensions} = require('../../utils/appPath/main')
+const { loaderBuilder } = require('../../extension/host/loader')
+const { Extensions } = require('../../utils/appPath/main')
 
 /**
  * @param {BrowserWindow} bw 
@@ -254,6 +259,5 @@ const {Extensions} = require('../../utils/appPath/main')
 function initExtensions(bw) {
     const loader = loaderBuilder(bw)
 
-    loader(path.resolve(__dirname, '../../extension/vendor'))
     loader(Extensions)
 }

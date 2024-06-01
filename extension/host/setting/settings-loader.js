@@ -21,9 +21,7 @@ export async function loadExtensionSettings(m) {
     }
 
     const settingEntry = await import(
-        `file://${m.vendor
-            ? AppPaths.ExtVendor
-            : AppPaths.Extensions}/${m.folderName}/${path}`
+        `file://${AppPaths.Extensions}/${m.folderName}/${path}`
     )
 
     settingEntries.set(m.id, settingEntry)

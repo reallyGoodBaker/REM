@@ -6,13 +6,13 @@ const filePath = path.join(__dirname, '../../../path')
 function readPath() {
     const paths = fs.readFileSync(filePath).toString().split('\n')
     const [
-        AppRoot, Data, AppCache, Downloads, Extensions, ExtVendor
+        AppRoot, Logs, Data, AppCache, Downloads, Extensions
     ] = paths
 
     fs.rmSync(filePath)
 
     return {
-        paths, AppRoot, Data, AppCache, Downloads, Extensions, ExtVendor
+        paths, AppRoot, Data, AppCache, Downloads, Extensions, Logs
     }
 }
 

@@ -54,9 +54,7 @@ async function loadModules(m) {
     }
 
     const uiExt = await import(
-        `file://${m.vendor
-            ? AppPaths.ExtVendor
-            : AppPaths.Extensions}/${m.folderName}/${path}`)
+        `file://${AppPaths.Extensions}/${m.folderName}/${path}`)
     const settings = safeStore(`ExtensionSettings/${m.id}`)
 
     __currentModule = m

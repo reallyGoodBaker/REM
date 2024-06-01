@@ -1,7 +1,7 @@
 {
     "name": "rem",
-    "version": "0.1.16",
-    "description": "Ugni",
+    "version": "0.1.17",
+    "description": "Vermillion orange",
     "main": "./main.js",
     "scripts": {
         "build-app": "rollup -c && electron-builder",
