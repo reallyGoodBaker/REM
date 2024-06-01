@@ -1,4 +1,4 @@
-import { onSetting, lyricsExtensionSettings } from "./settings.v.js"
+import { onSetting, lyricsExtensionSettings } from "./settings.js"
 export { onSetting }
 
 export function onLoad({ AudioPlayer, Playlist, store }) {

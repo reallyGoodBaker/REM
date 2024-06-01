@@ -1,14 +1,30 @@
 const net = require('net')
-const { promiseResolvers } = require('../high-level/node/promise')
 const fs = require('fs')
 const pipeName = `\\\\?\\pipe\\rem\\`
 const { jsonObj } = require('./utils')
+
+function promiseResolvers() {
+    let resolve, reject
+    let promise = new Promise((res, rej) => {
+        resolve = v => (res(v), resolve = reject = null)
+        reject = e => (rej(e), resolve = reject = null)
+    })
+
+    return {
+        /**@type {Promise<any>}*/
+        promise,
+        /**@type {(value: any) => void}*/
+        resolve,
+        /**@type {(reason?: any) => void}*/
+        reject
+    }
+}
 
 /**
  * @param {string} name 
  * @param {(socket: net.Socket) => void} listener
  */
-function provide(name, listener = s => s.write('ok')) {
+function server(name, listener = s => s.write('ok')) {
     if (fs.existsSync(pipeName + name)) {
         return
     }
@@ -60,5 +76,5 @@ function subscribe(type, receiver=Function.prototype) {
 }
 
 module.exports = {
-    provide, connect, invoke, subscribe,
+    server, connect, invoke, subscribe,
 }

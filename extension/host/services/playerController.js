@@ -1,5 +1,5 @@
 const initInvokerService = require('../../../utils/main-invoker/node')
-const { provide } = require('../../../utils/ipc/net')
+const { server } = require('../../../utils/ipc/net')
 const { json } = require('../../../utils/ipc/utils')
 
 module.exports = function (bw) {
@@ -17,16 +17,19 @@ module.exports = function (bw) {
                 return t[p]
             }
             if (p.startsWith('player')) {
-                return () => invoker.invoke(p)
+                return (args=[]) => {
+                    return invoker.invoke(p, ...args)
+                }
             }
         },
         set() { return false }
     })
 
-    provide('player-controller', s => {
+    server('player-controller', s => {
+        const separator = /\|/
         s.on('data', async d => {
-            const [ action, args ] = d.toString('utf-8').split('|')
-            const v = await proxy['player' + action](args?.split(',').map(v => parseFloat(v.trim())))
+            const [ action, args ] = d.toString('utf-8').split(separator)
+            const v = await proxy['player' + action](args?.split(',').map(v => Number(v.trim())))
 
             s.write(json(v))
         })

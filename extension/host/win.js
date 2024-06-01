@@ -1,6 +1,6 @@
 const { BrowserWindowConstructorOptions, BrowserWindow } = require('electron')
-const fs = require('fs')
 const path = require('path')
+const initInvoker = require('../../utils/main-invoker/node')
 
 const defaultOptions = {
     webPreferences: {
@@ -8,6 +8,13 @@ const defaultOptions = {
         nodeIntegration: true,
         contextIsolation: false,
         preload: path.join(__dirname, './win-inject.js')
+    }
+}
+
+function tryInvoke(obj, func, ...args) {
+    const fn = obj[func]
+    if (fn && fn.apply) {
+        fn.apply(obj, args)
     }
 }
 
@@ -22,10 +29,12 @@ function openWindow(file, options, manifest) {
     }
 
     const win = new BrowserWindow(Object.assign({}, options, defaultOptions))
+    const invoker = initInvoker(win)
     win.webContents.executeJavaScript(`win.init(globalThis.winId=${win.id})`)
 
     if (extra.main) {
-        eval(`(function(browserWindow){\n${fs.readFileSync(extra.main).toString()}\n})(win)`)
+        const m = require(extra.main)
+        tryInvoke(m, 'onReady', win, invoker)
     }
 
     if (extra.openDevTools) {
@@ -39,6 +48,11 @@ function openWindow(file, options, manifest) {
     }
 
     win.on('close', () => {
+        if (extra.main) {
+            const m = require(extra.main)
+            tryInvoke(m, 'onClose', win, invoker)
+        }
+
         win.webContents.executeJavaScript('win.beforeClose()')
         if (extra.replaceMain) {
             BrowserWindow.getAllWindows()[0].show()

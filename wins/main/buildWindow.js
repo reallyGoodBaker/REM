@@ -1,12 +1,13 @@
 const {
     BrowserWindow, ipcMain, app, nativeImage, screen,
-    Menu,
+    Menu, systemPreferences, nativeTheme,
 } = require('electron')
 const path = require('path')
 const RemStore = require('../../utils/stores/rem-store.js')
 const { watchNetworkChange } = require('../../utils/network/server.js')
 const { initExtRuntime } = require('../../extension/initExtensionHost')
 const initBroker = require('../../utils/ipc/main.js')
+const initMainInvoker = require('../../utils/main-invoker/node.js')
 
 const remStore = new RemStore()
 
@@ -85,6 +86,8 @@ module.exports = function buildWindow() {
  * @param {BrowserWindow} browserWindow 
  */
 function initMainWin(browserWindow) {
+    const invoker = initMainInvoker(browserWindow)
+
     browserWindow.on('maximize', () => {
         browserWindow.webContents.send('win:max')
     })
@@ -140,6 +143,17 @@ function initMainWin(browserWindow) {
 
     browserWindow.on('focus', () => {
         browserWindow.webContents.send('win:focus')
+    })
+
+    ipcMain.handle('win:sys-colors', () => {
+        return {
+            accent: systemPreferences.getAccentColor(),
+            dark: nativeTheme.shouldUseDarkColors,
+        }
+    })
+
+    ipcMain.handle('app?theme', async () => {
+        return await invoker.invoke('app?theme')
     })
 
 }

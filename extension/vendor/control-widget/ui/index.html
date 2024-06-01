@@ -26,6 +26,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
+
+            --background: #fff;
+            --background-dark: #ddd;
+            --color: #333;
+        }
+
+        .dark {
+            --background: #333;
+            --background-dark: #444;
+            --color: #ddd;
         }
 
         .play-warp {
@@ -46,7 +56,7 @@
             width: 360px;
             height: 80px;
             padding: 20px 30px;
-            background-color: #fff;
+            background-color: var(--background);
             border-radius: 12px;
             display: flex;
             justify-content: flex-end;
@@ -62,7 +72,7 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background-color: #f0f0f0;
+            background-color: var(--background-dark);
             padding: 6px;
             animation: zhuan 5s infinite linear;
             animation-play-state: paused;
@@ -79,7 +89,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #fff;
+            background-color: var(--background);
         }
 
         .cover img {
@@ -101,30 +111,30 @@
             line-height: 40px;
             text-align: center;
             font-size: 26px;
-            color: #333;
+            color: var(--color);
             cursor: pointer;
             transition: all 0.2s ease-in-out, background-color 0.1s;
         }
 
         .control i:hover {
-            background-color: rgba(0, 0, 0, .2);
+            background-color: rgba(128, 128, 128, .2);
             transition: background-color 0.2s;
         }
 
         .control i:active {
             scale: 0.9;
-            background-color: rgba(0, 0, 0, .3);
+            background-color: rgba(128, 128, 128, .3);
             transition: background-color 0.2s;
         }
 
         .info .name {
             font-size: 10px;
             font-weight: bold;
-            color: #333;
+            color: var(--color);
         }
 
         .info .singer-album {
-            color: #757474;
+            color: var(--color);
             line-height: 21px;
         }
 
@@ -132,85 +142,22 @@
             width: 100%;
         }
 
-        .music_progress .music_progress_top {
-            display: flex;
-            justify-content: space-between;
-            color: #66ccff;
-            line-height: 21px;
-        }
-
         .music_progress_bar {
             position: absolute;
+            display: flex;
             bottom: 0;
             left: 0;
-            width: 100%;
-            height: 4px;
+            width: 360px;
+            height: 10px;
             background: transparent;
             border-radius: 10px;
-            margin-top: 3px;
         }
 
-        .music_progress_bar .music_progress_line {
+        .music_progress_line {
             width: 0%;
             /* width: 50%; */
             height: 100%;
             background-color: #2d85f0;
-        }
-
-        .modal {
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            position: fixed;
-            top: 0;
-            left: 0;
-            display: none;
-        }
-
-        .modal .modal-box {
-            width: 30%;
-            height: 100%;
-            padding: 20px;
-            background-color: #fff;
-            position: absolute;
-            top: 0;
-            right: 0;
-        }
-
-        .modal-box .modal-box-top {
-            width: 100%;
-            height: 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-box-top .modal-close {
-            font-size: 20px;
-            cursor: pointer;
-            transition: transform 0.5s;
-        }
-
-        .modal-box-top .modal-close:hover {
-            transform: rotate(180deg);
-        }
-
-        .modal-box .modal-wrapper {
-            width: 100%;
-            height: calc(100% - 40px);
-            overflow-y: auto;
-        }
-
-        .modal-wrapper .music-list {
-            list-style: none;
-        }
-
-        .music-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid #ccc;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .fa {
@@ -245,10 +192,6 @@
             transform: scale(1.2);
         }
 
-        .playing {
-            color: #66ccff;
-        }
-
         @keyframes zhuan {
             0% {
                 transform: rotate(0deg);
@@ -257,6 +200,23 @@
             100% {
                 transform: rotate(360deg);
             }
+        }
+
+        #occlusions {
+            background-color: var(--background);
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, 0);
+            height: calc(100% - 2px);
+            width: calc(100% - 4px);
+            border-radius: 0 0 10px 10px;
+        }
+
+        .music_progress_bar:hover > #occlusions {
+            cursor: pointer;
+            height: calc(100% - 4px);
+            width: calc(100% - 8px);
         }
     </style>
     <div class="play-warp">
@@ -271,6 +231,7 @@
                 <i id="nextBtn" class="fa fa-step-forward" aria-hidden="true">&#xe044;</i>
             </div>
             <div class="music_progress_bar">
+                <div id="occlusions"></div>
                 <div class="music_progress_line"></div>
             </div>
         </div>

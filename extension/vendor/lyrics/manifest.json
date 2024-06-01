@@ -4,8 +4,8 @@
     "desc": "这是一个测试插件",
     "author": "RGB",
     "id": "23dc60bf-4621-4ab3-92f7-50baf8c6ca1b",
-    "uiEntry": "./ui.v.js",
-    "settings": "./settings.v.js",
+    "uiEntry": "./ui.js",
+    "settings": "./settings.js",
     "vendor": true,
 
     "components": [

@@ -1,4 +1,4 @@
-const { provide } = require('./net')
+const { server } = require('./net')
 const { ipcMain } = require('electron')
 
 let channels = new Map()
@@ -18,7 +18,7 @@ module.exports = () => {
     delegate('win:playstate', 'playstate')
     delegate('win:player', 'player')
 
-    provide('subscribe', s => {
+    server('subscribe', s => {
         s.on('data', data => {
             const channelStr = data.toString('utf-8')
 

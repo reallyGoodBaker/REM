@@ -2,21 +2,18 @@
 
     import Avatar from "./components/Avatar.svelte"
     import SplitList from "./components/SplitList.svelte"
-    import Input from "./components/Input.svelte"
     import { store } from '../utils/stores/base.js'
     import { rem } from '../utils/rem.js'
     import Link from "./components/Link.svelte"
 
+    export let header = null
 
-    export let header = null;
-
-    const defaultSortFunc = () => 1;
+    const defaultSortFunc = () => 1
     export let listSplitter = store.getSync('playlist/splitter') || {
-        location: [0, 16, 44, 72],
+        location: [0, 4, 44, 72],
         names: ['#', '歌曲名', '艺术家', '专辑'],
     }
 
-    let displayTypeLabels = ['\ue68e', '\ue600']
     let displayType = store.getSync('playlist/displayType') || 0
     onDestroy(() => {
         store.set('playlist/displayType', displayType)
@@ -33,144 +30,126 @@
     export let sortBy = 0
     export let forwards = true
 
-    let _listData = [], splitterContainer
-    let backup
+    let splitterContainer
 
-    function renderList(data) {
-        backup = [...data]
-        data.sort(listSplitter.sortFunc[sortBy])
+    async function renderList() {
+        let data = (await listData)
+            .slice()
+            .sort(listSplitter.sortFunc[sortBy])
         !forwards && data.reverse()
-        _listData = data
+
+        return data
     }
+
+    $: _listData = renderList()
 
     onMount(() => {
         if (listData instanceof Promise) {
-            rem.once('pageSwipeAnimFinish', () => listData.then(data => renderList(data)))
+            rem.once('pageSwipeAnimFinish', () => listData.then(renderList))
             return
         }
 
-        renderList(listData)
+        renderList()
     })
 
 
-    let click = false;
-
-    function sortList(key) {
-
-        if(!click) return false;
-
-        let sortf;
-        if(typeof key !== 'number') key = listSplitter.names.indexOf(key);
-
-        if(key === sortBy) {
-            forwards = !forwards;
-        }
-
-        sortf = listSplitter.sortFunc[key] || defaultSortFunc;
-        sortBy = key;
-
-        store.set('playlist/sortBy', sortBy);
-        store.set('playlist/forwards', forwards);
-
-        let arr = [...backup];
-
-        arr.sort(sortf);
-        if (!forwards) {
-            arr = arr.reverse();
-        }
-        setTimeout(() => {
-            _listData = arr
-        });
-
-    }
-
-    sortList(sortBy);
-
-
+    let click = false
     function loc2width(location) {
-        let loc = [...location]
-        let widths = new Array(location.length).fill(0)
-        loc.push(100)
-        widths.forEach((el, i, arr) => {
-            arr[i] = loc[i+1] - loc[i]
+        let widths = []
+        location.forEach((a, i, arr) => {
+            widths.push((arr[i + 1] || 100) - a)
         })
-
         return widths
     }
 
     let widths = loc2width(listSplitter.location),
-        location = listSplitter.location;
+        location = listSplitter.location
 
-    let dragging = false;
-    let splitWindowWidth = 0, raw = 0, rx = 0, ox = 0, index, element;
-    function startSplitDrag(ev) {
-        click = true;
-        element = ev.target;
-        if (element === splitterContainer) return;
+    let dragging = false
+    let splitWindowWidth = 0, rx = 0, ox = 0, index
+    function startSplitDrag(ev, i) {
+        click = true
+        index = i
 
-        index = [...element.parentNode.children].indexOf(element);
         if (index === 0) {
             return
         }
-        splitWindowWidth = ev.path[1].offsetWidth;
-        dragging = true;
-        raw = ev.target.offsetLeft;
-        rx = ev.screenX;
+        splitWindowWidth = ev.composedPath()[1].offsetWidth
+        dragging = true
+        rx = ev.screenX
     }
 
     function changeSplit(ev) {
         if (dragging) {
-            click = false;
-            ox = ev.screenX - rx;
-            element.style.transform = `translateX(${ox}px)`;
+            ox = ev.screenX - rx
+            if (ox !== 0) {
+                click = false
+            }
+            let per = ox/splitWindowWidth * 100
+            location[index] += per
+            rx = ev.screenX
+            widths = loc2width(location)
         }
     }
 
-    document.addEventListener('mousemove', changeSplit);
-    document.addEventListener('mouseup', endSplitDrag);
-
-    function endSplitDrag() {
+    /**
+     * @param {MouseEvent} ev
+     */
+    function endSplitDrag(ev) {
         if (dragging) {
-            dragging = false;
-            element.style.transform = '';
-            let per = ox/splitWindowWidth * 100;
-            location[index] += per;
-            widths = loc2width(location);
+            dragging = false
+            rx = ox = 0
 
-            const d = _listData;
-            _listData = [];
-            setTimeout(() => {
-               _listData = d;
-            });
-
-            raw = rx = ox = index = 0;
-            element = null;
-
-            store.set('playlist/splitter', {location, names: listSplitter.names});
+            store.set('playlist/splitter', {location, names: listSplitter.names})
         }
+
+        if (click) {
+            click = false
+            const el = ev.target
+            const index = listSplitter.names.indexOf(el.innerText)
+
+            if (index === -1) {
+                return
+            }
+
+            if (sortBy === index) {
+                forwards = !forwards
+            }
+
+            sortBy = index
+
+            store.set('playlist/sortBy', sortBy)
+            store.set('playlist/forwards', forwards)
+
+            requestIdleCallback(renderList)
+        }
+
     }
 
-    let multiMode = false;
+    document.addEventListener('mousemove', changeSplit)
+    document.addEventListener('mouseup', endSplitDrag)
+
+    let multiMode = false
     document.addEventListener('keydown', ev => {
         if (ev.ctrlKey) {
-            multiMode = true;
+            multiMode = true
         }
-    });
+    })
     document.addEventListener('keyup', ev => {
         if (!ev.ctrlKey) {
-            multiMode = false;
+            multiMode = false
         }
-    });
+    })
 
-    let selections = new Set();
+    let selections = new Set()
     function onClick(ev) {
-        const i = ev.detail.i;
+        const i = ev.detail.i
         
         if (multiMode) {
-            selections.add(i);
-            selections = selections;
+            selections.add(i)
+            selections = selections
         } else {
-            selections = new Set().add(i);
+            selections = new Set().add(i)
         }
 
     }
@@ -215,7 +194,7 @@
         let list = (await listData).slice(0)
 
         MainPlaylist.loadList(list)
-        MainPlaylist.play(0);
+        MainPlaylist.play(0)
     }
 
     async function playRandom() {
@@ -224,65 +203,8 @@
         MainPlaylist.loadList(list.sort(() => {
             return Math.random() - 0.5
         }))
-        MainPlaylist.play(0);
+        MainPlaylist.play(0)
     }
-
-    function ignoreCaseIncludes(src, comp) {
-        return src.toLowerCase().includes(comp.toLowerCase())
-    }
-
-    async function search(str) {
-        if (!str) {
-            return []
-        }
-
-        const arrayToSearch = (await listData).slice()
-        let res = []
-
-        for (const data of arrayToSearch) {
-            const {name, al, ar} = data
-            if (ignoreCaseIncludes(name, str)) {
-                res.push(data)
-                continue
-            }
-            
-            if (ignoreCaseIncludes(al.name || '', str)) {
-                res.push(data)
-                continue
-            }
-
-            for (const artist of ar) {
-                if (ignoreCaseIncludes(artist.name || '', str)) {
-                    res.push(data)
-                    break
-                }
-            }
-        }
-
-        return res
-    }
-
-    const doSearch = ((func, timeout=600) => {
-        let timer
-        return (...args) => {
-            if (timer) {
-                return
-            }
-
-            timer = setTimeout(() => {
-                func(...args)
-                timer = null
-            }, timeout);
-        }
-    })(async str => {
-        const res = await search(str)
-        if (res.length) {
-            renderList(res)
-        } else {
-            renderList(await listData)
-        }
-    })
-
 
     let scrollv, hasRestored = false
     Pager.beforeSwitch(() => {
@@ -328,7 +250,7 @@
     .nav {
         padding-bottom: 12px;
         width: 100%;
-        height: 92px;
+        height: 32px;
         border-bottom: solid 1px rgba(0,0,0,0.12);
         justify-content: space-between;
         box-sizing: border-box;
@@ -366,6 +288,8 @@
     }
 
     .splitterTab {
+        display: flex;
+        align-items: center;
         box-sizing: border-box;
         border-radius: 4px;
         padding-left: 6px;
@@ -379,25 +303,16 @@
     }
 
     .splitterTab.forwards::after {
-        content: '▲';
-        color: var(--controlDarker);
-        line-height: 6px;
-        font-size: 8px;
-        position: absolute;
-        top: 0px;
-        left: 50%;
-        transform: translateX(-50%);
+        font-family: 'Material Symbols Round';
+        content: '\eb95';
+        font-size: 16px;
     }
 
     .splitterTab.backwards::after {
-        content: '▼';
-        color: var(--controlDarker);
-        line-height: 6px;
-        font-size: 8px;
-        position: absolute;
-        top: 0px;
-        left: 50%;
-        transform: translateX(-50%) scaleX(1.2);
+        font-family: 'Material Symbols Round';
+        content: '\eb95';
+        font-size: 16px;
+        transform: scaleX(1.2) rotate(180deg);
     }
 
     .btn {
@@ -454,28 +369,6 @@
         background-color: var(--acrylicBackgroundColor);
     }
 
-    .view-display {
-        font-family: "iconfont";
-        font-size: medium;
-        color: var(--controlBlack);
-    }
-    .view-display > div {
-        margin: 1px;
-        padding: 4px;
-        cursor: pointer;
-        border: solid 2px transparent;
-        background-color: transparent;
-        border-radius: 4px;
-        transition: background-color 0.1s,
-            border-color 0.04s;
-    }
-    .view-display > div:hover {
-        border-color: var(--controlBright);
-    }
-    .view-display > div.selected {
-        background-color: var(--controlBrighter);
-    }
-
     .desc {
         margin-top: 40px;
     }
@@ -517,35 +410,17 @@
 <div class="playlistContent">
 
     <div class="nav">
-        <div class="Row" style="margin: 0 24px; height: 60px; align-items: center; justify-content: space-between;">
-            <Input
-                type="text"
-                placeholder={'\ue6a8  搜索列表'}
-                fullBorder={true}
-                on:input={ev => {
-                    doSearch(ev.detail)
-                }}/>
-
-            <div class="Row view-display" on:click={ev => {
-                    displayType = (+ev.target.getAttribute('index')) ?? displayType
-                }}>
-                {#each displayTypeLabels as label, i}
-                <div index="{i}" class="{displayType === i? 'selected': ''}">{label}</div>
-                {/each}
-            </div>
-        </div>
         <div class="Row splitter"
             style="width: calc(100% - 44px); margin: 0px 24px;"
             bind:this={splitterContainer}
-            on:mousedown={startSplitDrag}
         >
             {#each listSplitter.names as name, i}
-            <div class="splitterTab{sortBy===i?!forwards?' forwards': ' backwards': ''}" style="width: {widths[i]}%" on:click={() => sortList(i)}>{name}</div>
+            <div on:mousedown={ev => startSplitDrag(ev, i)} class="splitterTab{sortBy===i?!forwards?' forwards': ' backwards': ''}" style="width: {widths[i]}%">{name}</div>
             {/each}
         </div>
     </div>
     
-    <div style="height: calc(100% - 92px); ">
+    <div style="height: calc(100% - 32px); ">
         <SplitList
             on:update={onSplitListMounted}
             on:click={onClick}

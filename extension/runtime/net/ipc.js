@@ -1,22 +1,35 @@
 const net = require('net')
-const { promiseResolvers } = require('../../../utils/high-level/node/promise')
+const fs = require('fs')
 const pipeName = `\\\\?\\pipe\\rem\\`
+const { jsonObj } = require('./utils')
 
-let servers = new Map()
+function promiseResolvers() {
+    let resolve, reject
+    let promise = new Promise((res, rej) => {
+        resolve = v => (res(v), resolve = reject = null)
+        reject = e => (rej(e), resolve = reject = null)
+    })
+
+    return {
+        /**@type {Promise<any>}*/
+        promise,
+        /**@type {(value: any) => void}*/
+        resolve,
+        /**@type {(reason?: any) => void}*/
+        reject
+    }
+}
 
 /**
  * @param {string} name 
- * @param {(socket: net.Socket) => void} listener 
- * @returns 
+ * @param {(socket: net.Socket) => void} listener
  */
-function provide(name, listener = s => s.write('ok')) {
-    let server
-    if (server = servers.get(name)) {
-        return server
+function server(name, listener = s => s.write('ok')) {
+    if (fs.existsSync(pipeName + name)) {
+        return
     }
 
-    return server = net
-        .createServer(listener)
+    net.createServer(listener)
         .listen(pipeName + name)
 }
 
@@ -35,9 +48,8 @@ function connect(name) {
 async function invoke(socket, data) {
     const { promise, reject, resolve } = promiseResolvers()
     socket
-        .once('data', (...args) => {
-            console.log(args)
-            resolve()
+        .once('data', val => {
+            resolve(jsonObj(val))
         })
         .once('error', reject)
         .write(data)
@@ -45,6 +57,24 @@ async function invoke(socket, data) {
     return promise
 }
 
+/**
+ * @param {string} type 
+ * @param {(val: any) => void} [receiver] 
+ */
+function subscribe(type, receiver=Function.prototype) {
+    const socket = connect('subscribe')
+    socket.write(type)
+    socket.on('data', val => {
+        const contents = val.toString().split('\0')
+        const v = contents[contents.length - 2]
+        const data = jsonObj(v)
+
+        receiver(data)
+    })
+
+    return socket
+}
+
 module.exports = {
-    provide, connect, invoke,
+    server, connect, invoke, subscribe,
 }

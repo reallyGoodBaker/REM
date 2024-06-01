@@ -3,8 +3,8 @@ import './jq.js'
 const { ipcRenderer } = require('electron')
 const player = connect('player-controller')
 const playlist = connect('playlist')
-const update = subscribe('playstate', ([ playing, progress ]) => {
-    $(".music_progress_line").css("width", progress * 100 + "%")
+const update = subscribe('playstate', ([ playing, p ]) => {
+    $('.music_progress_line').css('width', `${p * 100}%`)
     $(".cover").css("animation-play-state", playing ? "running" : "paused")
     $("#playBtn")
         .removeClass(playing ? "fa-play" : "fa-pause")
@@ -21,8 +21,28 @@ win.beforeClose = () => {
 
 render()
 
+let duration = Infinity
+
+;(async() => {
+    if (process.platform === 'darwin' || process.platform === 'win32') {
+        const { colorHue, dark } = await ipcRenderer.invoke('app?theme')
+        if (dark) {
+            $('body').addClass('dark')
+        } else {
+            $('body').removeClass('dark')
+        }
+
+        $('.music_progress_line').css('background-color', `hsl(${colorHue}, 90%, 80%)`)
+    }
+})()
+
+$('.music_progress_bar').on('click', ev => {
+    const seekTo = ev.offsetX / 360 * duration
+    invoke(player, `:seek|${seekTo}`)
+})
+
 $("#randomBtn").on("click", function () {
-    ipcRenderer.send('win:restore')
+    ipcRenderer.invoke('win:restore')
 })
 
 $("#playBtn").on("click", async function () {
@@ -47,7 +67,7 @@ async function render() {
         al,
         ar,
     } = await invoke(player, '.audioData')
-    const duration = Number(await invoke(player, ".duration"))
+    duration = Number(await invoke(player, ".duration"))
 
     $(".name").text(name)
     $(".singer-album").text(ar.map(a => a.name).join(', ') + " - " + al.name)

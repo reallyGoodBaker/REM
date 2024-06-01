@@ -20,16 +20,14 @@
     export let index = 0
 
     function loc2width(location) {
-        let widths = new Array(location.length).fill(0)
-        location = [...location]
-        location.push(100)
-        widths.forEach((el, i, arr) => {
-            arr[i] = location[i+1] - location[i]
+        let widths = []
+        location.forEach((a, i, arr) => {
+            widths.push((arr[i + 1] || 100) - a)
         })
         return widths
     }
 
-    let widths = loc2width(location)
+    $: widths = loc2width(location)
 
 </script>
 

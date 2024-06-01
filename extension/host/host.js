@@ -201,6 +201,7 @@ class ExtensionHost {
     _registerComponent = (component) => {
         for (const key of this._getComponentKeys(component)) {
             const handler = async ({ args, id }) => {
+                // console.log(args)
                 let val
                     ,err = val = null
 

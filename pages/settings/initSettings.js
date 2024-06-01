@@ -2,6 +2,8 @@ import { store } from "../../utils/stores/base"
 import { Lang } from '../../utils/lang/lang.js'
 import { setClearFont } from "../../utils/style/font"
 import { rem } from "../../utils/rem"
+import { hue } from '../../utils/math.js'
+import { invoker } from '../../utils/main-invoker/browser.js'
 
 function lang(key) {
     return langMapping.s(key)
@@ -69,13 +71,18 @@ export function initSettings() {
         selected: 1
     })
 
+    let theme = {}
     init('AppSettings/theme', {
-        colors: [2, 39, 148, 210, 270, 292, 322],
-        selected: 3,
-    }, ({ colors, selected }) => {
+        colors: [ {label: '跟随系统'}, 2, 39, 148, 210, 270, 292, 322],
+        selected: 4,
+    }, async ({ colors, selected }) => {
         const setColor = color => document.body.style.setProperty('--controlHue', color)
-        setColor(colors[selected])
+        const sysTheme = await hooks.invoke('win:sys-colors')
+        const sysHue = selected ? colors[selected] : hue(sysTheme.accent)
+        theme = { colorHue: sysHue, dark: sysTheme.dark } 
+        setColor(sysHue)
         rem.on('changeControlColor', setColor)
+        invoker.handle('app?theme', () => theme)
     })
 
     init('AppSettings/font', {
