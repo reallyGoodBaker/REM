@@ -20,41 +20,43 @@ class ExtensionLoader {
         this.root = folder
         this.bw = bw
 
-        fs.readdirSync(folder).forEach(extFolder => {
-            const filePath = path.join(folder, extFolder)
-            if (!fs.statSync(filePath).isDirectory()) {
-                return
-            }
-
-            const host = new ExtensionHost(filePath)
-            
-            if (!host.error) {
-                this.extensions.set(host.manifest.id, host)
-
-                const m = host.manifest
-                m.folderName = extFolder
-
-                ipcMain.on('win:loaded', () => {
-                    bw.webContents.send('extension:loaded', m)
-                })
-            } else {
-                host.kill(0)
-                this.failed.add(extFolder)
-
-                ipcMain.on('win:loaded', () => {
-                    bw.webContents.send('notification:send', {
-                        uuid: crypto.randomUUID(),
-                        title: '加载错误',
-                        message: `${extFolder} 加载失败:\n${host.error.toString()}`,
-                        channel: crypto.randomUUID(),
-                        timeout: -1,
-                        icon: '\ue000',
-                    })
-                })
-            }
-        })
+        fs.readdirSync(folder).forEach(this.loadExt)
 
         this._listenExtensionsChange()
+    }
+
+    loadExt = (extFolder) => {
+        const filePath = path.join(this.root, extFolder)
+        if (!fs.statSync(filePath).isDirectory()) {
+            return
+        }
+
+        const host = new ExtensionHost(filePath)
+        
+        if (!host.error) {
+            this.extensions.set(host.manifest.id, host)
+
+            const m = host.manifest
+            m.folderName = extFolder
+
+            ipcMain.on('win:loaded', () => {
+                this.bw.webContents.send('extension:loaded', m)
+            })
+        } else {
+            host.kill(0)
+            this.failed.add(extFolder)
+
+            ipcMain.on('win:loaded', () => {
+                this.bw.webContents.send('notification:send', {
+                    uuid: crypto.randomUUID(),
+                    title: '加载错误',
+                    message: `${extFolder} 加载失败:\n${host.error.toString()}`,
+                    channel: crypto.randomUUID(),
+                    timeout: -1,
+                    icon: '\ue000',
+                })
+            })
+        }
     }
 
     enumIds() {
@@ -81,6 +83,9 @@ class ExtensionLoader {
     _listenExtensionsChange() {
         ipcMain.on('extension:active', (_, id) => this.start(id))
         ipcMain.on('extension:deactive', (_, id) => this._deactiveExtension(id))
+        fs.watch(this.root, (ev, file) => {
+            console.log(ev, file)
+        })
     }
 
     _deactiveExtension = id => {

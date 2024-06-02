@@ -30,8 +30,9 @@ export async function loadExtensionSettings(m) {
         return
     }
 
-    const setting = await call(settingEntry.onSetting, safeStore(`ExtensionSettings/${m.id}`))
-    settings.set(m.id, setting)
+    const store = safeStore(`ExtensionSettings/${m.id}`)
+    const setting = await call(settingEntry.onSetting, store)
+    settings.set(m.id, { setting, store })
 
     const setValue = async (id, name, value) => {
         if (m.id !== id) {
@@ -40,7 +41,7 @@ export async function loadExtensionSettings(m) {
 
         value = value ?? {}
 
-        await call(settingEntry.onSetSetting, name, value)
+        await call(settingEntry.onSetSetting, store, name, value)
     }
 
     const getValue = async (id, name) => {
@@ -48,21 +49,21 @@ export async function loadExtensionSettings(m) {
             return undefined
         }
 
-        return await call(settingEntry.onGetSetting, name)
+        return await call(settingEntry.onGetSetting, store, name)
     }
 
-    invoker.handle('ext.settings:get', (_, id) => settings.get(id))
+    invoker.handle('ext.settings:get', (_, id) => settings.get(id)?.setting)
     invoker.handle('ext.setting:get', (_, id, name) => getValue(id, name))
     invoker.handle('ext.settings:set', (_, id, name, setting) => setValue(id, name, setting))
     rem.on('ext.settings:set', setValue)
 }
 
 export function getExtensionSettings(id) {
-    return settings.get(id)
+    return settings.get(id)?.setting
 }
 
 export function getExtSetting(id, name) {
-    return call(settingEntries.get(id)?.onGetSetting, name)
+    return call(settingEntries.get(id)?.onGetSetting, settings.get(id)?.store, name)
 }
 
 export function setExtSetting(id, name, value) {

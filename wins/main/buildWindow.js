@@ -9,6 +9,7 @@ const { initExtRuntime } = require('../../extension/initExtensionHost')
 const initMainInvoker = require('../../utils/main-invoker/node.js')
 const { publish, init: initBroker } = require('../../utils/ipc/main.js')
 const { getExtId } = require('../../utils/ipc/extmapping.js')
+const { registerProtocol } = require('./protocol.js')
 
 const remStore = new RemStore()
 
@@ -21,6 +22,8 @@ if (!appLock) app.exit()
 function scaleDisplayProp(num, scale=0.7) {
     return ~~(num * scale)
 }
+
+registerProtocol()
 
 module.exports = function buildWindow() {
     const {width: rawW, height: rawH} = screen.getPrimaryDisplay().bounds
@@ -51,10 +54,14 @@ module.exports = function buildWindow() {
 
     browserWindow.on('closed', () => {
         browserWindow = null;
-    });
+    })
 
     app.on('second-instance', () => {
-        browserWindow.show()
+        if (browserWindow) {
+            browserWindow.show()
+        } else {
+            app.exit(1)
+        }
     })
 
     ipcMain.on('win:title', (_, title) => {
@@ -102,6 +109,8 @@ function initMainWin(browserWindow) {
     browserWindow.on("unmaximize", () => {
         browserWindow.webContents.send('win:unmax', browserWindow.getPosition())
     })
+
+    browserWindow.on('close', () => app.quit())
 
     ipcMain.on('online', () => {
         browserWindow.webContents.send('online')
@@ -162,6 +171,9 @@ function initMainWin(browserWindow) {
     ipcMain.handle('app?theme', async () => {
         return await invoker.invoke('app?theme')
     })
+
+    
+
 }
 
 /**
@@ -266,6 +278,7 @@ function initThumbarButtons(win, invoker) {
 
 const { loaderBuilder, ExtensionLoader } = require('../../extension/host/loader')
 const { Extensions } = require('../../utils/appPath/main')
+const { getLogger } = require('../../utils/easy-log/node.js')
 
 /**
  * @param {BrowserWindow} bw 
