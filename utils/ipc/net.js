@@ -37,6 +37,13 @@ function server(name, listener = s => s.write('ok')) {
         .listen(pipeName + name)
 }
 
+function unlink(name) {
+    const pipe = pipeName + name
+    if (fs.existsSync(pipe)) {
+        fs.unlinkSync(pipe)
+    }
+}
+
 /**
  * @param {string} name 
  */
@@ -80,5 +87,5 @@ function subscribe(type, receiver=Function.prototype) {
 }
 
 module.exports = {
-    server, connect, invoke, subscribe,
+    server, connect, invoke, subscribe, unlink,
 }

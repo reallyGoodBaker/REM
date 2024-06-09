@@ -1,7 +1,11 @@
 const net = require('net')
 const fs = require('fs')
-const pipeName = `\\\\?\\pipe\\rem\\`
 const { jsonObj } = require('./utils')
+
+const pipeName = ({
+    win32: `\\\\?\\pipe\\rem\\`,
+    linux: '\0rem/',
+})[process.platform]
 
 function promiseResolvers() {
     let resolve, reject
@@ -31,6 +35,13 @@ function server(name, listener = s => s.write('ok')) {
 
     net.createServer(listener)
         .listen(pipeName + name)
+}
+
+function unlink(name) {
+    const pipe = pipeName + name
+    if (fs.existsSync(pipe)) {
+        fs.unlinkSync(pipe)
+    }
 }
 
 /**
@@ -76,5 +87,5 @@ function subscribe(type, receiver=Function.prototype) {
 }
 
 module.exports = {
-    server, connect, invoke, subscribe,
+    server, connect, invoke, subscribe, unlink,
 }
