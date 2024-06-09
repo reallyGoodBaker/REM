@@ -42,11 +42,10 @@
             "!rollup.config.js",
             "!icon.png"
         ],
-        "asar": false,
         "linux": {
             "maintainer": "rgb39",
             "icon": "./icons",
-            "target": "deb",
+            "target": ["deb", "tar.xz"],
             "desktop": {
                 "Icon": "rem"
             }

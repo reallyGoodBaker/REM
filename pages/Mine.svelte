@@ -229,7 +229,7 @@
     })
     onMount(() => {
         const {save} = Pager.getContext()
-        requestIdleCallback(() => scrollv.setOffsetRatio(save.offsetRatio))
+        requestAnimationFrame(() => scrollv.setOffsetRatio(save.offsetRatio))
 
         Pager.setSearchPlaceholder('搜索我喜好的')
         Pager.setOnSearchInput(v => console.log(v))
@@ -419,6 +419,7 @@
     <img
         class="collection-bgc"
         src={desktopUrl} alt="" bind:this={imgBgc}/>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div title="{s('unfold')}" class="toggle{!collectionFolded?' unfold':''}" on:click={changeHeight}>▼</div>
     
     <Measurable bind:this={meter} cssStyle="width: 100%">

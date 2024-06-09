@@ -51,7 +51,7 @@
 
             if (cmDisplay) {
                 layerEvents.emit("disable")
-                return requestIdleCallback(() =>
+                return requestAnimationFrame(() =>
                     showContextMenu(pageX, pageY, path)
                 )
             }
@@ -133,6 +133,7 @@
     rem.on('tunnerClose', () => showTunnerWindow = false)
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
     bind:this={contentLayerElement}
     on:click={() => layerEvents.emit("disable")}
@@ -146,6 +147,7 @@
     </Popup>
     <NotificationList/>
 </div>
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
     class="container {layer ? 'layer' : ''}"
     on:click={() => layerEvents.emit("disable")}

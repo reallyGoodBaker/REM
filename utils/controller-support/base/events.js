@@ -47,7 +47,7 @@ class Linked {
         }
         map.delete(rawListener);
         this.count--;
-        requestIdleCallback(() => {
+        requestAnimationFrame(() => {
             cur.prev = null;
             cur.next = null;
         });
