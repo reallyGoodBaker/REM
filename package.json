@@ -1,7 +1,7 @@
 {
     "name": "rem",
-    "version": "0.1.17",
-    "description": "Vermillion orange",
+    "version": "0.1.18",
+    "description": "Water Melon",
     "main": "./main.js",
     "scripts": {
         "build-icons": "electron-icon-builder -i=./icon.png -f",
@@ -19,10 +19,10 @@
         "node-fetch": "^2.6.7"
     },
     "devDependencies": {
-        "electron-icon-builder": "^2.0.1",
         "@rollup/plugin-commonjs": "^22.0.0",
         "@rollup/plugin-node-resolve": "^13.3.0",
         "electron": "^30.0.8",
+        "electron-icon-builder": "^2.0.1",
         "picomatch": "^2.3.1",
         "rollup": "^2.73.0",
         "rollup-plugin-css-only": "^3.1.0",
