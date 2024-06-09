@@ -57,7 +57,7 @@ class Socket {
  * @param {(socket: net.Socket) => void} listener
  */
 function server(name, listener = s => s.write('ok')) {
-    if (!fs.existsSync(pipeName) && process.platform !== 'win32') {
+    if (process.platform !== 'win32' && !fs.existsSync(pipeName)) {
         fs.mkdirSync(pipeName)
     }
 
