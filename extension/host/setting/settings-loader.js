@@ -1,6 +1,7 @@
 import { invoker } from "../../../utils/main-invoker/browser.js"
 import { rem } from "../../../utils/rem.js"
 import { safeStore } from "../../../utils/stores/base.js"
+import { getPath } from '../../../utils/appPath/renderer.js'
 
 const settings = new Map()
 const settingEntries = new Map()
@@ -21,7 +22,7 @@ export async function loadExtensionSettings(m) {
     }
 
     const settingEntry = await import(
-        `file://${AppPaths.Extensions}/${m.folderName}/${path}`
+        `file://${await getPath('Extensions')}/${m.folderName}/${path}`
     )
 
     settingEntries.set(m.id, settingEntry)
