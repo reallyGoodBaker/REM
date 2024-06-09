@@ -4,7 +4,7 @@ const { jsonObj } = require('./utils')
 
 const pipeName = ({
     win32: `\\\\?\\pipe\\rem\\`,
-    linux: '\0rem/',
+    linux: '/tmp/rem/',
 })[process.platform]
 
 function promiseResolvers() {
@@ -24,15 +24,44 @@ function promiseResolvers() {
     }
 }
 
+class Socket {
+    #socket = null
+
+    constructor(socket) {
+        this.#socket = socket
+    }
+
+    async close() {
+        return new Promise(res => this.#socket.end(res))
+    }
+
+    /**
+     * @param {string | Uint8Array} data
+     * @returns 
+     */
+    async invoke(data) {
+        const { promise, reject, resolve } = promiseResolvers()
+        this.#socket
+            .once('data', val => {
+                resolve(jsonObj(val))
+            })
+            .once('error', reject)
+            .write(data)
+    
+        return promise
+    }
+}
+
 /**
  * @param {string} name 
  * @param {(socket: net.Socket) => void} listener
  */
 function server(name, listener = s => s.write('ok')) {
-    if (fs.existsSync(pipeName + name)) {
-        return
+    if (!fs.existsSync(pipeName)) {
+        fs.mkdirSync(pipeName)
     }
 
+    unlink(name)
     net.createServer(listener)
         .listen(pipeName + name)
 }
@@ -48,24 +77,7 @@ function unlink(name) {
  * @param {string} name 
  */
 function connect(name) {
-    return net.connect(pipeName + name)
-}
-
-/**
- * 
- * @param {net.Socket} socket 
- * @param {string | Uint8Array} data
- */
-async function invoke(socket, data) {
-    const { promise, reject, resolve } = promiseResolvers()
-    socket
-        .once('data', val => {
-            resolve(jsonObj(val))
-        })
-        .once('error', reject)
-        .write(data)
-
-    return promise
+    return new Socket(net.connect(pipeName + name))
 }
 
 /**
@@ -73,7 +85,7 @@ async function invoke(socket, data) {
  * @param {(val: any) => void} [receiver] 
  */
 function subscribe(type, receiver=Function.prototype) {
-    const socket = connect('subscribe')
+    const socket = net.connect(pipeName + 'subscribe')
     socket.write(type)
     socket.on('data', val => {
         const contents = val.toString().split('\0')
@@ -83,9 +95,9 @@ function subscribe(type, receiver=Function.prototype) {
         receiver(data)
     })
 
-    return socket
+    return new Socket(socket)
 }
 
 module.exports = {
-    server, connect, invoke, subscribe, unlink,
+    server, connect, subscribe, unlink,
 }

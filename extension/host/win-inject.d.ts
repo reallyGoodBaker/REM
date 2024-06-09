@@ -10,6 +10,11 @@ interface Win {
     init: (winId: number) => void,
 }
 
+interface Socket {
+    close(): Promise<void>
+    invoke(data: string | Uint8Array): Promise<any>
+}
+
 declare global {
     const win: Win
     const contextBridge: Electron.ContextBridge
@@ -17,10 +22,9 @@ declare global {
     const webFrame: Electron.WebFrame
     const webUtils: Electron.WebUtils
 
-    const server: (name: string, listener?: (socket: net.Socket) => void) => void
-    const connect: (name: string) => net.Socket
-    const invoke: (socket: net.Socket, data: string | Uint8Array) => Promise<any>
-    const subscribe: (type: string, receiver?: (val: any) => void) => net.Socket
+    const server: (name: string, listener?: (socket: Socket) => void) => void
+    const connect: (name: string) => Socket
+    const subscribe: (type: string, receiver?: (val: any) => void) => Socket
     const unlink: (name: string) => void
 
     const invoker: InvokerServer

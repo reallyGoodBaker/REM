@@ -20,13 +20,24 @@ function tryInvoke(obj, func, ...args) {
     }
 }
 
-const activeWindows = new Set()
+/**@type {Map<string, BrowserWindow>}*/
+const activeWindows = new Map()
 /**
  * @param {BrowserWindowConstructorOptions} options 
  */
 function openWindow(winName, options, manifest) {
-    if (!manifest.windows || activeWindows.has(winName)) {
+    if (!manifest.windows) {
         return -1
+    }
+
+    if (activeWindows.has(winName)) {
+        const win = activeWindows.get(winName)
+        if (!win) {
+            activeWindows.delete(winName)
+            return -1
+        }
+
+        return win.id
     }
 
     const extra = manifest.windows[winName] ?? {}
@@ -43,7 +54,7 @@ function openWindow(winName, options, manifest) {
     const winMain = path.join(pluginRoot, extra.main)
 
     record(win.id, manifest.id)
-    activeWindows.add(winName)
+    activeWindows.set(winName, win)
 
     if (extra.main) {
         const m = require(winMain)
@@ -55,7 +66,7 @@ function openWindow(winName, options, manifest) {
     }
 
     win.loadFile(path.join(pluginRoot, extra.renderer))
-    win.on('close', () => {
+    win.on('close', async () => {
         if (extra.main) {
             const m = require(winMain)
             tryInvoke(m, 'onClose', win, invoker)
