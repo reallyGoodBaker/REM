@@ -93,6 +93,7 @@
 
         {#if isLogedin}
         <div style="padding-left: 56px; margin: 8px 0px;">
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div class="btn outlined" on:click={showEditProfile}> {"\ue66b  " + s('edit_profile')} </div>
         </div>
         {/if}

@@ -1,4 +1,4 @@
-const { app } = require('electron')
+const { app, ipcMain } = require('electron')
 const path = require('path')
 const fs = require('fs')
 
@@ -38,17 +38,23 @@ function mkdir(paths) {
 
 mkdir(paths)
 
-function savePath() {
-    fs.writeFileSync(path.join(__dirname, '../../../path'), paths.join('\n'))
-}
-
-module.exports = {
+const pathObj = {
     paths,
     AppRoot,
     Data: pathResolve('Data'),
     AppCache: pathResolve('AppCache'),
     Downloads: DownloadPath,
     Extensions: pathResolve('Data/Extensions'),
-
-    savePath
 }
+
+function savePath() {
+    ipcMain.handle('paths?', (_, name) => {
+        if (name && name in pathObj) {
+            return pathObj[name]
+        }
+
+        return pathObj
+    })
+}
+
+module.exports = Object.assign({ savePath }, pathObj)

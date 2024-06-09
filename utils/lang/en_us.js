@@ -42,6 +42,7 @@ export default {
     
     theme: 'Theme',
     theme_color: 'Theme color (Hue)',
+    theme_dark: 'Dark mode',
     use_acrylic: 'Use "Acrylic" ',
     use_acrylic_extra: 'Turn off this option for devices with lower performance for a better experience',
     

@@ -40,6 +40,7 @@ module.exports = function buildWindow() {
         backgroundColor: '#d3ece0',
         minWidth: width,
         minHeight: height,
+        roundedCorners: true,
 
         webPreferences: {
             sandbox: false,
@@ -50,7 +51,7 @@ module.exports = function buildWindow() {
     browserWindow.store = remStore
 
     browserWindow.loadFile(path.resolve(__dirname, './index.html'))
-    // browserWindow.webContents.openDevTools({ mode: 'detach' })
+    browserWindow.webContents.openDevTools({ mode: 'detach' })
 
     browserWindow.on('closed', () => {
         browserWindow = null;
@@ -148,6 +149,10 @@ function initMainWin(browserWindow) {
         return process.platform === 'darwin'
     })
 
+    ipcMain.handle('app?platform', () => {
+        return process.platform
+    })
+
     ipcMain.on('store:getSync', (ev, k) => {
         ev.returnValue = remStore.get(k)
     })
@@ -162,17 +167,19 @@ function initMainWin(browserWindow) {
     })
 
     ipcMain.handle('win:sys-colors', () => {
-        return {
-            accent: systemPreferences.getAccentColor(),
-            dark: nativeTheme.shouldUseDarkColors,
+        if (process.platform === 'win32' || process.platform === 'darwin') {
+            return {
+                accent: systemPreferences.getAccentColor(),
+                dark: nativeTheme.shouldUseDarkColors,
+            }
         }
+
+        return null
     })
 
     ipcMain.handle('app?theme', async () => {
         return await invoker.invoke('app?theme')
-    })
-
-    
+    })    
 
 }
 

@@ -3,36 +3,10 @@ require('../../utils/main-invoker/preload')
 const { ipcRenderer, webFrame } = require('electron')
 const Binder = require('../../utils/jsBinder')
 const { createFuncBinding } = require('../../utils/api/funcBinder')
+const { readPath } = require('../../utils/appPath/preload')
 
-const { fetchJson } = require('../../utils/server/fetch')
-const { readPath } = require('../../utils/appPath/renderer')
-const AppPaths = readPath()
-
-const { AppCache } = AppPaths
-
-new Binder('AppPaths').use(AppPaths)
-
-const {
-    saveToCache,
-    getMedia,
-    saveToPlaylist,
-    getPlaylist,
-    getMetadata,
-    clearAllCache,
-    clearCache,
-} = require('../../utils/server/media-cache')(AppCache)
-
-
-new Binder('server')
-.use({
-    fetchJson,
-    saveToCache,
-    getMedia,
-    getPlaylist,
-    saveToPlaylist,
-    getMetadata,
-    clearAllCache,
-    clearCache,
+readPath().then(AppPaths => {
+    new Binder('AppPaths').use(AppPaths)
 })
 
 new Binder('hooks')
@@ -59,8 +33,10 @@ const { getSongDetail, getSongUrl, getSongDownload, getSongUrlX } = require('../
 const { logout } = require('NeteaseCloudMusicApi')
 const { getArtistDetail, getArtistSongs, getArtistAlbums } = require('../../utils/api/artist')
 const { getLyrics } = require('../../utils/api/lyrics')
-const { send } = require('../../extension/runtime/notification/main')
+const { fetchJson } = require('../../utils/server/fetch')
 
+new Binder('server')
+    .use({ ...require('../../utils/server/media-cache'), fetchJson })
 
 new Binder('NeteaseApi')
 .bind('login', createFuncBinding(login))

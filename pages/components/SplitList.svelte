@@ -23,8 +23,8 @@
         emit('dbclick', {listData: await listData, i});
     }
 
-    onMount(() => {
-        emit('mount');
+    onMount(async () => {
+        emit('mount')
     })
 
     afterUpdate(async () => {

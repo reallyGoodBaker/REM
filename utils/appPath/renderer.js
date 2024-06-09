@@ -1,21 +1,5 @@
-const fs = require('fs')
-const path = require('path')
+let paths
 
-const filePath = path.join(__dirname, '../../../path')
-
-function readPath() {
-    const paths = fs.readFileSync(filePath).toString().split('\n')
-    const [
-        AppRoot, Logs, Data, AppCache, Downloads, Extensions
-    ] = paths
-
-    fs.rmSync(filePath)
-
-    return {
-        paths, AppRoot, Data, AppCache, Downloads, Extensions, Logs
-    }
-}
-
-module.exports = {
-    readPath
+export async function getPath(name) {
+      return paths ?? await hooks.invoke('paths?', name) 
 }

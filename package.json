@@ -4,8 +4,9 @@
     "description": "Vermillion orange",
     "main": "./main.js",
     "scripts": {
-        "build-app": "rollup -c && electron-builder",
-        "build": "rollup -c",
+        "build-icons": "electron-icon-builder -i=./icon.png -f",
+        "build-app": "npm run build && electron-builder",
+        "build": "rollup -c && npm run build-icons",
         "start": "rollup -c && electron .",
         "postinstall": "electron-builder install-app-deps"
     },
@@ -18,6 +19,7 @@
         "node-fetch": "^2.6.7"
     },
     "devDependencies": {
+        "electron-icon-builder": "^2.0.1",
         "@rollup/plugin-commonjs": "^22.0.0",
         "@rollup/plugin-node-resolve": "^13.3.0",
         "electron": "^30.0.8",
@@ -39,6 +41,15 @@
             "!*.md",
             "!rollup.config.js",
             "!icon.png"
-        ]
+        ],
+        "asar": false,
+        "linux": {
+            "maintainer": "rgb39",
+            "icon": "./icons",
+            "target": "deb",
+            "desktop": {
+                "Icon": "rem"
+            }
+        }
     }
 }

@@ -62,7 +62,7 @@
 <style>
     .container {
         width: 100vw;
-        height: calc(100vh - 72px - 89px);
+        height: calc(100vh - 160px);
         overflow: visible;
         position: relative;
         z-index: 0;

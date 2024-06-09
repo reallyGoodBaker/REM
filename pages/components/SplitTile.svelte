@@ -70,6 +70,7 @@
 </style>
 
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="Row c tile{selected?' selected': ''}{focus?' focus': ''} {index % 2 ? 'even' : ''}"
     on:click={onClick}
     on:dblclick={dbClick}

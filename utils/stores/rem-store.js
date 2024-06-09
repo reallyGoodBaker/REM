@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const {Data} = require('../appPath/main')
+const { Data } = require('../appPath/main')
 const APPSTORE = path.join(Data, 'store')
 
 if (!fs.existsSync(APPSTORE)) {

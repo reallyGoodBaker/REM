@@ -380,6 +380,7 @@
     
 
     <div class="row center">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div class="column" style="margin: 4px 0px;">
             <div class="btn big btn-nb{randomPlay?' active':''}"
                 on:click={() => {

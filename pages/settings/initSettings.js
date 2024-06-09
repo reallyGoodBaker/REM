@@ -20,8 +20,13 @@ function init(name, defaultValue, init) {
         store.set(name, val)
     }
 
+    const setDefault = async () => {
+        await store.set(name, defaultValue)
+        return defaultValue
+    }
+
     if (typeof init === 'function') {
-        init.call(null, val)
+        init.call(null, val, setDefault)
     }
 }
 
@@ -74,14 +79,33 @@ export function initSettings() {
     let theme = {}
     init('AppSettings/theme', {
         colors: [ {label: '跟随系统'}, 2, 39, 148, 210, 270, 292, 322],
+        dark: [ {label: '跟随系统'}, {label: 'light', value: false}, {label: 'dark', value: true}],
         selected: 4,
-    }, async ({ colors, selected }) => {
+        selectedDark: 1
+    }, async ({ colors, selected, dark, selectedDark }) => {
         const setColor = color => document.body.style.setProperty('--controlHue', color)
+        const setDarkMode = darkMode => darkMode
+                ? document.body.classList.add('dark-mode')
+                : document.body.classList.remove('dark-mode')
+
         const sysTheme = await hooks.invoke('win:sys-colors')
+        if (!selected || !selectedDark) {
+            if (!sysTheme) {
+                selected = 1
+                selectedDark = 1
+                await store.set('AppSettings/theme', {
+                    colors, selected, dark, selectedDark
+                })
+            }
+        }
+
         const sysHue = selected ? colors[selected] : hue(sysTheme.accent)
-        theme = { colorHue: sysHue, dark: sysTheme.dark } 
+        const darkMode = selectedDark ? dark[selectedDark].value : sysTheme.darksysTheme.dark
+        theme = { colorHue: sysHue, dark: darkMode } 
         setColor(sysHue)
+        setDarkMode(darkMode)
         rem.on('changeControlColor', setColor)
+        rem.on('changeDarkMode', setDarkMode)
         invoker.handle('app?theme', () => theme)
     })
 

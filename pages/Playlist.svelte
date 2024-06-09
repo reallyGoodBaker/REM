@@ -26,7 +26,7 @@
         (a, b) => b.al.name > a.al.name || -1,
     ]
 
-    export let listData = []
+    export let listData = Promise.resolve([])
     export let sortBy = 0
     export let forwards = true
 
@@ -38,7 +38,10 @@
             .sort(listSplitter.sortFunc[sortBy])
         !forwards && data.reverse()
 
-        return data
+        return data.map(data => {
+            data.al.picUrl = data.al.picUrl ?? header.imgUrl
+            return data
+        })
     }
 
     $: _listData = renderList()
@@ -400,6 +403,7 @@
             {/if}
         </div>
 
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div class="Row">
             <div class="btn big accent" on:click={playAll}> {'\ue615'} 播放 </div>
             <div class="btn big bright" on:click={playRandom}>{'\ue619'}</div>

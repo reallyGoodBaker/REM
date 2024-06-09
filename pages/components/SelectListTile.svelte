@@ -1,19 +1,22 @@
 <script>
-    import { createEventDispatcher } from "svelte";
-    import ListTile from "./ListTile.svelte";
+    import { createEventDispatcher } from "svelte"
+    import ListTile from "./ListTile.svelte"
 
-    export let dataList = [];
-    export let selected = 0;
+    export let dataList = []
+    export let selected = 0
+    export let autoSelect = true
 
-    const emit = createEventDispatcher();
+    const emit = createEventDispatcher()
 
     function onClick(ev, i) {
         if (selected === i) {
             return
         }
 
-        emit('selected', i);
-        selected = i;
+        emit('selected', i)
+        if (autoSelect) {
+            selected = i
+        }
     }
 </script>
 
@@ -43,6 +46,7 @@
 <ListTile {...$$props} bold={true} breakLine={true}>
     <div class="Row container">
         {#each dataList as data, i}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div class="btn outlined{i === 0? ' first-child': ''}{selected === i? ' selected':''}" on:click={ev => onClick(ev, i)} on:mousedown={ev => ev.stopPropagation()}>
             {data.label || data}
         </div>

@@ -41,6 +41,7 @@ export default {
 
     theme: '主题',
     theme_color: '主题色 (色相)',
+    theme_dark: '深色模式',
     use_acrylic: '使用 "Acrylic" ',
     use_acrylic_extra: '性能较低的设备关闭此选项以获得更好的体验',
 

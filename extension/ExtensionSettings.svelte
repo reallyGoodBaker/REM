@@ -15,7 +15,7 @@
     export let icon = '\ue68b'
 
     const customSettings = getExtensionSettings(id)
-    console.log(customSettings)
+    // console.log(customSettings)
     const extension = extensionManifests.get(id)
 
     const s = (f, ...args) => langMapping.s(f, ...args) || f

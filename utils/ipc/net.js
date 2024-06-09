@@ -1,7 +1,11 @@
 const net = require('net')
 const fs = require('fs')
-const pipeName = `\\\\?\\pipe\\rem\\`
 const { jsonObj } = require('./utils')
+
+const pipeName = ({
+    win32: `\\\\?\\pipe\\rem\\`,
+    linux: '\0rem/',
+})[process.platform]
 
 function promiseResolvers() {
     let resolve, reject
