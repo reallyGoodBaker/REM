@@ -2,11 +2,10 @@ Object.assign(globalThis, require('../../utils/ipc/net'))
 
 const win = {
     beforeClose: Function.prototype,
-    shared: Function.prototype,
     init: Function.prototype,
 }
 
-const electron = require('electron')
+const electron = require('electron/renderer')
 
 Object.assign(globalThis, electron, {
     win,
