@@ -94,6 +94,7 @@
 
     input, textarea {
         font-family: "iconfont", Roboto, sans-serif;
+        color: var(--controlBlack);
     }
 </style>
 
