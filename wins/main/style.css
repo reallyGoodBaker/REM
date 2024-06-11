@@ -60,53 +60,54 @@ body {
 }
 
 body.dark-mode {
-    --color: #000;
+    --color: #fff;
     --controlHue: 210;
-    --controlAcrylic: hsla(var(--controlHue, 210), 80%, 98%, 0.3);
-    --controlAcrylicDark: hsla(var(--controlHue, 210), 80%, 10%, 0.2);
-    --controlColor: hsl(var(--controlHue, 210), 80%, 50%);
-    --controlBright: hsl(var(--controlHue, 210), 80%, 70%);
-    --controlBright72: hsl(var(--controlHue, 210), 80%, 72%);
-    --controlBright76: hsl(var(--controlHue, 210), 80%, 76%);
-    --controlBright80: hsl(var(--controlHue, 210), 80%, 80%);
-    --controlBright84: hsl(var(--controlHue, 210), 80%, 84%);
-    --controlBright88: hsl(var(--controlHue, 210), 80%, 88%);
-    --controlBrighter: hsl(var(--controlHue, 210), 80%, 90%);
-    --controlDark: hsl(var(--controlHue, 210), 80%, 45%);
-    --controlDarker: hsl(var(--controlHue, 210), 80%, 30%);
-    --controlNight: hsl(var(--controlHue, 210), 80%, 14%);
-    --controlWhite: hsl(var(--controlHue, 210), 80%, 98%);
-    --controlBackground: hsl(var(--controlHue, 210), 80%, 96%);
-    --controlBackground2: hsl(var(--controlHue, 210), 80%, 93%);
-    --controlBlack: hsl(var(--controlHue, 210), 20%, 6%);
-    --controlBlack2: hsl(var(--controlHue, 210), 20%, 2%);
-    --controlBlack4: hsl(var(--controlHue, 210), 20%, 4%);
-    --controlBlack8: hsl(var(--controlHue, 210), 20%, 8%);
-    --controlBlack12: hsl(var(--controlHue, 210), 20%, 12%);
-    --controlBlack16: hsl(var(--controlHue, 210), 20%, 16%);
-    --controlBlack24: hsl(var(--controlHue, 210), 20%, 24%);
-    --controlBlack36: hsl(var(--controlHue, 210), 20%, 36%);
-    --controlBlack52: hsl(var(--controlHue, 210), 20%, 52%);
-    --controlGray: hsl(var(--controlHue, 210), 10%, 70%);
+    --controlAcrylic: hsla(var(--controlHue, 210), 72%, 4%, 0.3);
+    --controlAcrylicDark: hsla(var(--controlHue, 210), 72%, 90%, 0.2);
+    --controlColor: hsl(var(--controlHue, 210), 50%, 60%);
+    --controlBright: hsl(var(--controlHue, 210), 72%, 18%);
+    --controlBright72: hsl(var(--controlHue, 210), 72%, 28%);
+    --controlBright76: hsl(var(--controlHue, 210), 72%, 24%);
+    --controlBright80: hsl(var(--controlHue, 210), 72%, 20%);
+    --controlBright84: hsl(var(--controlHue, 210), 72%, 16%);
+    --controlBright88: hsl(var(--controlHue, 210), 72%, 12%);
+    --controlBrighter: hsl(var(--controlHue, 210), 72%, 8%);
+    --controlDark: hsl(var(--controlHue, 210), 72%, 55%);
+    --controlDarker: hsl(var(--controlHue, 210), 50%, 48%);
+    --controlNight: hsl(var(--controlHue, 210), 72%, 86%);
+    --controlWhite: hsl(var(--controlHue, 210), 72%, 4%);
+    --controlBackground: hsl(var(--controlHue, 210), 40%, 5%);
+    --controlBackground2: hsl(var(--controlHue, 210), 40%, 8%);
+    --controlBlack: hsl(var(--controlHue, 210), 20%, 80%);
+    --controlBlack2: hsl(var(--controlHue, 210), 20%, 98%);
+    --controlBlack4: hsl(var(--controlHue, 210), 20%, 96%);
+    --controlBlack8: hsl(var(--controlHue, 210), 20%, 92%);
+    --controlBlack12: hsl(var(--controlHue, 210), 20%, 88%);
+    --controlBlack16: hsl(var(--controlHue, 210), 20%, 84%);
+    --controlBlack24: hsl(var(--controlHue, 210), 20%, 76%);
+    --controlBlack36: hsl(var(--controlHue, 210), 20%, 64%);
+    --controlBlack52: hsl(var(--controlHue, 210), 20%, 48%);
+    --controlGray: hsl(var(--controlHue, 210), 10%, 30%);
 
-    --controlColorAcrylic: hsla(var(--controlHue, 210), 80%, 70%, 0.5);
-    --controlGrayAcrylic: hsla(var(--controlHue, 210), 10%, 70%, 0.5);
-    --controlBlackAcrylic: hsla(var(--controlHue, 210), 20%, 52%, 0.5);
+    --controlColorAcrylic: hsla(var(--controlHue, 210), 72%, 30%, 0.5);
+    --controlGrayAcrylic: hsla(var(--controlHue, 210), 10%, 30%, 0.5);
+    --controlBlackAcrylic: hsla(var(--controlHue, 210), 20%, 48%, 0.5);
 
     --noneAcrylicBackgroundColor: var(--controlBackground);
 
     --fadeBright: rgba(0, 0, 0, 0.16);
-    --fade: rgba(0, 0, 0, 0.3);
+    --fade: rgba(255, 255, 255, 0.2);
     --fadeDark: rgba(0, 0, 0, 0.5);
 
     --dynamicControlLight: var(var(--controlBrighter));
 
-    --controlBackgroundAcrylic: hsla(var(--controlHue, 210), 80%, 96%, 0.7);
+    --controlBackgroundAcrylic: hsla(var(--controlHue, 210), 72%, 4%, 0.7);
 
     background-color: var(--controlWhite);
     color: var(--controlBlack);
 
-    --acrylicTransparent: hsla(var(--controlHue, 210), 80%, 96%, 0.3);
+    --acrylicTransparent: hsla(var(--controlHue, 210), 72%, 4%, 0.3);
+    --acrylicBackgroundColor: hsla(var(--controlHue), 20%, 50%, 0.1);
 }
 
 .column {

@@ -32,6 +32,8 @@ function init(name, defaultValue, init) {
     }
 }
 
+export let theme = {}
+
 export function initSettings() {
     init('AppSettings/beta_features', {
         showDevTools: false,
@@ -78,7 +80,6 @@ export function initSettings() {
         selected: 1
     })
 
-    let theme = {}
     init('AppSettings/theme', {
         colors: [ {label: '跟随系统'}, 2, 39, 148, 210, 270, 292, 322],
         dark: [ {label: '跟随系统'}, {label: 'light', value: false}, {label: 'dark', value: true}],
@@ -102,7 +103,7 @@ export function initSettings() {
         }
 
         const sysHue = selected ? colors[selected] : hue(sysTheme.accent)
-        const darkMode = selectedDark ? dark[selectedDark].value : sysTheme.darksysTheme.dark
+        const darkMode = selectedDark ? dark[selectedDark].value : sysTheme.dark
         theme = { colorHue: sysHue, dark: darkMode } 
         setColor(sysHue)
         setDarkMode(darkMode)

@@ -11,7 +11,8 @@
     import { NETEASE_IMG_SMALL } from "../../utils/stores/img.js"
     import { AudioPlayer } from '../../utils/player/player.js'
     import { onMount } from "svelte";
-    import { interval } from "../../utils/core/interval";
+    import { interval } from "../../utils/core/interval"
+    import { theme } from '../settings/initSettings'
 
     let l = langMapping.getMapping()
     rem.on('langChange', lang => {
@@ -49,8 +50,8 @@
 
     let ctx, container
 
-    function setColor() {
-        const colorStr = getColor(ctx, 1)
+    async function setColor() {
+        const colorStr = getColor(ctx, theme.dark ? 0.3 : 1)
         container.style.setProperty('--color', colorStr)
     }
 

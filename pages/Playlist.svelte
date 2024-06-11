@@ -322,14 +322,16 @@
         color: var(--controlWhite);
         padding: 10px;
         border: none;
-        border-radius: 8px;
+        border-radius: 12px;
         margin-right: 4px;
         font-size: medium;
         text-align: center;
     }
 
     .btn.big {
+        font-size: small;
         height: 16px;
+        min-width: 16px;
         font-weight: bold;
         line-height: 16px;
     }
@@ -404,7 +406,7 @@
         </div>
 
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div class="Row">
+        <div class="Row" style="gap: 4px;">
             <div class="btn big accent" on:click={playAll}> {'\ue615'} 播放 </div>
             <div class="btn big bright" on:click={playRandom}>{'\ue619'}</div>
         </div>

@@ -278,7 +278,6 @@
         padding: 24px;
         background: linear-gradient(180deg, rgba(0,0,0,0.1) var(--start), var(--color) calc(var(--start) + 100px));
         overflow: hidden;
-        box-shadow: 0px 4px 12px var(--color);
         height: 375px;
         overflow: hidden;
     }
