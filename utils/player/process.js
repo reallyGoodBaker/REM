@@ -159,6 +159,8 @@ export function initProcessor(ctx, srcNode, destNode) {
 
     setEqEnable(processConfig.eq.enable)
     dynamicsCompressorEnable(processConfig.dynamicsCompressor)
+
+    return fader
 }
 
 function initProcessorConfig() {

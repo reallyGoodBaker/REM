@@ -7,9 +7,10 @@ const RemStore = require('../../utils/stores/rem-store.js')
 const { watchNetworkChange } = require('../../utils/network/server.js')
 const { initExtRuntime } = require('../../extension/initExtensionHost')
 const initMainInvoker = require('../../utils/main-invoker/node.js')
-const { publish, init: initBroker } = require('../../utils/ipc/main.js')
+const { publish, write, init: initBroker } = require('../../utils/ipc/main.js')
 const { getExtId } = require('../../utils/ipc/extmapping.js')
 const { registerProtocol } = require('./protocol.js')
+const { initDevicesMain } = require('../../utils/devices/node/index.js')
 
 const remStore = new RemStore()
 
@@ -77,6 +78,7 @@ module.exports = function buildWindow() {
 
     initExtRuntime()
     initBroker()
+    initDevicesMain()
     initMainWin(browserWindow)
     activeAppBarBtns(browserWindow)
     const extLoader = initExtensions(browserWindow)
@@ -179,7 +181,16 @@ function initMainWin(browserWindow) {
 
     ipcMain.handle('app?theme', async () => {
         return await invoker.invoke('app?theme')
-    })    
+    })
+
+    let pluginOutput = false
+    ipcMain.on('output:setPluginOutput', (_, o) => pluginOutput = o)
+
+    ipcMain.on('pcm', (_, buffer) => {
+        if (pluginOutput) {
+            write('pcm', Buffer.from(buffer.buffer))
+        }
+    })
 
 }
 

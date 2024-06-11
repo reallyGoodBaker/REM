@@ -14,6 +14,15 @@ function delegate(from, to) {
     })
 }
 
+exports.write = function publish(channelName, buffer) {
+    const channel = channels.get(channelName)
+    if (channel) {
+        channel.forEach(s => {
+            s.write(buffer)
+        })
+    }
+}
+
 exports.publish = function publish(channelName, ...args) {
     const channel = channels.get(channelName)
     if (channel) {

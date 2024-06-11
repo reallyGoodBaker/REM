@@ -45,7 +45,10 @@
         "linux": {
             "maintainer": "rgb39",
             "icon": "./icons",
-            "target": ["deb", "tar.xz"],
+            "target": [
+                "deb",
+                "tar.xz"
+            ],
             "desktop": {
                 "Icon": "rem"
             }

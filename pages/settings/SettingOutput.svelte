@@ -5,6 +5,7 @@
     import { setOutputDeviceId, indexOfOutputDevice } from '../../utils/devices/browser/output.js'
     import { onDestroy, onMount } from "svelte";
     import ToggleListTile from '../components/ToggleListTile.svelte'
+    import { store } from '../../utils/stores/base'
 
     import { rem } from '../../utils/rem.js'
     import {enableAnc} from '../../utils/player/anc.js'
@@ -15,6 +16,7 @@
     async function updateOutputDeviceSelected() {
         outputDeviceList = [...(await getAudioDevices())]
         outputSelected = await indexOfOutputDevice(outputDeviceList)
+        rem.emitNone('setOutputDevice', outputDeviceList[outputSelected])
     }
 
     onDestroy(() => {
@@ -33,6 +35,11 @@
     })
 
     let useAnc = false
+    let { pluginOutput } = store.getSync('AppSettings/output')
+
+    function save() {
+        store.set('AppSettings/output', { pluginOutput })
+    }
 
     function onUseAnc({detail}) {
         useAnc = false
@@ -51,6 +58,17 @@
         on:selected={async ev => {
             outputSelected = ev.detail
             setOutputDeviceId(outputDeviceList[ev.detail].deviceId)
+        }}
+    />
+    <ToggleListTile
+        data={lang.s('output')}
+        extra={lang.s('plugin_output')}
+        useAvatar={false}
+        isUrl={false}
+        bind:checked={pluginOutput}
+        on:toggle={({ detail }) => {
+            rem.emitNone('setPluginOutput', detail)
+            save()
         }}
     />
     {#if rem.isBeta}

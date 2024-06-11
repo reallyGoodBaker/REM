@@ -32,6 +32,7 @@ export default {
     device_extra: 'When the output device in use changes, it will switch to the default device',
     anc: 'Active Noise Cancellation *',
     anc_extra: 'Need access to your microphone (This is an experimental feature)',
+    plugin_output: 'Use the plugin to output audio',
     
     fast: 'Fast',
     medium: 'Medium',
@@ -112,6 +113,7 @@ export default {
     $playlist: 'Control your Playlist',
     $new_window: 'Open a new window',
     $replace_main_window: 'Replace the main window',
+    $output: 'Get output info',
 
     notification: 'Notification',
     

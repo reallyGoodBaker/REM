@@ -16,16 +16,19 @@ interface Socket {
 }
 
 declare global {
-    const win: Win
-    const contextBridge: Electron.ContextBridge
-    const ipcRenderer: Electron.IpcRenderer
-    const webFrame: Electron.WebFrame
-    const webUtils: Electron.WebUtils
+    interface Window {
+        readonly win: Win
+        readonly contextBridge: Electron.ContextBridge
+        readonly ipcRenderer: Electron.IpcRenderer
+        readonly webFrame: Electron.WebFrame
+        readonly webUtils: Electron.WebUtils
 
-    const server: (name: string, listener?: (socket: Socket) => void) => void
-    const connect: (name: string) => Socket
-    const subscribe: (type: string, receiver?: (val: any) => void) => Socket
-    const unlink: (name: string) => void
+        readonly server: (name: string, listener?: (socket: Socket) => void) => void
+        readonly connect: (name: string) => Socket
+        readonly subscribe: (type: string, receiver?: (val: any) => void) => Socket
+        readonly subscribePcm: (type: string, receiver?: (val: Buffer) => void) => Socket
+        readonly unlink: (name: string) => void
 
-    const invoker: InvokerServer
+        readonly invoker: InvokerServer
+    }
 }

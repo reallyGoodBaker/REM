@@ -4,6 +4,8 @@ import { setClearFont } from "../../utils/style/font"
 import { rem } from "../../utils/rem"
 import { hue } from '../../utils/math.js'
 import { invoker } from '../../utils/main-invoker/browser.js'
+import { indexOfOutputDevice, setPluginOutput } from "../../utils/devices/browser/output"
+import { getAudioDevices } from '../../utils/devices/browser/find'
 
 function lang(key) {
     return langMapping.s(key)
@@ -113,5 +115,50 @@ export function initSettings() {
         clearFont: false
     }, val => {
         setClearFont(val.clearFont)
+    })
+
+    init('AppSettings/output', {
+        pluginOutput: false,
+    }, async ({ pluginOutput }) => {
+        const { promise, resolve } = Promise.withResolvers()
+        const wrap = d => ({
+            label: d.label.includes(' -') ? d.label.replace(/^.* - /, '') : d.label,
+            deviceId: d.deviceId, 
+        })
+
+        let deviceRef = new Proxy({ value: null }, {
+            get(target, prop) {
+                return target[prop]
+            },
+            set(target, prop, value) {
+                if (!target[prop]) {
+                    resolve(wrap(value))
+                }
+                target[prop] = value
+                return true
+            }
+        })
+
+        invoker.handle('output?pluginOutput', () => pluginOutput)
+        invoker.handle('output?device', () => {
+            if (deviceRef.value) {
+                return wrap(deviceRef.value)
+            }
+
+            return promise
+        })
+        rem.on('setOutputDevice', d => {
+            deviceRef.value = d
+            hooks.send('output:setOutputDevice', d)
+        })
+        rem.on('setPluginOutput', pluginOutput => {
+            hooks.send('output:setPluginOutput', pluginOutput)
+            setPluginOutput(pluginOutput)
+        })
+
+        const devices = await getAudioDevices()
+        const selected = await indexOfOutputDevice(devices)
+        rem.emitNone('setOutputDevice', devices[selected])
+        rem.emitNone('setPluginOutput', pluginOutput)
     })
 }

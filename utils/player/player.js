@@ -7,6 +7,7 @@ import {LifeCycle, rem} from '../rem.js'
 import { invoker } from '../main-invoker/browser.js'
 import { UrlPlayerAdapter } from './url-player-adapter.js'
 import { BufferPlayerAdapter } from './buffer-player-adapter.js'
+import { initPcmForward } from './pcm-forward.js'
 
 initAudioDevicesFind()
 
@@ -186,8 +187,9 @@ LifeCycle.when('runtimeReady').then(() => {
 
     const globalPlayer = new AudioPlayer()
 
-    initProcessor(AudioPlayer.audioCtx, srcNode, destNode)
+    const lastProcessNode = initProcessor(AudioPlayer.audioCtx, srcNode, destNode)
     initAncProcessor(AudioPlayer.audioCtx, destNode)
+    initPcmForward(AudioPlayer.audioCtx, lastProcessNode, destNode)
     initOutputAudio(destNode.stream)
 
     AudioPlayer.on('play', () => AudioPlayer.isPlayingIgnoreFade = true)

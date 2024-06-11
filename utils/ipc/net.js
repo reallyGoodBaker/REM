@@ -98,6 +98,14 @@ function subscribe(type, receiver=Function.prototype) {
     return new Socket(socket)
 }
 
+function subscribePcm(type, receiver=Function.prototype) {
+    const socket = net.connect(pipeName + 'subscribe')
+    socket.write(type)
+    socket.on('data', receiver)
+
+    return new Socket(socket)
+}
+
 module.exports = {
-    server, connect, subscribe, unlink,
+    server, connect, subscribe, unlink, subscribePcm,
 }
