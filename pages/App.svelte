@@ -205,7 +205,7 @@ window.Pager = (() => {
             if(i > 1) removeByIndex(i)
         }, removeCurrent,
         setOnSearch, setOnSearchInput, setSearchPlaceholder,
-        performSearch, performSearchInput,
+        performSearch, performSearchInput, clearSearchListeners,
     }
 
 })()

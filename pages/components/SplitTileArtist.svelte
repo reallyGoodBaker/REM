@@ -18,7 +18,7 @@
     {#each data as ar}
         <Link
             text={ar.name}
-            cssText={'--color: #000; line-height: 1.2em;'}
+            cssText={'line-height: 1.2em;'}
             on:click={() => window.Pager.openNew(ar.name, Artist, { id: ar.id })}
         />
     {/each}

@@ -1,17 +1,21 @@
 const {
     BrowserWindow, ipcMain, app, nativeImage, screen,
-    Menu,
+    Menu, systemPreferences, nativeTheme,
 } = require('electron')
 const path = require('path')
 const RemStore = require('../../utils/stores/rem-store.js')
-const {watchNetworkChange} = require('../../utils/network/server.js')
-const {initExtRuntime} = require('../../extension/initExtensionHost')
+const { watchNetworkChange } = require('../../utils/network/server.js')
+const { initExtRuntime } = require('../../extension/initExtensionHost')
+const initMainInvoker = require('../../utils/main-invoker/node.js')
+const { publish, write, init: initBroker } = require('../../utils/ipc/main.js')
+const { getExtId } = require('../../utils/ipc/extmapping.js')
+const { registerProtocol } = require('./protocol.js')
+const { initDevicesMain } = require('../../utils/devices/node/index.js')
 
 const remStore = new RemStore()
 
 Menu.setApplicationMenu(null)
 watchNetworkChange()
-
 
 const appLock = app.requestSingleInstanceLock()
 if (!appLock) app.exit()
@@ -19,6 +23,8 @@ if (!appLock) app.exit()
 function scaleDisplayProp(num, scale=0.7) {
     return ~~(num * scale)
 }
+
+registerProtocol()
 
 module.exports = function buildWindow() {
     const {width: rawW, height: rawH} = screen.getPrimaryDisplay().bounds
@@ -35,8 +41,10 @@ module.exports = function buildWindow() {
         backgroundColor: '#d3ece0',
         minWidth: width,
         minHeight: height,
+        roundedCorners: true,
 
         webPreferences: {
+            sandbox: false,
             preload: path.resolve(__dirname, './preload.js'),
         }
     })
@@ -48,10 +56,14 @@ module.exports = function buildWindow() {
 
     browserWindow.on('closed', () => {
         browserWindow = null;
-    });
+    })
 
     app.on('second-instance', () => {
-        browserWindow.show()
+        if (browserWindow) {
+            browserWindow.show()
+        } else {
+            app.exit(1)
+        }
     })
 
     ipcMain.on('win:title', (_, title) => {
@@ -61,17 +73,16 @@ module.exports = function buildWindow() {
     ipcMain.once('win:show-main', () => {
         globalThis.playerReady = true
 
-        if (process.platform === 'win32') {
-            setThumbarButtons(browserWindow)
-        }
-
         ipcMain.emit('win:loaded')
     })
 
     initExtRuntime()
+    initBroker()
+    initDevicesMain()
     initMainWin(browserWindow)
     activeAppBarBtns(browserWindow)
-    initExtensions(browserWindow)
+    const extLoader = initExtensions(browserWindow)
+    initComponents(browserWindow, extLoader)
 
     browserWindow.show()
 
@@ -80,9 +91,20 @@ module.exports = function buildWindow() {
 }
 
 /**
+ * @type {{ setPlay(): void, setPause(): void, update(): void }}
+ */
+let thumbButtonController = null
+
+/**
  * @param {BrowserWindow} browserWindow 
  */
 function initMainWin(browserWindow) {
+    const invoker = initMainInvoker(browserWindow)
+
+    if (process.platform === 'win32') {
+        thumbButtonController = initThumbarButtons(browserWindow, invoker)
+    }
+
     browserWindow.on('maximize', () => {
         browserWindow.webContents.send('win:max')
     })
@@ -90,6 +112,8 @@ function initMainWin(browserWindow) {
     browserWindow.on("unmaximize", () => {
         browserWindow.webContents.send('win:unmax', browserWindow.getPosition())
     })
+
+    browserWindow.on('close', () => app.quit())
 
     ipcMain.on('online', () => {
         browserWindow.webContents.send('online')
@@ -127,6 +151,10 @@ function initMainWin(browserWindow) {
         return process.platform === 'darwin'
     })
 
+    ipcMain.handle('app?platform', () => {
+        return process.platform
+    })
+
     ipcMain.on('store:getSync', (ev, k) => {
         ev.returnValue = remStore.get(k)
     })
@@ -140,6 +168,30 @@ function initMainWin(browserWindow) {
         browserWindow.webContents.send('win:focus')
     })
 
+    ipcMain.handle('win:sys-colors', () => {
+        if (process.platform === 'win32' || process.platform === 'darwin') {
+            return {
+                accent: systemPreferences.getAccentColor(),
+                dark: nativeTheme.shouldUseDarkColors,
+            }
+        }
+
+        return null
+    })
+
+    ipcMain.handle('app?theme', async () => {
+        return await invoker.invoke('app?theme')
+    })
+
+    let pluginOutput = false
+    ipcMain.on('output:setPluginOutput', (_, o) => pluginOutput = o)
+
+    ipcMain.on('pcm', (_, buffer) => {
+        if (pluginOutput) {
+            write('pcm', Buffer.from(buffer.buffer))
+        }
+    })
+
 }
 
 /**
@@ -147,7 +199,7 @@ function initMainWin(browserWindow) {
  */
 function activeAppBarBtns(browserWindow) {
     ipcMain.on('win:close', () => {
-        browserWindow.close()
+        app.quit()
     })
 
     ipcMain.on('win:min', () => {
@@ -176,7 +228,7 @@ function activeAppBarBtns(browserWindow) {
 
 }
 
-function setThumbarButtons(win) {
+function initThumbarButtons(win, invoker) {
 
     const playIcon = nativeImage.createFromPath(path.resolve(__dirname, '../icons/play.png')),
         pauseIcon = nativeImage.createFromPath(path.resolve(__dirname, '../icons/pause.png')),
@@ -189,22 +241,22 @@ function setThumbarButtons(win) {
             win.webContents.send('player:previous')
         }
     },
-        nextBtn = {
-            icon: nextIcon,
-            click() {
-                win.webContents.send('player:next')
-            }
-        },
-        playBtn = {
-            icon: playIcon,
-            click: onPlayBtn
-        },
-        pauseBtn = {
-            icon: pauseIcon,
-            click: onPauseBtn
-        },
-        playBtns = [preBtn, playBtn, nextBtn],
-        pauseBtns = [preBtn, pauseBtn, nextBtn]
+    nextBtn = {
+        icon: nextIcon,
+        click() {
+            win.webContents.send('player:next')
+        }
+    },
+    playBtn = {
+        icon: playIcon,
+        click: onPlayBtn
+    },
+    pauseBtn = {
+        icon: pauseIcon,
+        click: onPauseBtn
+    },
+    playBtns = [preBtn, playBtn, nextBtn],
+    pauseBtns = [preBtn, pauseBtn, nextBtn]
 
     function onPlayBtn() {
         win.webContents.send('player:play')
@@ -222,15 +274,29 @@ function setThumbarButtons(win) {
         win.setThumbarButtons(pauseBtns)
     }
 
+    async function update() {
+        const playing = await invoker.invoke('player.isPlaying')
+        if (playing) {
+            setPause()
+        } else {
+            setPlay()
+        }
+    }
+
     ipcMain.on('thumbar:play', setPlay)
     ipcMain.on('thumbar:pause', setPause)
 
     win.setThumbarButtons(playBtns)
+
+    return {
+        setPlay, setPause, update,
+    }
 }
 
 
-const {loaderBuilder} = require('../../extension/host/loader')
-const {Extensions} = require('../../utils/appPath/main')
+const { loaderBuilder, ExtensionLoader } = require('../../extension/host/loader')
+const { Extensions } = require('../../utils/appPath/main')
+const { getLogger } = require('../../utils/easy-log/node.js')
 
 /**
  * @param {BrowserWindow} bw 
@@ -238,6 +304,47 @@ const {Extensions} = require('../../utils/appPath/main')
 function initExtensions(bw) {
     const loader = loaderBuilder(bw)
 
-    loader(path.resolve(__dirname, '../../extension/vendor'))
-    loader(Extensions)
+    return loader(Extensions)
+}
+
+/**
+ * @param {BrowserWindow} bw 
+ * @param {ExtensionLoader} extLoader
+ */
+function initComponents(bw, extLoader) {
+    const extensions = extLoader.enumIds()
+
+    ipcMain.on('app:restoreMainWindow', () => {
+        bw.show()
+        thumbButtonController?.update()
+    })
+
+    ipcMain.on('app:hideMainWindow', (ev) => {
+        const winId = BrowserWindow.fromWebContents(ev.sender).id
+        const extId = getExtId(winId)
+
+        if (!extId || !extensions.includes(extId)) {
+            return
+        }
+
+        const ext = extLoader.extensions.get(extId)
+
+        if (!ext || !ext?.manifest?.components?.includes('replace_main_window')) {
+            return
+        }
+
+        bw.hide()
+    })
+
+    bw.on('hide', () => {
+        publish('mainWindowVisible', false)
+    })
+
+    bw.on('show', () => {
+        publish('mainWindowVisible', true)
+    })
+
+    ipcMain.handle('win:mainWindowVisible', () => {
+        return bw.isVisible()
+    })
 }

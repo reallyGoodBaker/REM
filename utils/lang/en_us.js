@@ -32,6 +32,7 @@ export default {
     device_extra: 'When the output device in use changes, it will switch to the default device',
     anc: 'Active Noise Cancellation *',
     anc_extra: 'Need access to your microphone (This is an experimental feature)',
+    plugin_output: 'Use the plugin to output audio',
     
     fast: 'Fast',
     medium: 'Medium',
@@ -42,6 +43,7 @@ export default {
     
     theme: 'Theme',
     theme_color: 'Theme color (Hue)',
+    theme_dark: 'Dark mode',
     use_acrylic: 'Use "Acrylic" ',
     use_acrylic_extra: 'Turn off this option for devices with lower performance for a better experience',
     
@@ -109,6 +111,9 @@ export default {
     $notification: 'Send notifications to you',
     $new_page: 'Create new pages',
     $playlist: 'Control your Playlist',
+    $new_window: 'Open a new window',
+    $replace_main_window: 'Replace the main window',
+    $output: 'Get output info',
 
     notification: 'Notification',
     

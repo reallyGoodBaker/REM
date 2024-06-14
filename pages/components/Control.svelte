@@ -4,7 +4,6 @@
     import { globalMetadata } from '../../utils/player/metadata.js'
     import { MainPlaylist } from '../../utils/player/playlist.js'
     import { rem, LifeCycle } from '../../utils/rem.js'
-    import { vsync } from '../../utils/core/vsync.js'
     import { store } from '../../utils/stores/base.js'
     import { getColor } from '../../utils/style/imageBasicColor.js'
     import Link from "./Link.svelte"
@@ -12,6 +11,8 @@
     import { NETEASE_IMG_SMALL } from "../../utils/stores/img.js"
     import { AudioPlayer } from '../../utils/player/player.js'
     import { onMount } from "svelte";
+    import { interval } from "../../utils/core/interval"
+    import { theme } from '../settings/initSettings'
 
     let l = langMapping.getMapping()
     rem.on('langChange', lang => {
@@ -49,8 +50,8 @@
 
     let ctx, container
 
-    function setColor() {
-        const colorStr = getColor(ctx, 1)
+    async function setColor() {
+        const colorStr = getColor(ctx, theme.dark ? 0.3 : 1)
         container.style.setProperty('--color', colorStr)
     }
 
@@ -70,6 +71,8 @@
         let cur = AudioPlayer.seek()
         seekValue = (cur/duration)*100
         currentTimeEle.innerText = s(cur)
+
+        hooks.send('win:playstate', playing, cur / duration, duration, cur)
     }
     rem.on('setControlsContent', setContent)
     rem.on('loadedContent', () => {
@@ -79,7 +82,7 @@
             seekValue = 0
             checker.cancel()
         }
-        checker = vsync(_progressUpdate)
+        checker = interval(_progressUpdate, 200)
     });
 
     let volume;
@@ -378,6 +381,7 @@
     
 
     <div class="row center">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div class="column" style="margin: 4px 0px;">
             <div class="btn big btn-nb{randomPlay?' active':''}"
                 on:click={() => {

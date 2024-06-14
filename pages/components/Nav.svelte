@@ -54,7 +54,7 @@
     }
 
     function fresh() {
-        requestIdleCallback(() => {
+        requestAnimationFrame(() => {
             const _tabs = tabs.slice()
             tabs = _tabs
         })
@@ -223,6 +223,7 @@
 </style>
 
 <div class="Column stretch {overflowed? 'overflowed': ''}">
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
         class="btn new-icon light left Column"
         on:click={() => scroll(-oneThirdVw)}
@@ -232,6 +233,7 @@
         <div class="Row c" bind:this={inner}>
             {#each tabs as tab, i}
                 {#if i === selected}
+                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                     {#if tab.startsWith('#')}
                         <div id="nav_selected" class="tab selected tab-text" on:click={() => onClick(i)}>{s(tab)}</div>
                     {:else}
@@ -241,6 +243,7 @@
                         </div>
                     {/if}
                 {:else}
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <div class="tab tab-text Row" on:click={() => onClick(i)}>
                         <span>{s(tab)}</span>
                         {#if !tab.startsWith('#')}
@@ -252,6 +255,7 @@
         </div>
     </div>
 
+     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
         class="btn new-icon light right Column"
         on:click={() => scroll(oneThirdVw)}

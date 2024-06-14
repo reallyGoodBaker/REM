@@ -14,8 +14,9 @@
             oldNotif.close()
         }
 
-        const notif = new Notification({ target: container, props: notification })
-        globalNotifications[notification.channel] = notif
+        globalNotifications[notification.channel] = notification.dom
+            ? (container.appendChild(notification.dom), notification.dom)
+            : new Notification({ target: container, props: notification })
     }
 
     onMount(() => {

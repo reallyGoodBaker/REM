@@ -1,4 +1,4 @@
-const { parentPort, MessagePort } = require('worker_threads')
+const { parentPort, MessagePort, isMainThread } = require('worker_threads')
 const { X509Certificate } = require('crypto')
 const { Blob } = require('buffer')
 const { EventEmitter } = require('stream')
@@ -29,13 +29,15 @@ function invoke(name, ...args) {
     })
 }
 
-parentPort.on('message', v => {
-    if (typeof v.uid === 'undefined') {
-        return _handleMainReturned(v)
-    }
-
-    _handleMainRequest(v)
-})
+if (!isMainThread) {
+    parentPort.on('message', v => {
+        if (typeof v.uid === 'undefined') {
+            return _handleMainReturned(v)
+        }
+    
+        _handleMainRequest(v)
+    })
+}
 
 function _handleMainReturned({ id, val, err }) {
     let handler = invokeCallbacks.get(id)
@@ -85,10 +87,9 @@ async function ready() {
 }
 
 async function whenReady(cb) {
-    if (await ready())
-        cb.call(null)
-    else
-        provide('ready', cb)   
+    await ready()
+        ? cb.call(null)
+        : provide('ready', cb)
 }
 
 module.exports = {

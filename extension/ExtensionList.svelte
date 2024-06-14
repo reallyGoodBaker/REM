@@ -24,10 +24,6 @@
             icon = icon.replace(/^\.\/(.*)/g, '$1')
         }
 
-        if (icon.endsWith('.v.png')) {
-            return `file://${AppPaths.ExtVendor}/${folderName}/${icon}`
-        }
-        
         if (icon.endsWith('.png')) {
             return `file://${AppPaths.Extensions}/${folderName}/${icon}`
         }

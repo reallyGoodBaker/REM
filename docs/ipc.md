@@ -8,7 +8,7 @@
 
 | 渲染进程         | 主进程              |
 | ------------ | ---------------- |
-| hooks.send() | ipcMain.handle() |
+| hooks.invoke() | ipcMain.handle() |
 
 | 主进程                     | 插件线程      |
 | ----------------------- | --------- |
@@ -28,4 +28,16 @@
 export const rem: EventEmitter
 ```
 
+
+
+
+
+### IPC (pipe)
+
+
+
+#### 服务器
+
+```ts
+```
 

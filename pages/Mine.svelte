@@ -34,10 +34,10 @@
 
         store.set('dailyDesktop', {
             timeStamp: new Date().getTime(), url
-        });
+        })
     }
 
-    onMount(getOneDayDesktop);
+    onMount(getOneDayDesktop)
 
     let pageStore = Pager.getContext().save
     async function getUserPlaylist() {
@@ -229,7 +229,7 @@
     })
     onMount(() => {
         const {save} = Pager.getContext()
-        requestIdleCallback(() => scrollv.setOffsetRatio(save.offsetRatio))
+        requestAnimationFrame(() => scrollv.setOffsetRatio(save.offsetRatio))
 
         Pager.setSearchPlaceholder('搜索我喜好的')
         Pager.setOnSearchInput(v => console.log(v))
@@ -278,7 +278,6 @@
         padding: 24px;
         background: linear-gradient(180deg, rgba(0,0,0,0.1) var(--start), var(--color) calc(var(--start) + 100px));
         overflow: hidden;
-        box-shadow: 0px 4px 12px var(--color);
         height: 375px;
         overflow: hidden;
     }
@@ -419,11 +418,13 @@
     <img
         class="collection-bgc"
         src={desktopUrl} alt="" bind:this={imgBgc}/>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div title="{s('unfold')}" class="toggle{!collectionFolded?' unfold':''}" on:click={changeHeight}>▼</div>
     
     <Measurable bind:this={meter} cssStyle="width: 100%">
     <div class="column card-container">
     {#each playlists as list, i}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div class="card row active" title={list.name} on:click={() => {
             let id = list.id;
 
@@ -449,6 +450,7 @@
             <div class="pic">
                 <Image fit={true} width={160} height={160} radius={'4px'} src={list.coverImgUrl + NETEASE_IMG_LARGE} borderWidth={'0px'}/>
             </div>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div class="btn light FAB"
                 on:click|stopPropagation={() => {fastPlay(list.id)}}
                 on:mouseenter|stopPropagation={dullParent}
@@ -466,6 +468,7 @@
 
 {#if artistSublist.length}
 <div class="Row" row-title="{s('favorite_artists')}" style="--item-height: 200px; --item-width: 200px; align-self: flex-start;">
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="btn light"
         style="position: absolute; left: 200px; top: 0px; border-radius: 6px;"
         on:click={() => {
@@ -483,6 +486,7 @@
         artistSublist.count
     )}</div>
     {#each artistSublist as artist, i}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div class="Column artist-c active" on:click={() => {
             window.Pager.openNew(artist.name, Artist, artist)
         }}>
@@ -501,6 +505,7 @@
 
 {#if albumSublist.length}
 <div class="Row" row-title="{s('favorite_albums')}" style="--item-height: 200px; --item-width: 200px; align-self: flex-start;">
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="btn light"
         style="position: absolute; left: 200px; top: 0px; border-radius: 6px;"
         on:click={() => {
@@ -518,6 +523,7 @@
         albumSublist.count
     )}</div>
     {#each albumSublist as al, i}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div class="Column artist-c al active"
             on:click={async () => {
                 let id = al.id
@@ -542,6 +548,7 @@
                 })
             }}
         >
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div class="btn light FAB"
                 on:click|stopPropagation={() => {fastPlay(al.id, 1)}}
                 on:mouseenter|stopPropagation={dullParent}

@@ -6,6 +6,7 @@ const { EventEmitter } = require('events')
 const { X509Certificate } = require('crypto')
 const { Blob } = require('buffer')
 const serviceMap = require('./serviceMap')
+const { openWindow, destroyWindow, closeWindow } = require('./win')
 
 class ExtensionHost {
     events = new EventEmitter()
@@ -92,6 +93,10 @@ class ExtensionHost {
             this._registerComponents()
         }
         this._registerActivationChange(bw)
+
+        if (this.manifest.components.includes('new_window')) {
+            this._listenWindowEvents()
+        }
 
         this.events.on('@@@ready', ({ id }) => {
             this.extension.postMessage({ id, val: globalThis.playerReady, err: null })
@@ -196,6 +201,7 @@ class ExtensionHost {
     _registerComponent = (component) => {
         for (const key of this._getComponentKeys(component)) {
             const handler = async ({ args, id }) => {
+                // console.log(args)
                 let val
                     ,err = val = null
 
@@ -247,6 +253,24 @@ class ExtensionHost {
         return transList
     }
 
+    _listenWindowEvents = () => {
+        const ev = this.events
+
+        ev.on('@win:open', ({ id, args: [ file, options ] }) => {
+            const uuid = openWindow(file, options, this.manifest)
+            this.extension.postMessage({ id, val: uuid })
+        })
+
+        ev.on('@win:destroy', ({ id, args: [ uuid ] }) => {
+            destroyWindow(uuid)
+            this.extension.postMessage({ id })
+        })
+
+        ev.on('@win:close', ({ id, args: [ uuid ] }) => {
+            closeWindow(uuid)
+            this.extension.postMessage({ id })
+        })
+    }
 
 }
 

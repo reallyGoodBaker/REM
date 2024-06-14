@@ -1,17 +1,19 @@
 {
     "name": "rem",
-    "version": "0.1.15",
-    "description": "Tangerine",
+    "version": "0.1.18",
+    "description": "Water Melon",
     "main": "./main.js",
     "scripts": {
-        "build-app": "rollup -c && electron-builder",
-        "build": "rollup -c",
+        "build-icons": "electron-icon-builder -i=./icon.png -f",
+        "build-app": "npm run build && electron-builder",
+        "build": "rollup -c && npm run build-icons",
         "start": "rollup -c && electron .",
         "postinstall": "electron-builder install-app-deps"
     },
     "author": "RGB",
     "license": "GPLv2",
     "dependencies": {
+        "compressing": "^1.10.1",
         "music-metadata": "^7.12.6",
         "NeteaseCloudMusicApi": "^4.13.6",
         "node-fetch": "^2.6.7"
@@ -19,7 +21,8 @@
     "devDependencies": {
         "@rollup/plugin-commonjs": "^22.0.0",
         "@rollup/plugin-node-resolve": "^13.3.0",
-        "electron": "^18.2.0",
+        "electron": "^30.0.8",
+        "electron-icon-builder": "^2.0.1",
         "picomatch": "^2.3.1",
         "rollup": "^2.73.0",
         "rollup-plugin-css-only": "^3.1.0",
@@ -38,6 +41,17 @@
             "!*.md",
             "!rollup.config.js",
             "!icon.png"
-        ]
+        ],
+        "linux": {
+            "maintainer": "rgb39",
+            "icon": "./icons",
+            "target": [
+                "deb",
+                "tar.xz"
+            ],
+            "desktop": {
+                "Icon": "rem"
+            }
+        }
     }
 }

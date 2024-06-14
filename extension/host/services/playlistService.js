@@ -1,9 +1,10 @@
 const initInvokerService = require('../../../utils/main-invoker/node')
+const { server } = require('../../../utils/ipc/net')
+const { json } = require('../../../utils/ipc/utils')
 
 module.exports = function (bw) {
     const invoker = initInvokerService(bw)
-
-    return new Proxy({
+    const proxy = new Proxy({
         keys() {
             return [
                 ':next', ':previous', ''
@@ -20,4 +21,14 @@ module.exports = function (bw) {
         },
         set() { return false }
     })
+
+    server('playlist', s => {
+        s.on('data', async d => {
+            const v = await proxy['playlist' + d.toString('utf-8')]()
+
+            s.write(json(v))
+        })
+    })
+
+    return proxy
 }

@@ -4,6 +4,7 @@ import { LifeCycle } from "../../utils/rem.js"
 import { safeStore, store } from "../../utils/stores/base.js"
 import { home } from "./services/home-provider"
 import { loadExtensionSettings } from "./setting/settings-loader.js"
+import { getPath } from '../../utils/appPath/renderer.js'
 
 const loadedUIExts = new Set()
 
@@ -54,9 +55,7 @@ async function loadModules(m) {
     }
 
     const uiExt = await import(
-        `file://${path.endsWith('.v.js')
-            ? AppPaths.ExtVendor
-            : AppPaths.Extensions}/${m.folderName}/${path}`)
+        `file://${await getPath('Extensions')}/${m.folderName}/${path}`)
     const settings = safeStore(`ExtensionSettings/${m.id}`)
 
     __currentModule = m

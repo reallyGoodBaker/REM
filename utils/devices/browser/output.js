@@ -1,7 +1,9 @@
 const outputAudio = new Audio()
+let _stream = null
 
 export function initOutputAudio(stream) {
-    outputAudio.srcObject = stream
+    _stream = stream
+    outputAudio.srcObject = _stream
     outputAudio.play()
 }
 
@@ -18,6 +20,16 @@ export async function setOutputDeviceId(id) {
         }
 
         return true
+    }
+}
+
+export function setPluginOutput(bool=true) {
+    outputAudio.srcObject = bool
+        ? null
+        : _stream
+
+    if (!bool) {
+        outputAudio.play()
     }
 }
 

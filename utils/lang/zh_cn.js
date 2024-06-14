@@ -31,6 +31,7 @@ export default {
     device_extra: '正在使用的输出设备变化时将会切换到默认设备',
     anc: '主动降噪*',
     anc_extra: '需要访问你的麦克风 (这是个实验性的功能)',
+    plugin_output: '使用插件输出',
 
     fast: '快',
     medium: '中',
@@ -41,6 +42,7 @@ export default {
 
     theme: '主题',
     theme_color: '主题色 (色相)',
+    theme_dark: '深色模式',
     use_acrylic: '使用 "Acrylic" ',
     use_acrylic_extra: '性能较低的设备关闭此选项以获得更好的体验',
 
@@ -108,6 +110,9 @@ export default {
     $notification: '发送通知',
     $new_page: '创建新的页面',
     $playlist: '控制你的播放列表',
+    $new_window: '打开一个新窗口',
+    $replace_main_window: '替换主窗口',
+    $output: '获取输出设备信息',
     
     notification: '通知',
 

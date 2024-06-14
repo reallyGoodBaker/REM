@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const {Data} = require('../appPath/main')
+const { Data } = require('../appPath/main')
 const APPSTORE = path.join(Data, 'store')
 
 if (!fs.existsSync(APPSTORE)) {
@@ -13,10 +13,23 @@ function appDataJoin(...paths) {
     return path.join(APPSTORE, ...paths)
 }
 
+const accessKeys = [
+    'get', 'getRaw', 'set', 'rm'
+]
+
 module.exports = class RemStore {
 
     static safeStore = constKey => {
-        
+        return new Proxy(new RemStore(), {
+            get(t, p) {
+                if (!accessKeys.includes(p)) {
+                    return undefined
+                }
+
+                return v => t[p].call(t, constKey, v)
+            },
+            set() { return false }
+        })
     }
 
     get(k) {

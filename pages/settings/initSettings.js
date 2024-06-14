@@ -2,6 +2,10 @@ import { store } from "../../utils/stores/base"
 import { Lang } from '../../utils/lang/lang.js'
 import { setClearFont } from "../../utils/style/font"
 import { rem } from "../../utils/rem"
+import { hue } from '../../utils/math.js'
+import { invoker } from '../../utils/main-invoker/browser.js'
+import { indexOfOutputDevice, setPluginOutput } from "../../utils/devices/browser/output"
+import { getAudioDevices } from '../../utils/devices/browser/find'
 
 function lang(key) {
     return langMapping.s(key)
@@ -18,10 +22,17 @@ function init(name, defaultValue, init) {
         store.set(name, val)
     }
 
+    const setDefault = async () => {
+        await store.set(name, defaultValue)
+        return defaultValue
+    }
+
     if (typeof init === 'function') {
-        init.call(null, val)
+        init.call(null, val, setDefault)
     }
 }
+
+export let theme = {}
 
 export function initSettings() {
     init('AppSettings/beta_features', {
@@ -70,17 +81,85 @@ export function initSettings() {
     })
 
     init('AppSettings/theme', {
-        colors: [2, 39, 148, 210, 270, 292, 322],
-        selected: 3,
-    }, ({ colors, selected }) => {
+        colors: [ {label: '跟随系统'}, 2, 39, 148, 210, 270, 292, 322],
+        dark: [ {label: '跟随系统'}, {label: 'light', value: false}, {label: 'dark', value: true}],
+        selected: 4,
+        selectedDark: 1
+    }, async ({ colors, selected, dark, selectedDark }) => {
         const setColor = color => document.body.style.setProperty('--controlHue', color)
-        setColor(colors[selected])
+        const setDarkMode = darkMode => darkMode
+                ? document.body.classList.add('dark-mode')
+                : document.body.classList.remove('dark-mode')
+
+        const sysTheme = await hooks.invoke('win:sys-colors')
+        if (!selected || !selectedDark) {
+            if (!sysTheme) {
+                selected = 1
+                selectedDark = 1
+                await store.set('AppSettings/theme', {
+                    colors, selected, dark, selectedDark
+                })
+            }
+        }
+
+        const sysHue = selected ? colors[selected] : hue(sysTheme.accent)
+        const darkMode = selectedDark ? dark[selectedDark].value : sysTheme.dark
+        theme = { colorHue: sysHue, dark: darkMode } 
+        setColor(sysHue)
+        setDarkMode(darkMode)
         rem.on('changeControlColor', setColor)
+        rem.on('changeDarkMode', setDarkMode)
+        invoker.handle('app?theme', () => theme)
     })
 
     init('AppSettings/font', {
         clearFont: false
     }, val => {
         setClearFont(val.clearFont)
+    })
+
+    init('AppSettings/output', {
+        pluginOutput: false,
+    }, async ({ pluginOutput }) => {
+        const { promise, resolve } = Promise.withResolvers()
+        const wrap = d => ({
+            label: d.label.includes(' -') ? d.label.replace(/^.* - /, '') : d.label,
+            deviceId: d.deviceId, 
+        })
+
+        let deviceRef = new Proxy({ value: null }, {
+            get(target, prop) {
+                return target[prop]
+            },
+            set(target, prop, value) {
+                if (!target[prop]) {
+                    resolve(wrap(value))
+                }
+                target[prop] = value
+                return true
+            }
+        })
+
+        invoker.handle('output?pluginOutput', () => pluginOutput)
+        invoker.handle('output?device', () => {
+            if (deviceRef.value) {
+                return wrap(deviceRef.value)
+            }
+
+            return promise
+        })
+        rem.on('setOutputDevice', d => {
+            deviceRef.value = d
+            hooks.send('output:setOutputDevice', d)
+        })
+        rem.on('setPluginOutput', pluginOutput => {
+            hooks.send('output:setPluginOutput', pluginOutput)
+            setPluginOutput(pluginOutput)
+        })
+
+        const devices = await getAudioDevices()
+        const selected = await indexOfOutputDevice(devices)
+        rem.emitNone('setOutputDevice', devices[selected])
+        rem.emitNone('setPluginOutput', pluginOutput)
     })
 }

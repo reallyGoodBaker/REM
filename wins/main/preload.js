@@ -3,41 +3,17 @@ require('../../utils/main-invoker/preload')
 const { ipcRenderer, webFrame } = require('electron')
 const Binder = require('../../utils/jsBinder')
 const { createFuncBinding } = require('../../utils/api/funcBinder')
+const { readPath } = require('../../utils/appPath/preload')
 
-const { fetchJson } = require('../../utils/server/fetch')
-const { readPath } = require('../../utils/appPath/renderer')
-const AppPaths = readPath()
-
-const { AppCache } = AppPaths
-
-new Binder('AppPaths').use(AppPaths)
-
-const {
-    saveToCache,
-    getMedia,
-    saveToPlaylist,
-    getPlaylist,
-    getMetadata,
-    clearAllCache,
-    clearCache,
-} = require('../../utils/server/media-cache')(AppCache)
-
-
-new Binder('server')
-.use({
-    fetchJson,
-    saveToCache,
-    getMedia,
-    getPlaylist,
-    saveToPlaylist,
-    getMetadata,
-    clearAllCache,
-    clearCache,
+readPath().then(AppPaths => {
+    new Binder('AppPaths').use(AppPaths)
 })
 
 new Binder('hooks')
 .use({
-    ...ipcRenderer,
+    invoke: (...args) => ipcRenderer.invoke.apply(ipcRenderer, args),
+    send: (...args) => ipcRenderer.send.apply(ipcRenderer, args),
+    sendSync: (...args) => ipcRenderer.sendSync.apply(ipcRenderer, args),
     on: (...args) => ipcRenderer.on.apply(ipcRenderer, args),
     once: (...args) => ipcRenderer.once.apply(ipcRenderer, args),
     off: (...args) => ipcRenderer.removeListener.apply(ipcRenderer, args),
@@ -45,7 +21,6 @@ new Binder('hooks')
     rmAll: type => ipcRenderer.removeAllListeners.call(ipcRenderer, type),
     zoom: ratio => webFrame.setZoomFactor(ratio),
 })
-
 
 const { login, loginViaQRCode, validQRLogin, getUserAccount } = require('../../utils/api/login')
 const { Search, suggest } = require('../../utils/api/search')
@@ -58,7 +33,10 @@ const { getSongDetail, getSongUrl, getSongDownload, getSongUrlX } = require('../
 const { logout } = require('NeteaseCloudMusicApi')
 const { getArtistDetail, getArtistSongs, getArtistAlbums } = require('../../utils/api/artist')
 const { getLyrics } = require('../../utils/api/lyrics')
+const { fetchJson } = require('../../utils/server/fetch')
 
+new Binder('server')
+    .use({ ...require('../../utils/server/media-cache'), fetchJson })
 
 new Binder('NeteaseApi')
 .bind('login', createFuncBinding(login))

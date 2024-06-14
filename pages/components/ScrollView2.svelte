@@ -126,7 +126,7 @@ function pressScrollThumb(ev) {
 function releaseScrollThumb(ev) {
     _mouseThumbOffset = 0
     _draggingMode = false
-    if (!ev.path.includes(scrollTrackContainer)) {
+    if (!ev?.path?.includes(scrollTrackContainer)) {
         isHoverScrollTrack = false
     }
 }

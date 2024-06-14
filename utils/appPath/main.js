@@ -1,4 +1,4 @@
-const {app} = require('electron')
+const { app, ipcMain } = require('electron')
 const path = require('path')
 const fs = require('fs')
 
@@ -10,39 +10,51 @@ function pathResolve(name) {
 }
 
 const DownloadPath = path.join(app.getPath('downloads'), ProdPath)
-const ExtVendor = path.join(__dirname, '../../extension/vendor')
+const Logs = app.getPath('logs')
 
 const paths = [
     AppRoot,
+    Logs,
     pathResolve('Data'),
     pathResolve('AppCache'),
     DownloadPath,
     pathResolve('Data/Extensions'),
-    ExtVendor,
 ]
 
 function mkdir(paths) {
     for (const filename of paths) {
         if (!fs.existsSync(filename)) {
-            fs.mkdirSync(filename)
+            fs.mkdir(filename, err => {
+                if (err) {
+                    fs.writeFileSync(
+                        path.join(Logs, `${Date.now()}.log`),
+                        err.stack
+                    )
+                }
+            })
         }
     }
 }
 
 mkdir(paths)
 
-function savePath() {
-    fs.writeFileSync(path.join(__dirname, '../../../path'), paths.join('\n'))
-}
-
-module.exports = {
+const pathObj = {
     paths,
     AppRoot,
     Data: pathResolve('Data'),
     AppCache: pathResolve('AppCache'),
     Downloads: DownloadPath,
     Extensions: pathResolve('Data/Extensions'),
-    ExtVendor,
-
-    savePath
 }
+
+function savePath() {
+    ipcMain.handle('paths?', (_, name) => {
+        if (name && name in pathObj) {
+            return pathObj[name]
+        }
+
+        return pathObj
+    })
+}
+
+module.exports = Object.assign({ savePath }, pathObj)

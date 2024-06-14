@@ -7,6 +7,7 @@ import {LifeCycle, rem} from '../rem.js'
 import { invoker } from '../main-invoker/browser.js'
 import { UrlPlayerAdapter } from './url-player-adapter.js'
 import { BufferPlayerAdapter } from './buffer-player-adapter.js'
+import { initPcmForward } from './pcm-forward.js'
 
 initAudioDevicesFind()
 
@@ -186,13 +187,15 @@ LifeCycle.when('runtimeReady').then(() => {
 
     const globalPlayer = new AudioPlayer()
 
-    initProcessor(AudioPlayer.audioCtx, srcNode, destNode)
+    const lastProcessNode = initProcessor(AudioPlayer.audioCtx, srcNode, destNode)
     initAncProcessor(AudioPlayer.audioCtx, destNode)
+    initPcmForward(AudioPlayer.audioCtx, lastProcessNode, destNode)
     initOutputAudio(destNode.stream)
 
     AudioPlayer.on('play', () => AudioPlayer.isPlayingIgnoreFade = true)
     AudioPlayer.on('pause', () => AudioPlayer.isPlayingIgnoreFade = false)
     AudioPlayer.on('ended', () => AudioPlayer.isPlayingIgnoreFade = false)
+    AudioPlayer.on('loadedContent', () => hooks.send('win:player', structuredClone(AudioPlayer.audioData?.data)))
 
     navigator.mediaSession.setActionHandler('play', () => globalPlayer.play())
     navigator.mediaSession.setActionHandler('pause', () => globalPlayer.pause())
@@ -203,7 +206,7 @@ LifeCycle.when('runtimeReady').then(() => {
     invoker.on('player:pause', () => globalPlayer.pause())
     invoker.on('player.isPlaying', () => AudioPlayer.isPlayingIgnoreFade)
     invoker.on('player.duration', () => globalPlayer.duration())
-    invoker.on('player:seek', (_, t) => globalPlayer.seek(t))
+    invoker.on('player:seek', t => globalPlayer.seek(t))
     invoker.on('player.metadata', () => globalPlayer.getMetadata())
     invoker.on('player.audioData', () => structuredClone(AudioPlayer.audioData?.data))
 })

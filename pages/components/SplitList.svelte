@@ -9,39 +9,48 @@
 
     let emit = createEventDispatcher();
 
-    export let listData = []
+    export let listData = Promise.resolve([])
     export let location = []
     export let selections = new Set()
     export let focus = -1
     export let components = [, SplitTileTitle, SplitTileArtist, SplitTileAlbum]
 
-    $: list = listData.map((item, index) => {item.i = index; return item})
-
-    function onClick(i) {
-        emit('click', {listData, i});
+    async function onClick(i) {
+        emit('click', {listData: await listData, i});
     }
 
-    function dbClick(i) {
-        emit('dbclick', {listData, i});
+    async function dbClick(i) {
+        emit('dbclick', {listData: await listData, i});
     }
 
-    onMount(() => {
-        emit('mount');
+    onMount(async () => {
+        emit('mount')
     })
 
-    afterUpdate(() => {
-        if (listData.length > 0) {
+    afterUpdate(async () => {
+        if ((await listData).length > 0) {
             emit('update')
         }
     })
 
 </script>
 
-{#if listData.length}
+{#await listData}
+<div class="Column" style="width: 100%; margin-top: 20px">
+    <LoadingCircle
+        strokeStyle={window.getComputedStyle(
+            document.body
+        ).getPropertyValue('--controlDark')}
+        size={20}
+        lineWidth={3}
+        transformationDelay={300}
+        transformDuration={300}/>
+</div>
+{:then list} 
 <RecyclerScrollView
     templateHeight={56}
-    count={listData.length}
-    getItem={i => listData[i]}
+    count={list.length}
+    getItem={i => Object.assign(list[i], { i })}
     let:item={data}
 >
     <SplitTile
@@ -60,17 +69,5 @@
         focus={~focus && focus}
     />
 </RecyclerScrollView>
-
-{:else}
-<div class="Column" style="width: 100%; margin-top: 20px">
-    <LoadingCircle
-        strokeStyle={window.getComputedStyle(
-            document.body
-        ).getPropertyValue('--controlDark')}
-        size={20}
-        lineWidth={3}
-        transformationDelay={300}
-        transformDuration={300}/>
-</div>
-{/if}
+{/await}
 

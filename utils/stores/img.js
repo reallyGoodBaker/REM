@@ -1,4 +1,4 @@
-import { LifeCycle } from "../rem";
+import { LifeCycle } from "../rem"
 import { store } from './base.js'
 
 let storeLoaded = false
@@ -38,7 +38,7 @@ export async function getImageBitmap(url, opt) {
         binary = await saveImg(url)
     }
 
-    return createImageBitmap(new Blob([binary]), opt)
+    return createImageBitmap(new Blob([ binary ]), opt)
 }
 
 const imgUriCache = new Map()
