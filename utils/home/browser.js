@@ -22,6 +22,7 @@ export const homeOptions = [
         onClick: Function.prototype,
     },
     {
+        isUrl: false,
         avatar: '\ue87b',
         title: 'extensions',
         onClick: showExtensionsPage,

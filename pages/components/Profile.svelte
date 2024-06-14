@@ -6,6 +6,7 @@
     import { store } from '../../utils/stores/base.js'
     import { rem } from "../../utils/rem"
     import { homeOptions } from '../../utils/home/browser'
+    import { getPath } from '../../utils/appPath/renderer'
 
     function login() {
         Pager.openNew('登录', Login)
@@ -45,12 +46,17 @@
         options = options
     })
 
-    function avatarFromExt(path, folder) {
-        if (path.startsWith('./')) {
-            return `${AppPaths.Extensions}/${folder}/${path.slice(2)}`
+    async function avatarFromExt(path, folder, isUrl=false) {
+        if (!isUrl) {
+            return path
         }
 
-        return `${AppPaths.Extensions}/${folder}/${path}`
+        const extPath = await getPath('Extensions')
+        if (path.startsWith('./')) {
+            return `${extPath}/${folder}/${path.slice(2)}`
+        }
+
+        return `${extPath}/${folder}/${path}`
     }
 </script>
 
@@ -122,6 +128,7 @@
 
     <div class="article Column">
         {#each options as { title, avatar, onClick, isUrl, extFolder }}
+            {#await avatarFromExt(avatar, extFolder, isUrl) then avatarUrl}
             <ListTile
                 on:click={() => {
                     onClick()
@@ -132,8 +139,9 @@
                 style={"font-size: small"}
                 size={'small'}
                 width={24}
-                avatar={extFolder ? avatarFromExt(avatar, extFolder) : avatar}
+                avatar={avatarUrl}
                 data={s(title)}/>
+            {/await}
         {/each}
     </div>
 </div>
