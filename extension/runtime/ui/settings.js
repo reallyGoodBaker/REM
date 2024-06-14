@@ -18,7 +18,7 @@ export const TextField = (label='text', defaultValue='', name=`${counter++}`) =>
     }
 }
 
-export const NumberField = (label='number', defaultValue='', min=0, max=1, name=`${counter++}`) => {
+export const NumberField = (label='number', defaultValue=0, min=0, max=1, name=`${counter++}`) => {
     return {
         type: 'number',
         name,

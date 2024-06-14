@@ -76,6 +76,28 @@ interface RendererStore {
     rm(k: any): Promise<void>
 }
 
+interface GenericUIElement<T> {
+    name: string
+    label: string
+    defaultValue: T
+}
+
+interface StringUIElement extends GenericUIElement<string> {
+    type: 'string'
+}
+
+interface NumberUIElement extends GenericUIElement<number> {
+    type: 'number'
+    min: number
+    max: number
+}
+
+interface BooleanUIElement extends GenericUIElement<boolean> {
+    type: 'boolean'
+}
+
+type UIElement = StringUIElement | NumberUIElement | BooleanUIElement
+
 interface UIModules {
     readonly settings: Settings,
     /**
@@ -85,20 +107,34 @@ interface UIModules {
     /**
      * Component "playlist"
      */
-    readonly MainPlaylist?: IPlaylist
+    readonly Playlist?: IPlaylist
     /**
      * Component "store"
      */
     readonly store?: RendererStore
 }
 
-declare global {
+namespace UIExports {
     /**
      * Only for "uiEntry"
      */
-    type ExportOnLoad = (mods: UIModules & { home: UIHome }) => void
+    type OnLoad = (mods: UIModules & { home: UIHome }) => void
     /**
      * Only for "uiEntry"
      */
-    type ExportOnReady = (mods: UIModules) => void
+    type OnReady = (mods: UIModules) => void | Promise<void>
+
+
+    /**
+     * Only for "settings"
+     */
+    type OnSetting = (settings: Settings) => UIElement[] | Promise<UIElement[]>
+    /**
+     * Only for "settings"
+     */
+    type OnGetSetting = (settings: Settings, name: string) => any | Promise<any>
+    /**
+     * Only for "settings"
+     */
+    type OnSetSetting = (settings: Settings, name: string, value: any) => void | Promise<void>
 }
