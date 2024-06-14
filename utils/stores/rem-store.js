@@ -101,4 +101,10 @@ module.exports = class RemStore {
 
         return false
     }
+
+    clear() {
+        for (const k of stores.keys()) {
+            this.rm(k)
+        }
+    }
 }

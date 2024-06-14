@@ -1,14 +1,14 @@
 import { rem } from '../../utils/rem.js'
 import { store } from '../stores/base.js'
 
-const bufferSize = 8192
+const bufferSize = 4096
 
 /**
  * @param {AudioContext} ctx 
  * @param {AudioNode} node 
  * @param {AudioDestinationNode} dest 
  */
-export function initPcmForward(ctx, node, dest) {
+export async function initPcmForward(ctx, node, dest) {
     const forward = ctx.createScriptProcessor(bufferSize)
     const { pluginOutput } = store.getSync('AppSettings/output')
 
@@ -19,13 +19,8 @@ export function initPcmForward(ctx, node, dest) {
         const len = halfLen << 1
         const buffer = new Float32Array(len)
 
-        for (let i = 0; i < c0.length; i++) {
-            const lf = c0[i]
-            const rf = c1[i]
-
-            buffer[i << 1] = lf
-            buffer[(i << 1) + 1] = rf
-        }
+        buffer.set(c0)
+        buffer.set(c1, halfLen)
 
         hooks.send('pcm', buffer)
     })

@@ -62,7 +62,7 @@ function server(name, listener = s => s.write('ok')) {
     }
 
     unlink(name)
-    net.createServer(listener)
+    return net.createServer(listener)
         .listen(pipeName + name)
 }
 
@@ -98,14 +98,13 @@ function subscribe(type, receiver=Function.prototype) {
     return new Socket(socket)
 }
 
-function subscribePcm(type, receiver=Function.prototype) {
-    const socket = net.connect(pipeName + 'subscribe')
-    socket.write(type)
-    socket.on('data', receiver)
-
+function registerPcmStreamReceiver(resolver=Function.prototype, manifest={}) {
+    const socket = net.connect(pipeName + 'pcm-stream-broker')
+    socket.on('data', resolver)
+    
     return new Socket(socket)
 }
 
 module.exports = {
-    server, connect, subscribe, unlink, subscribePcm,
+    server, connect, subscribe, unlink, registerPcmStreamReceiver,
 }

@@ -9,6 +9,7 @@
     import { setExtSetting, getExtSetting, getExtensionSettings } from './host/setting/settings-loader';
     import ToggleListTile from './host/components/setting/ToggleListTile.svelte';
     import InputWithLabel from './host/components/setting/InputWithLabel.svelte';
+    import Slider from './host/components/setting/Slider.svelte';
 
     export let id = ''
     export let isUrl = false
@@ -256,25 +257,13 @@
         <div class="card_list">
         {#each customSettings as { type, defaultValue, min, max, label, name }}
             <div class="card_list_tile" icon={icon ?? ''}>
-                <!-- svelte-ignore missing-declaration -->
-                <!-- <svelte:component
-                    this={ctor}
-                    {...props}
-                    on:click={listeners.click ?? Function.prototype}
-                    on:selected={listeners.selected ?? Function.prototype}
-                    on:toggle={listeners.toggle ?? Function.prototype}
-                    on:mousedown={listeners.mousedown ?? Function.prototype}
-                    on:mouseup={listeners.mouseup ?? Function.prototype}
-                    on:mousemove={listeners.mousemove ?? Function.prototype}
-                    on:input={listeners.input ?? Function.prototype}
-                    on:change={listeners.change ?? Function.prototype}
-                    on:progressChange={listeners.progressChange ?? Function.prototype}
-                    on:inputChange={listeners.inputChange ?? Function.prototype}/> -->
                     {#await getExtSetting(id, name) then value}
                     {#if type === 'boolean'}
                         <ToggleListTile {label} checked={value || defaultValue} on:toggle={e => setExtSetting(id, name, e.detail)}/>
                     {:else if type === 'string'}
                         <InputWithLabel {label} value={value || defaultValue} on:change={e => setExtSetting(id, name, e.detail)}/>
+                    {:else if type === 'number'}
+                        <Slider {label} {min} {max} value={value || defaultValue} on:change={e => setExtSetting(id, name, e.detail)}/>
                     {/if}
                     {/await}
             </div>

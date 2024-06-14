@@ -85,7 +85,7 @@ interface Ipc {
     connect(name: string): Socket
     subscribe(type: string, receiver?: (val: any) => void): Socket
     unlink(name: string): void
-    subscribePcm(type: string, receiver?: (val: Buffer) => void): Socket
+    registerPcmStreamReceiver: (receiver?: (buf: Buffer) => void) => Socket
 }
 
 export const ipc: Ipc

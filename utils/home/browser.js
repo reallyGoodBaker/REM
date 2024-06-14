@@ -19,7 +19,10 @@ export const homeOptions = [
     {
         avatar: '\uf090',
         title: 'download_manager',
-        onClick: Function.prototype,
+        onClick: () => {
+            // console.log('????')
+            // console.log(greet('RGB39'))
+        },
     },
     {
         isUrl: false,

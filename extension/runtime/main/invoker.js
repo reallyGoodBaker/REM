@@ -47,6 +47,7 @@ function _handleMainReturned({ id, val, err }) {
     }
 
     handler.call(undefined, err, val)
+    invokeCallbacks.delete(id)
 }
 
 async function _handleMainRequest({ uid, name, args }) {

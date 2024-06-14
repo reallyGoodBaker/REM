@@ -21,6 +21,8 @@
     "devDependencies": {
         "@rollup/plugin-commonjs": "^22.0.0",
         "@rollup/plugin-node-resolve": "^13.3.0",
+        "@rollup/plugin-wasm": "^6.2.2",
+        "assemblyscript": "^0.27.27",
         "electron": "^30.0.8",
         "electron-icon-builder": "^2.0.1",
         "picomatch": "^2.3.1",

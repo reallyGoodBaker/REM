@@ -147,6 +147,10 @@ function initMainWin(browserWindow) {
         return remStore.rm(k)
     })
 
+    ipcMain.handle('store:clear', (_, k) => {
+        return remStore.clear()
+    })
+
     ipcMain.handle('isMac', () => {
         return process.platform === 'darwin'
     })
@@ -182,16 +186,6 @@ function initMainWin(browserWindow) {
     ipcMain.handle('app?theme', async () => {
         return await invoker.invoke('app?theme')
     })
-
-    let pluginOutput = false
-    ipcMain.on('output:setPluginOutput', (_, o) => pluginOutput = o)
-
-    ipcMain.on('pcm', (_, buffer) => {
-        if (pluginOutput) {
-            write('pcm', Buffer.from(buffer.buffer))
-        }
-    })
-
 }
 
 /**
@@ -297,6 +291,7 @@ function initThumbarButtons(win, invoker) {
 const { loaderBuilder, ExtensionLoader } = require('../../extension/host/loader')
 const { Extensions } = require('../../utils/appPath/main')
 const { getLogger } = require('../../utils/easy-log/node.js')
+const { server } = require('../../utils/ipc/net.js')
 
 /**
  * @param {BrowserWindow} bw 

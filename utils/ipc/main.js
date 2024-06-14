@@ -49,4 +49,35 @@ exports.init = () => {
             channel.add(s)
         })
     })
+
+    /**
+     * @type {import('net').Socket}
+     */
+    let singletonOutput
+    server('pcm-stream-broker', s => {
+        singletonOutput = s
+    })
+
+    let pluginOutput = false
+    ipcMain.on('output:setPluginOutput', (_, o) => pluginOutput = o)
+
+    ipcMain.on('pcm', (_, /**@type {Float32Array}*/ buffer) => {
+        if (!pluginOutput) {
+            return
+        }
+        const len = buffer.length
+        const buf = new Float32Array(len)
+
+        const c0 = buffer.slice(0, len >> 1),
+            c1 = buffer.slice(len >> 1)
+
+        for (let i = 0; i < c0.length; i++) {
+            buf[i << 1] = c0[i]
+            buf[(i << 1) + 1] = c1[i]
+        }
+
+        if (singletonOutput) {
+            singletonOutput.write(Buffer.from(buf.buffer))
+        }
+    })
 }

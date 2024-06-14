@@ -81,8 +81,6 @@
         }, [])
 
         data = (await NeteaseApi.getSongDetail(ids, cookie)).body.songs
-
-        store.setCache('playlist'+id, data)
         
         return data
     }

@@ -14,7 +14,7 @@ initAudioDevicesFind()
 export class AudioPlayer {
 
     static bufferMode = false
-    static audioCtx = new AudioContext()
+    static audioCtx = new AudioContext({ sampleRate: 48000 })
     static urlPlayer = new UrlPlayerAdapter(this.audioCtx)
     static bufferPlayer = new BufferPlayerAdapter(this.audioCtx)
     static audioElementSource = this.urlPlayer.outputNode()
