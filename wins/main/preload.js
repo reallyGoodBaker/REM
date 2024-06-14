@@ -3,11 +3,6 @@ require('../../utils/main-invoker/preload')
 const { ipcRenderer, webFrame } = require('electron')
 const Binder = require('../../utils/jsBinder')
 const { createFuncBinding } = require('../../utils/api/funcBinder')
-const { readPath } = require('../../utils/appPath/preload')
-
-readPath().then(AppPaths => {
-    new Binder('AppPaths').use(AppPaths)
-})
 
 new Binder('hooks')
 .use({

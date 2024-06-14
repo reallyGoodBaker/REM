@@ -1,6 +1,7 @@
 <script>
     import ScrollView2 from '../pages/components/ScrollView2.svelte'
     import ExtensionListTile from './ExtensionListTile.svelte'
+    import { getPath } from '../utils/appPath/renderer'
 
     import { extensionManifests } from './initExtensionList'
     import { onMount } from 'svelte'
@@ -15,7 +16,7 @@
         return icon.endsWith('.png')
     }
 
-    function createUrl(icon, folderName) {
+    async function createUrl(icon, folderName) {
         if (!icon) {
             return '\ue68b'
         }
@@ -25,7 +26,7 @@
         }
 
         if (icon.endsWith('.png')) {
-            return `file://${AppPaths.Extensions}/${folderName}/${icon}`
+            return `file://${await getPath('Extensions')}/${folderName}/${icon}`
         }
         
         return icon
@@ -63,10 +64,11 @@
                 name, desc, ver, components, icon, id, folderName,
                 activated, author,
             }}
+            {#await createUrl(icon, folderName) then iconUrl}
             <ExtensionListTile
                 isUrl={isUrl(icon)}
                 customClickListener={true}
-                icon={createUrl(icon, folderName)}
+                icon={iconUrl}
                 {id}
                 {name}
                 {desc}
@@ -75,6 +77,7 @@
                 {author}
                 checked={activated}
             />
+            {/await}
             {/each}
         </div>
     </ScrollView2>
