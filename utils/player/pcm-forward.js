@@ -16,8 +16,7 @@ export async function initPcmForward(ctx, node, dest) {
         const c0 = buf.getChannelData(0)
         const c1 = buf.getChannelData(1)
         const halfLen = c0.length
-        const len = halfLen << 1
-        const buffer = new Float32Array(len)
+        const buffer = new Float32Array(halfLen << 1)
 
         buffer.set(c0)
         buffer.set(c1, halfLen)
