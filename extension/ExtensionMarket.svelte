@@ -32,12 +32,17 @@
             return
         }
 
+        /**@type {HTMLElement}*/
+        const el = ev.target
+
         installing.add(name)
-        ev.target.pointerEvents = 'none'
-        ev.target.innerText = s('installing')
+        el.pointerEvents = 'none'
+        el.innerText = s('installing')
         const done = await install(name)
-        ev.target.pointerEvents = 'all'
-        ev.target.innerText = done ? s('installed') : s('error')
+        el.pointerEvents = 'all'
+        el.innerText = done ? s('installed') : s('error')
+        el.classList.add('disabled')
+
         installing.delete(name)
     }
 </script>

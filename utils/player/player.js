@@ -118,8 +118,9 @@ export class AudioPlayer {
     static async loadData(audioData, onload=Function.prototype) {
         audioData.onLoadMetadata = metadata => {
             AudioPlayer.metadata = metadata
-            rem.emit('metadata', metadata)
-            this.em.emit('metadata', metadata)
+            const clonedMetadata = this.getMetadata()
+            rem.emit('metadata', clonedMetadata)
+            this.em.emit('metadata', clonedMetadata)
         }
 
         AudioPlayer.audioData = audioData

@@ -51,7 +51,7 @@
         notify({
             icon: '\ue92b',
             title: s('uninstall'),
-            message: `${s('uninstall')} ?`,
+            message: `${s('uninstall')} "${extensionManifests.get(id).name}" ?`,
             channel: `ext_uninstall_${Math.random()}`,
             timeout: -1,
             controls: [

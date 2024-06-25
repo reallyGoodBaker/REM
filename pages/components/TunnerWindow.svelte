@@ -42,7 +42,7 @@
         processConfig = data
     }
 
-    onMount(async () => {
+    onMount(() => {
         rem.on('metadata', updateMetadata)
         rem.on('processUpdate', updateProcessConf)
     })

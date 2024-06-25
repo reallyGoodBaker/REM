@@ -25,6 +25,7 @@ function scaleDisplayProp(num, scale=0.7) {
 }
 
 registerProtocol()
+app.commandLine.appendSwitch('enable-features', 'WindowsScrollingPersonality,FluentOverlayScrollbars')
 
 module.exports = function buildWindow() {
     const {width: rawW, height: rawH} = screen.getPrimaryDisplay().bounds

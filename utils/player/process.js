@@ -129,6 +129,9 @@ export function setEqEnable(bool = true) {
     if (typeof rem !== 'undefined') {
         rem.emit('eqChange')
     }
+
+    processConfig.eq.enable = bool
+    saveConfig()
 }
 
 /**
