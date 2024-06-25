@@ -4,9 +4,15 @@
     import { getPath } from '../utils/appPath/renderer'
 
     import { extensionManifests } from './initExtensionList'
-    import { onMount } from 'svelte'
+    import { onDestroy, onMount } from 'svelte'
+    import ExtensionMarket from './ExtensionMarketTile.svelte'
+    import { getRoot, uninstall } from '../utils/ext-market/browser'
+    import { notify } from '../utils/notification/browser'
+    import { rem } from '../utils/rem';
 
     const s = v => langMapping.s(v)
+
+    let manifests = extensionManifests.values()
 
     function isUrl(icon) {
         if (!icon) {
@@ -32,9 +38,30 @@
         return icon
     }
 
+    const reload = () => manifests = extensionManifests.values()
+
     onMount(() => {
         Pager.setSearchPlaceholder('搜索插件')
+        rem.on('reload-extension-list', reload)
     })
+
+    onDestroy(() => rem.off('reload-extension-list', reload))
+
+    function unist(id) {
+        notify({
+            icon: '\ue92b',
+            title: s('uninstall'),
+            message: `${s('uninstall')} ?`,
+            channel: `ext_uninstall_${Math.random()}`,
+            timeout: -1,
+            controls: [
+                { icon: '\ue876', label: '确认', onClick() {
+                    uninstall(id)
+                } },
+                { icon: '\ue5cd', label: '取消' },
+            ]
+        })
+    }
 </script>
 
 <style>
@@ -60,12 +87,13 @@
 <div class="outer">
     <ScrollView2>
         <div class="Row inner">
-            {#each Array.from(extensionManifests.values()) as {
+            {#each Array.from(manifests) as {
                 name, desc, ver, components, icon, id, folderName,
                 activated, author,
             }}
             {#await createUrl(icon, folderName) then iconUrl}
             <ExtensionListTile
+                on:uninstall={({ detail }) => unist(detail)}
                 isUrl={isUrl(icon)}
                 customClickListener={true}
                 icon={iconUrl}
@@ -79,6 +107,9 @@
             />
             {/await}
             {/each}
+            {#await getRoot() then extRoot}
+            <ExtensionMarket root={extRoot}/>
+            {/await}
         </div>
     </ScrollView2>
 </div>

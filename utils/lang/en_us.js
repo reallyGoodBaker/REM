@@ -130,4 +130,11 @@ export default {
     need_to_do: 'need $1',
 
     $store: 'Store',
+
+    install: 'Install',
+    uninstall: 'Uninstall',
+    update: 'Update',
+    installed: 'Installed',
+    installing: 'Installing',
+    failed: 'Failed',
 }

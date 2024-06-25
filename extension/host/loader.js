@@ -5,6 +5,7 @@ const path = require('path')
 const { open } = require('../../utils/stores/configurator')
 const fs = require('fs')
 const crypto = require('crypto')
+const bus = require('../../utils/bus')
 
 class ExtensionLoader {
 
@@ -23,9 +24,24 @@ class ExtensionLoader {
         fs.readdirSync(folder).forEach(this.loadExt)
 
         this._listenExtensionsChange()
+
+        bus.on('extension:install', this.loadExt)
+        bus.on('extension:uninstall', (id, resolve) => {
+            const name = this.extensions.get(id)?.manifest?.folderName
+            if (!name) {
+                return resolve(false)
+            }
+
+            try {
+                this.rmExt(name)
+                resolve(true)
+            } catch (error) {
+                resolve(false)
+            }
+        })
     }
 
-    loadExt = (extFolder) => {
+    loadExt = extFolder => {
         const filePath = path.join(this.root, extFolder)
         if (!fs.statSync(filePath).isDirectory()) {
             return
@@ -59,6 +75,20 @@ class ExtensionLoader {
         }
     }
 
+    rmExt = extFolder => {
+        const filePath = path.join(this.root, extFolder)
+        if (!fs.statSync(filePath).isDirectory()) {
+            return
+        }
+
+        const { id } = JSON.parse(fs.readFileSync(path.join(filePath, 'manifest.json')))
+        this._deactiveExtension(id)
+        this.config.remove(id)
+        this.config.commit()
+    
+        fs.rmSync(filePath, { recursive: true, force: true })
+    }
+
     enumIds() {
         return Array.from(this.extensions.keys())
     }
@@ -83,6 +113,28 @@ class ExtensionLoader {
     _listenExtensionsChange() {
         ipcMain.on('extension:active', (_, id) => this.start(id))
         ipcMain.on('extension:deactive', (_, id) => this._deactiveExtension(id))
+        ipcMain.handle('extension?status', (_, extManifest) => {
+            let ext
+            if (!(ext = this.extensions.get(extManifest.id))) {
+                return 1
+            }
+
+            const verQuery = extManifest.ver.split('.')
+            const ver = ext.manifest.ver.split('.')
+            if (verQuery.length > ver.length) {
+                return 2
+            }
+
+            for (let i = 0; i < verQuery.length; i++) {
+                if (verQuery[i] > ver[i]) {
+                    return 2
+                } else if (verQuery[i] < ver[i]) {
+                    return -1
+                }
+            }
+
+            return 0
+        })
         fs.watch(this.root, (ev, file) => {
             console.log(ev, file)
         })
@@ -96,6 +148,8 @@ class ExtensionLoader {
             this.config.assign({ [id]: false })
             this.config.commit()
         }
+
+        this.extensions.delete(id)
     }
 
 }

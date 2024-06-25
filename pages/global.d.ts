@@ -11,12 +11,14 @@ interface SearchHandler {
       (str: string): void
 }
 
+type ConstructorOf<T> = new (...args: any[]) => T
+
 interface Pager {
       add(name: string, component: SvelteComponent, props={}, force=false): boolean
       select(key: string | number, forceUpdate=false): void
       remove(key: string | number): void
       has(key: string | number): boolean
-      openNew(name: string, component: SvelteComponent, props={}, force=false): void
+      openNew(name: string, component: ConstructorOf<SvelteComponent>, props={}, force=false): void
       getContext(): PagerContext
       beforeSwitch(handler: () => void): void
       size(): number

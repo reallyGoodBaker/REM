@@ -160,7 +160,7 @@
         </div>
 
         <RippleLayer rippleColor='var(--fadeDark)' cssStyle="border-radius: 50%;">
-            <div class="iconfont i _btn red">{'\ue863'}</div>
+            <div on:click={() => emit('uninstall', id)} class="iconfont i _btn red">{'\ue863'}</div>
         </RippleLayer>
     </div>
 

@@ -110,6 +110,13 @@ body.dark-mode {
     --acrylicBackgroundColor: hsla(var(--controlHue), 20%, 50%, 0.1);
 }
 
+.win-center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .column {
     display: flex;
     justify-content: center;

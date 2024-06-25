@@ -5,6 +5,7 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
 import { wasm } from '@rollup/plugin-wasm'
+import typescript from '@rollup/plugin-typescript'
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -38,6 +39,7 @@ export default {
 		file: 'bundle/bundle.js'
 	},
 	plugins: [
+        typescript(),
         wasm(),
 		svelte({
 			compilerOptions: {

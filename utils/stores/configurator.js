@@ -21,7 +21,11 @@ class Configurator {
         return Object.assign({}, this.store)
     }
 
-    assign = (obj) => {
+    remove = key => {
+        delete this.store[key]
+    }
+
+    assign = obj => {
         this.store = Object.assign(this.store, obj)
     }
 
@@ -42,11 +46,12 @@ function open(path) {
     }
 
     const configurator = new Configurator(path)
+    const accessibles = ['clone', 'assign', 'commit', 'store', 'sync', 'remove']
 
     return new Proxy(configurator, {
         set() { return false },
         get(t, p) {
-            if (['clone', 'assign', 'commit', 'store', 'sync'].includes(p)) {
+            if (accessibles.includes(p)) {
                 return t[p]
             }
 

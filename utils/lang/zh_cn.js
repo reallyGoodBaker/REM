@@ -129,4 +129,11 @@ export default {
     need_to_do: '需要$1',
 
     $store: '操作存储',
+
+    install: '安装',
+    uninstall: '卸载',
+    update: '更新',
+    installed: '已安装',
+    installing: '正在安装',
+    failed: '失败',
 }

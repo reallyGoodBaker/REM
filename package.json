@@ -13,6 +13,7 @@
     "author": "RGB",
     "license": "GPLv2",
     "dependencies": {
+        "@rollup/plugin-typescript": "^11.1.6",
         "compressing": "^1.10.1",
         "music-metadata": "^7.12.6",
         "NeteaseCloudMusicApi": "^4.13.6",

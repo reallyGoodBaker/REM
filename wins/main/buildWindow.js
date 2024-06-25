@@ -83,6 +83,7 @@ module.exports = function buildWindow() {
     activeAppBarBtns(browserWindow)
     const extLoader = initExtensions(browserWindow)
     initComponents(browserWindow, extLoader)
+    initMarket()
 
     browserWindow.show()
 
@@ -292,6 +293,7 @@ const { loaderBuilder, ExtensionLoader } = require('../../extension/host/loader'
 const { Extensions } = require('../../utils/appPath/main')
 const { getLogger } = require('../../utils/easy-log/node.js')
 const { server } = require('../../utils/ipc/net.js')
+const { initMarket } = require('../../utils/ext-market/node.js')
 
 /**
  * @param {BrowserWindow} bw 
