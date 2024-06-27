@@ -10,7 +10,7 @@ const path = require('path')
 const bus = require('../bus')
 const { promiseResolvers } = require('../high-level/node/promise')
 
-const defaultRoot = 'https://reallygoodbaker.github.io/REM-Extensions/'
+const defaultRoot = 'http://remext.rgb39.top/'
 
 let marketRoot = defaultRoot
 
@@ -33,7 +33,9 @@ async function getManifest(name) {
 
 async function install(name) {
     return new Promise(resolve => {
-        https.get(`${marketRoot}dist/${name}`, async res => {
+        const filePath = `${marketRoot}dist/${name}`
+        const net = filePath.startsWith('https') ? https : require('http')
+        net.get(filePath, async res => {
             try {
                 await tar.uncompress(res, Extensions)
                 resolve(JSON.parse(fs.readFileSync(path.join(Extensions, name, 'manifest.json'))))
