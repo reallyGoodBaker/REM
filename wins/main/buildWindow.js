@@ -11,6 +11,7 @@ const { publish, write, init: initBroker } = require('../../utils/ipc/main.js')
 const { getExtId } = require('../../utils/ipc/extmapping.js')
 const { registerProtocol } = require('./protocol.js')
 const { initDevicesMain } = require('../../utils/devices/node/index.js')
+const { appendFeatures } = require('../../utils/features/main.js')
 
 const remStore = new RemStore()
 
@@ -25,7 +26,7 @@ function scaleDisplayProp(num, scale=0.7) {
 }
 
 registerProtocol()
-app.commandLine.appendSwitch('enable-features', 'WindowsScrollingPersonality,FluentOverlayScrollbars')
+appendFeatures()
 
 module.exports = function buildWindow() {
     const {width: rawW, height: rawH} = screen.getPrimaryDisplay().bounds
