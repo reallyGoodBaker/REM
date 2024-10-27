@@ -38,8 +38,8 @@
             const sysTheme = await hooks.invoke('win:sys-colors')
             if (sysTheme) {
                 rem.emit('changeDarkMode', sysTheme.dark)
-                saveTheme()
                 selectedDark = detail
+                saveTheme()
                 return
             }
 
