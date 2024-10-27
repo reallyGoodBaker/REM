@@ -14,7 +14,7 @@ function lang(key) {
 /**
  * @type {<T>(name: string, defaultValue: T, init: (val: T) => void) => void}
  */
-function init(name, defaultValue, init) {
+export function __init_setting(name, defaultValue, init) {
     let val = store.getSync(name)
 
     if (!val) {
@@ -35,7 +35,7 @@ function init(name, defaultValue, init) {
 export let theme = {}
 
 export function initSettings() {
-    init('AppSettings/beta_features', {
+    __init_setting('AppSettings/beta_features', {
         showDevTools: false,
         useBufferOutput: false,
     }, ({ showDevTools }) => {
@@ -44,7 +44,7 @@ export function initSettings() {
         }`)
     })
 
-    init('AppSettings/cache', {
+    __init_setting('AppSettings/cache', {
         qualities: [
             { label: '鲸云母带', value: 'jymaster' },
             { label: '鲸云臻音', value: 'jyeffect' },
@@ -57,12 +57,12 @@ export function initSettings() {
         selected: 5,
     })
 
-    init('AppSettings/lang', {
+    __init_setting('AppSettings/lang', {
         langs: [...Object.keys(Lang.langs)],
         selected: 'zh_cn'
     })
 
-    init('AppSettings/left_stick', {
+    __init_setting('AppSettings/left_stick', {
         levels: [
             {label: lang('slow'), value: 0.3},
             {label: lang('medium'), value: 0.65},
@@ -71,7 +71,7 @@ export function initSettings() {
         selected: 1
     })
 
-    init('AppSettings/right_stick', {
+    __init_setting('AppSettings/right_stick', {
         levels: [
             {label: lang('slow'), value: 0.3},
             {label: lang('medium'), value: 0.65},
@@ -80,7 +80,7 @@ export function initSettings() {
         selected: 1
     })
 
-    init('AppSettings/theme', {
+    __init_setting('AppSettings/theme', {
         colors: [ {label: '跟随系统'}, 2, 39, 148, 210, 270, 292, 322],
         dark: [ {label: '跟随系统'}, {label: 'light', value: false}, {label: 'dark', value: true}],
         selected: 4,
@@ -112,13 +112,13 @@ export function initSettings() {
         invoker.handle('app?theme', () => theme)
     })
 
-    init('AppSettings/font', {
+    __init_setting('AppSettings/font', {
         clearFont: false
     }, val => {
         setClearFont(val.clearFont)
     })
 
-    init('AppSettings/output', {
+    __init_setting('AppSettings/output', {
         pluginOutput: false,
         sampleRate: 48000,
     }, async ({ pluginOutput, sampleRate }) => {

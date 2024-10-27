@@ -33,8 +33,8 @@ export class Lang {
 
     lang = 'zh_cn'
 
-    constructor(lang) {
-        this.lang = lang || 'zh_cn'
+    constructor(lang='zh_cn') {
+        this.lang = lang
     }
 
     /**

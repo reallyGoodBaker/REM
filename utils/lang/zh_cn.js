@@ -136,4 +136,17 @@ export default {
     installed: '已安装',
     installing: '正在安装',
     failed: '失败',
+
+    shortcuts: '快捷键',
+    unset: '未设置',
+    $next_tab: '下一个标签',
+    $prev_tab: '上一个标签',
+    $close_tab: '关闭标签',
+    $toggle_playing: '播放/暂停',
+    $fast_forward: '快进',
+    $fast_backward: '快退',
+    $next_track: '下一首',
+    $prev_track: '上一首',
+    $toggle_search: '搜索/关闭搜索',
+    change_keybind: '修改快捷键',
 }

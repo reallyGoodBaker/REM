@@ -3,7 +3,7 @@
     import { EventEmitter } from "../../utils/events.js"
     import Popup from './Popup.svelte'
     import { store } from '../../utils/stores/base.js'
-    import { LifeCycle, rem } from '../../utils/rem.js'
+    import { rem } from '../../utils/rem.js'
 
     let layer = false
 
@@ -28,7 +28,6 @@
 
     function showContextMenu(x, y, path) {
         cmX = visualViewport.width - x > 200 ? x : x - 200
-
         cmY = y
 
         let _cmData = [];
@@ -59,7 +58,7 @@
             ev.preventDefault()
             showContextMenu(pageX, pageY, path)
         }
-    });
+    })
 
     setContext("layerEvents", layerEvents)
 

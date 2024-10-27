@@ -4,25 +4,27 @@ export function vsync(handler) {
     }
 
     let timeStamp
-    let loopid
+    let end = false
     const onFrameFresh = ts => {
         if (!timeStamp) {
             timeStamp = ts
-            loopid = requestAnimationFrame(onFrameFresh)
+            requestAnimationFrame(onFrameFresh)
         }
 
         const dt = ts - timeStamp
         timeStamp = ts
 
         handler.call(undefined, dt, ts)
-        loopid = requestAnimationFrame(onFrameFresh)
+        if (end) return
+
+        requestAnimationFrame(onFrameFresh)
     }
 
     requestAnimationFrame(onFrameFresh)
 
     return {
         cancel: () => {
-            cancelAnimationFrame(loopid)
+            end = true
         }
     }
 }

@@ -137,4 +137,17 @@ export default {
     installed: 'Installed',
     installing: 'Installing',
     failed: 'Failed',
+
+    shortcuts: 'Shortcuts',
+    unset: 'Unset',
+    $next_tab: 'Next tab',
+    $prev_tab: 'Previous tab',
+    $close_tab: 'Close tab',
+    $toggle_playing: 'Toggle playing',
+    $fast_forward: 'Fast forward',
+    $fast_backward: 'Fast backward',
+    $next_track: 'Next track',
+    $prev_track: 'Previous track',
+    $toggle_search: 'Toggle search',
+    change_keybind: 'Change keybind',
 }

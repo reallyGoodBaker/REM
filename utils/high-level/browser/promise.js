@@ -1,6 +1,5 @@
 /**
- * 
- * @returns {promise: Promise<any>,resolve: (value: any) => void,reject: (reason?: any) => void}
+ * @returns {{promise: Promise<any>,resolve: (value: any) => void,reject: (reason?: any) => void}}
  */
 export function promiseResolvers() {
     let resolve, reject

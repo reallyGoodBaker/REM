@@ -147,7 +147,7 @@ body.dark-mode {
     cursor: pointer;
 }
 
-.btn.new-icon {
+.new-icon {
     font-family: 'Material Symbols Round';
 }
 
@@ -230,7 +230,6 @@ body.dark-mode {
 .btn.text:hover {
     background-color: var(--fade);
 }
-
 
 
 
@@ -369,4 +368,47 @@ progress.horizontal {
 }
 .scrollable.flex:hover::-webkit-scrollbar-thumb {
     background-color: var(--fade);
+}
+
+.alertButtonGroup {
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+}
+
+.alertButtonGroup > :first-child {
+    font-size: medium;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 16px 16px 4px 4px;
+    background-color: var(--controlColor);
+    color: var(--controlWhite);
+}
+
+.alertButtonGroup > :last-child {
+    font-size: medium;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 4px 4px 16px 16px;
+    background-color: var(--controlDarker);
+    color: var(--controlWhite);
+}
+
+dialog {
+    border: none;
+    background-color: transparent;
+    outline: none;
+    appearance: none;
+    pointer-events: none;
 }
