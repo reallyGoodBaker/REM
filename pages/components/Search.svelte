@@ -71,10 +71,13 @@
     $: performSearchInput = () => suggests = window.Pager?.performSearchInput(value) || []
 
     onMount(() => {
-        window.addEventListener('keydown', e => {
-            if (e.key === 'f' && e.ctrlKey) {
+        rem.on('toggleSearch', () => {
+            if (!showSearch) {
                 searchInput.focus()
                 showSearch = true
+            } else {
+                searchInput.blur()
+                showSearch = false
             }
         })
     })

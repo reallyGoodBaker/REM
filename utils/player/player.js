@@ -8,13 +8,15 @@ import { invoker } from '../main-invoker/browser.js'
 import { UrlPlayerAdapter } from './url-player-adapter.js'
 import { BufferPlayerAdapter } from './buffer-player-adapter.js'
 import { initPcmForward } from './pcm-forward.js'
+import { store } from '../stores/base.js'
 
 initAudioDevicesFind()
 
 export class AudioPlayer {
 
+    static sampleRate = store.getSync('AppSettings/output')?.sampleRate
     static bufferMode = false
-    static audioCtx = new AudioContext({ sampleRate: 48000 })
+    static audioCtx = new AudioContext({ sampleRate: this.sampleRate === 0 ? undefined : this.sampleRate })
     static urlPlayer = new UrlPlayerAdapter(this.audioCtx)
     static bufferPlayer = new BufferPlayerAdapter(this.audioCtx)
     static audioElementSource = this.urlPlayer.outputNode()

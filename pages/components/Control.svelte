@@ -130,11 +130,7 @@
         return AudioPlayer.play()
     }
 
-    window.addEventListener('keypress', ev => {
-        if (ev.key === ' ') {
-            onClick()
-        }
-    })
+    rem.on('togglePlay', onClick)
 
     function playPrev() {
         MainPlaylist.playPrev()

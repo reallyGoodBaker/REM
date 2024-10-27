@@ -27,7 +27,7 @@ export async function install(name) {
 }
 
 export async function uninstall(id) {
-    const done =  await hooks.invoke('ext-market:uninstall', id)
+    const done = await hooks.invoke('ext-market:uninstall', id)
     if (done) {
         rem.emit('extension:uninstall', id)
     }

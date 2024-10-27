@@ -120,7 +120,8 @@ export function initSettings() {
 
     init('AppSettings/output', {
         pluginOutput: false,
-    }, async ({ pluginOutput }) => {
+        sampleRate: 48000,
+    }, async ({ pluginOutput, sampleRate }) => {
         const { promise, resolve } = Promise.withResolvers()
         const wrap = d => ({
             label: d.label.includes(' -') ? d.label.replace(/^.* - /, '') : d.label,

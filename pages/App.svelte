@@ -34,7 +34,6 @@ let __pager
 window.Pager = (() => {
 
     let Props = [{}, {}],
-        history = [0],
         saves = new Map()
             .set(tabs[0], {})
             .set(tabs[1], {}),
@@ -90,7 +89,7 @@ window.Pager = (() => {
         return true
     }
 
-    function selectByIndex(index, forceUpdate=false, back=false) {
+    function selectByIndex(index, forceUpdate=false) {
         if (index < 0 || index >= tabs.length) index = 0
 
         let props = Props[index]
@@ -102,12 +101,9 @@ window.Pager = (() => {
         beforeSwitchHandlers = []
         clearSearchListeners()
 
-        history[index] = tabs[selected]
-
         __pager.display(
             selections[index],
             props,
-            back
         )
 
         selected = index
@@ -118,17 +114,9 @@ window.Pager = (() => {
         selectByIndex(key, forceUpdate)
     }
 
-    function back() {
-        let sel = tabs.indexOf(history[selected])
-        !~sel && (sel = 0)
-
-        selectByIndex(sel, true, true)
-    }
-
     function removeByIndex(index) {
+        if (tabs[index].startsWith('#')) return
         if (index < 0 || index >= tabs.length) index = 0
-
-        let shouldBack = index === selected
 
         saves.delete(tabs[index])
         beforeSwitchHandlers = []
@@ -151,7 +139,7 @@ window.Pager = (() => {
 
         if(typeof onTabDestroy === 'function') onTabDestroy(index)
 
-        if (shouldBack) back()
+        selectByIndex(index < size() ? index : index - 1, true)
     }
 
     function remove(key) {
@@ -198,14 +186,28 @@ window.Pager = (() => {
         return removeByIndex(selected)
     }
 
+    function next() {
+        const i = index()
+        selectByIndex(i < size() - 1 ? i + 1 : 0)
+    }
+
+    function prev() {
+        const i = index()
+        if (i === 0) {
+            selectByIndex(size() - 1)
+            return
+        }
+
+        selectByIndex(i - 1)
+    }
+
     return {
         add, select, remove, has, openNew,
         getContext, beforeSwitch, size, index,
-        removeByIndex: i => {
-            if(i > 1) removeByIndex(i)
-        }, removeCurrent,
+        removeByIndex, removeCurrent,
         setOnSearch, setOnSearchInput, setSearchPlaceholder,
         performSearch, performSearchInput, clearSearchListeners,
+        next, prev,
     }
 
 })()
@@ -291,8 +293,6 @@ rem.on('__pageUnfold', () => {
     <Pager bind:this={__pager}/>
     <Control/>
 </div>
-<SurfaceLayer>
-    
-</SurfaceLayer>
+<SurfaceLayer/>
 
 <Appbar/>

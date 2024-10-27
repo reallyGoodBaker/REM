@@ -13,7 +13,7 @@
             _page = Blank
             _props = props
             setTimeout(() => {
-                _page = page;
+                _page = page
             })
             return
         }

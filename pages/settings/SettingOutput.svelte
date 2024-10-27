@@ -8,7 +8,7 @@
     import { store } from '../../utils/stores/base'
 
     import { rem } from '../../utils/rem.js'
-    import {enableAnc} from '../../utils/player/anc.js'
+    import { enableAnc } from '../../utils/player/anc.js'
 
     $: lang = window.langMapping
 
@@ -35,16 +35,20 @@
     })
 
     let useAnc = false
-    let { pluginOutput } = store.getSync('AppSettings/output')
+    let { pluginOutput, sampleRate } = store.getSync('AppSettings/output')
 
     function save() {
-        store.set('AppSettings/output', { pluginOutput })
+        store.set('AppSettings/output', { pluginOutput, sampleRate })
     }
 
     function onUseAnc({detail}) {
         useAnc = false
         //enableAnc(detail)
     }
+
+    const sampleRates = [ 0, 44100, 48000, 96000, 192000, 384000 ]
+    $: _sampleRates = [ { label: 'auto' }, 44100, 48000, 96000, 192000, 384000 ]
+    $: sampleRateSelected = sampleRates.indexOf(sampleRate)
 </script>
 
 <RowList title={lang.s('output')}>
@@ -71,7 +75,18 @@
             save()
         }}
     />
-    {#if rem.isBeta}
+    <SelectListTile
+        data={lang.s('sample_rate')}
+        dataList={_sampleRates}
+        bind:selected={sampleRateSelected}
+        useAvatar={false}
+        isUrl={false}
+        on:selected={async ev => {
+            sampleRate = sampleRates[ev.detail]
+            save()
+        }}
+    />
+    <!-- {#if rem.isBeta}
     <ToggleListTile
         data={lang.s('anc')}
         extra={lang.s('anc_extra')}
@@ -80,5 +95,5 @@
         bind:checked={useAnc}
         on:toggle={onUseAnc}
     />
-    {/if}
+    {/if} -->
 </RowList>

@@ -133,16 +133,16 @@
     document.addEventListener('mouseup', endSplitDrag)
 
     let multiMode = false
-    document.addEventListener('keydown', ev => {
-        if (ev.ctrlKey) {
-            multiMode = true
-        }
-    })
-    document.addEventListener('keyup', ev => {
-        if (!ev.ctrlKey) {
-            multiMode = false
-        }
-    })
+    // document.addEventListener('keydown', ev => {
+    //     if (ev.ctrlKey) {
+    //         multiMode = true
+    //     }
+    // })
+    // document.addEventListener('keyup', ev => {
+    //     if (!ev.ctrlKey) {
+    //         multiMode = false
+    //     }
+    // })
 
     let selections = new Set()
     function onClick(ev) {

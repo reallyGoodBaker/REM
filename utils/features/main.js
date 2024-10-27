@@ -1,13 +1,13 @@
 const { app } = require('electron')
 
 const features = [
-      'FluentOverlayScrollbars',
+    'FluentOverlayScrollbars',
 ]
 
 if (process.platform === 'win32') {
-      features.push('WindowsScrollingPersonality')
+    features.push('WindowsScrollingPersonality')
 }
 
 exports.appendFeatures = function appendFeatures() {
-      app.commandLine.appendSwitch('enable-features', features.join(','))
+    app.commandLine.appendSwitch('enable-features', features.join(','))
 }

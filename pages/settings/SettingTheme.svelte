@@ -19,8 +19,8 @@
             const sysTheme = await hooks.invoke('win:sys-colors')
             if (sysTheme) {
                 rem.emit('changeControlColor', hue(sysTheme.accent))
-                saveTheme()
                 selected = detail
+                saveTheme()
                 return
             }
 

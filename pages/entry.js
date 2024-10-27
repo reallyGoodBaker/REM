@@ -10,6 +10,7 @@ import { initCrossThreadNotification } from '../utils/notification/browser.js'
 import { initSettings } from './settings/initSettings.js'
 import { initHighLevelApi } from '../utils/high-level/browser'
 import { loadExtensionUI } from '../extension/host/ui-loader'
+import { initAppShortcut } from '../utils/shortcut/app'
 
 initHighLevelApi()
 
@@ -25,7 +26,7 @@ initNetworkWatcher()
 initAudioDevicesFind()
 watchAudioDeviceChange()
 initCrossThreadNotification()
-
+initAppShortcut()
 
 export default new App({
     target: document.body
