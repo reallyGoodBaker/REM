@@ -6,8 +6,10 @@ const playlist = require('./player/playlist')
 const win = require('./win')
 const ipc = require('./net/ipc')
 const output = require('./player/output')
+const { settings, store } = require('./store/index')
 
 module.exports = {
     ready, invoke, call, provide, timeout, interval, player,
-    notification, playlist, whenReady, win, ipc, output,
+    notification, playlist, whenReady, win, ipc, output, store,
+    settings,
 }

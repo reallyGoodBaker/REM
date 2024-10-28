@@ -157,7 +157,7 @@ class ExtensionHost {
             return
         }
 
-        const component = this._initComponent(name, bw, this.extension)
+        const component = this._initComponent(name, bw, this.extension, this.manifest)
         this.components.set(name, component)
     }
 
@@ -201,7 +201,6 @@ class ExtensionHost {
     _registerComponent = (component) => {
         for (const key of this._getComponentKeys(component)) {
             const handler = async ({ args, id }) => {
-                // console.log(args)
                 let val
                     ,err = val = null
 

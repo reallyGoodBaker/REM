@@ -101,3 +101,21 @@ interface Output {
 }
 
 export const output: Output
+
+interface Store {
+    get(key: string): Promise<any>
+    set(key: string, value: any): Promise<void>
+    getRaw(key: string): Promise<any>
+    rm(key: string): Promise<void>
+}
+
+export const store: Store
+
+interface Settings {
+    get(): Promise<any>
+    set(value: any): Promise<void>
+    getRaw(): Promise<any>
+    rm(): Promise<void>
+}
+
+export const settings: Settings
