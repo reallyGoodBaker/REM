@@ -8,6 +8,7 @@
         "build-app": "npm run build && electron-builder",
         "build": "rollup -c && npm run build-icons",
         "start": "rollup -c && electron .",
+        "preview": "electron .",
         "postinstall": "electron-builder install-app-deps"
     },
     "author": "RGB",

@@ -2,7 +2,6 @@ const { ipcMain } = require('electron')
 const { registerHandler } = require('../../wins/main/protocol')
 const fetch = require('node-fetch')
 const { tar } = require('compressing')
-const https = require('https')
 const fs = require('fs')
 const { Extensions } = require('../../utils/appPath/main')
 const { defaultLogger } = require('../easy-log/node')
@@ -10,7 +9,7 @@ const path = require('path')
 const bus = require('../bus')
 const { promiseResolvers } = require('../high-level/node/promise')
 
-const defaultRoot = 'http://remext.rgb39.top/'
+const defaultRoot = 'https://remext.rgb39.top/'
 
 let marketRoot = defaultRoot
 
@@ -34,7 +33,7 @@ async function getManifest(name) {
 async function install(name) {
     return new Promise(resolve => {
         const filePath = `${marketRoot}dist/${name}`
-        const net = filePath.startsWith('https') ? https : require('http')
+        const net = filePath.startsWith('https') ? require('https') : require('http')
         net.get(filePath, async res => {
             try {
                 await tar.uncompress(res, Extensions)
