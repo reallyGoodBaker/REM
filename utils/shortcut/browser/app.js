@@ -67,7 +67,7 @@ export async function initAppShortcut() {
 
 export async function saveKeybinding({ id, key, flag }) {
     const save = await store.get('AppSettings/shortcuts')
-    save[id] = keyset2str(key, flag).replaceAll(' ', '')
+    save[id] = keyset2str(key, flag, true)
 
     await store.set('AppSettings/shortcuts', save)
 }
