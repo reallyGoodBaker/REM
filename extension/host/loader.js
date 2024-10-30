@@ -85,6 +85,7 @@ class ExtensionLoader {
         this._deactiveExtension(id)
         this.config.remove(id)
         this.config.commit()
+        this.extensions.delete(id)
     
         fs.rmSync(filePath, { recursive: true, force: true })
     }
