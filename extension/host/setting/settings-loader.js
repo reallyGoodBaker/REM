@@ -50,7 +50,6 @@ export async function loadExtensionSettings(m) {
         return
 
     const setValue = async (id, name, value) => {
-        console.log(settingEntry)
         if (m.id !== id) {
             return
         }
