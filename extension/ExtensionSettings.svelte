@@ -15,9 +15,9 @@
     export let isUrl = false
     export let icon = '\ue68b'
 
-    const customSettings = getExtensionSettings(id)
     // console.log(customSettings)
     const extension = extensionManifests.get(id)
+    const customSettings = getExtensionSettings(extension)
 
     const s = (f, ...args) => langMapping.s(f, ...args) || f
     let ver = extension.ver ?? '1.0'
@@ -249,13 +249,14 @@
     </div>
 
     {#if customSettings}
+    {#await customSettings then _customSettings}
     <div class="card">
         <div class="card_header">
             <div class="icon-round">{'\ue8b8'}</div>
             <div>{s('settings')}</div>
         </div>
         <div class="card_list">
-        {#each customSettings as { type, defaultValue, min, max, label, name }}
+        {#each _customSettings as { type, defaultValue, min, max, label, name }}
             <div class="card_list_tile" icon={icon ?? ''}>
                     {#await getExtSetting(id, name) then value}
                     {#if type === 'boolean'}
@@ -268,8 +269,9 @@
                     {/await}
             </div>
         {/each}
+        </div>
     </div>
-    </div>
+    {/await}
     {/if}
 </div>
 </ScrollView>
