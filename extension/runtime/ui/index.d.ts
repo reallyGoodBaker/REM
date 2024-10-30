@@ -17,3 +17,5 @@ export function NumberField(
     max?: number,
     name?: string
 ): BooleanUIElement
+
+export function fromObject(obj: any, i18n?: any): UIElement[]

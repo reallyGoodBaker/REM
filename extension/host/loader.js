@@ -148,8 +148,6 @@ class ExtensionLoader {
             this.config.assign({ [id]: false })
             this.config.commit()
         }
-
-        this.extensions.delete(id)
     }
 
 }

@@ -1,12 +1,18 @@
 const { invoke } = require('../main/invoker')
 
 class Store {
-    constructor(prefix='store.') {
+    constructor(prefix) {
         this.prefix = prefix
     }
 
-    async get(k) {
-        return await invoke(this.prefix + 'get', k)
+    async get(k, defaultValue) {
+        let value = await invoke(this.prefix + 'get', k)
+        if (value !== undefined && value !== null) {
+            return value
+        }
+        
+        await this.set(k, defaultValue)
+        return defaultValue
     }
 
     async getRaw(k) {
@@ -23,6 +29,6 @@ class Store {
 }
 
 module.exports = {
-    store: new Store(),
+    store: new Store('store.'),
     settings: new Store('$store.'),
 }

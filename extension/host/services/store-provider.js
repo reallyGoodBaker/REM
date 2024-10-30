@@ -15,7 +15,8 @@ module.exports = ({ store }, _, { id }) => {
             }
 
             if (p.startsWith('$store.')) {
-                return (...args) => t[p.slice(7)](`ExtensionSettings/${id}`, ...args)
+                return (...args) =>
+                    t[p.slice(7)](`ExtensionSettings/${id}`, ...args)
             }
         },
         set() { return false }

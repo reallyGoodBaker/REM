@@ -1,5 +1,5 @@
 export const store = {
-    async get(key) {
+    async _get(key) {
         let res = null,
             data = await hooks.invoke('store:get', key)
         
@@ -15,6 +15,16 @@ export const store = {
 
         return undefined;
 
+    },
+
+    async get(key, defaultValue) {
+        let res = await this._get(key)
+        if (res !== undefined && res !== null) {
+            return res
+        }
+
+        await this.set(key, defaultValue)
+        return defaultValue
     },
 
     getSync(key) {

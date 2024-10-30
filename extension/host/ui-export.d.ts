@@ -59,7 +59,7 @@ interface UIHome {
 }
 
 interface Settings {
-    get(): Promise<any>
+    get(defaultValue?: any): Promise<any>
     getRaw(): Promise<any>
     getSync(): any
     set(v: any): Promise<void>

@@ -21,7 +21,6 @@ class ExtensionHost {
         const manifestPath = path.join(folder, 'manifest.json')
         try {
             this.manifest = requireManifest(manifestPath)
-
             this.events.setMaxListeners(Infinity)
             this.events.on('internal-error', err => {
                 console.error(err)
@@ -39,7 +38,6 @@ class ExtensionHost {
         )
 
         ext.on('message', v => {
-
             if ('name' in v && 'args' in v) {
                 this.events.emit(`@${v.name}`, v)
                 return
@@ -86,7 +84,6 @@ class ExtensionHost {
      * @param {BrowserWindow} bw 
      */
     initExtension(bw) {
-        //const extWorker = 
         if (this.manifest.entry) {
             this._registerExtensionWorker()
             this._connectComponents(bw)
@@ -170,7 +167,7 @@ class ExtensionHost {
             return serviceMap[name].apply(undefined, args)
         } catch (err) {
             this.events.emit('internal-error', err)
-            return {}
+            return Object.prototype
         }
     }
 
@@ -198,7 +195,7 @@ class ExtensionHost {
         }
     }
 
-    _registerComponent = (component) => {
+    _registerComponent = component => {
         for (const key of this._getComponentKeys(component)) {
             const handler = async ({ args, id }) => {
                 let val

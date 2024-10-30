@@ -42,7 +42,7 @@
         position: relative;
         overflow: hidden;
         border-radius: 6px;
-        background-color: rgba(255,255,255,0.5);
+        background-color: var(--controlBright84);
     }
 
     .input::after {
