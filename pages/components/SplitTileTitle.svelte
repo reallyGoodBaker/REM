@@ -1,7 +1,20 @@
 <script>
-    import { neteaseImgSizeParam, getImgSrc } from "../../utils/stores/img"
+    import { onMount } from "svelte";
+    import { neteaseImgSizeParam } from "../../utils/stores/img"
+    import Image from './Image3.svelte'
 
+    let image, canUpdate = false
     export let data = {}
+
+    function renderImage(data) {
+        if (canUpdate) {
+            image.render(data.picUrl + neteaseImgSizeParam(32, 32), true)
+        }
+    }
+
+    onMount(() => canUpdate = true)
+
+    $: renderImage(data)
 </script>
 
 <style>
@@ -12,26 +25,12 @@
         white-space: nowrap;
     }
 
-    .img {
-        border-radius: 8px;
-    }
-
-    .placeholder {
-        width: 32px;
-        height: 32px;
-        background-color: var(--controlGray);
-    }
-
     .Row {
         user-select: none;
     }
 </style>
 
 <div class="Row" style="flex-wrap: nowrap; width: 100%;">
-    {#await getImgSrc(data.picUrl + neteaseImgSizeParam(32, 32))}
-    <div class="img placeholder"></div>
-    {:then src} 
-    <img draggable="false" alt="img" class="img" width={32} height={32} {src}/>
-    {/await}
+    <Image bind:this={image} radius="8px" width={32} height={32} src={data.picUrl + neteaseImgSizeParam(32, 32)}/>
     <div class="title" style="margin-left: 8px;">{data.title}</div>
 </div>

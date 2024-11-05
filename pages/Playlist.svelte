@@ -161,8 +161,9 @@
     import { onDestroy, onMount, tick } from "svelte"
     import Artist from "./Artist.svelte"
 
-    async function dbClick(ev) {
-        const { listData, i } = ev.detail
+    async function dbClick({ detail }) {
+        const { listData, i } = detail
+        console.log(detail)
 
         // const matches = MainPlaylist.query({
         //     name: listData[i].name

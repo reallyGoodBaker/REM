@@ -1,7 +1,7 @@
 {
     "name": "rem",
-    "version": "0.2.2",
-    "description": "Bilberry",
+    "version": "0.2.3",
+    "description": "Carambola",
     "main": "./main.js",
     "scripts": {
         "build-icons": "electron-icon-builder -i=./icon.png -f",

@@ -38,7 +38,7 @@ export async function getImageBitmap(url, opt) {
         binary = await saveImg(url)
     }
 
-    return createImageBitmap(new Blob([ binary ]), opt)
+    return await createImageBitmap(new Blob([ binary ]), opt)
 }
 
 const imgUriCache = new Map()

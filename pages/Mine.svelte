@@ -6,7 +6,7 @@
     import { NETEASE_IMG_LARGE, getImgSrc } from '../utils/stores/img.js'
     import { store } from '../utils/stores/base.js'
     import { getColor } from '../utils/style/imageBasicColor.js'
-    import Image from "./components/Image2.svelte"
+    import Image from "./components/Image3.svelte"
     import Artist from "./Artist.svelte"
 
     const s = (str, ...args) => langMapping.s(str, ...args)
