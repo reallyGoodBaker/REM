@@ -21,8 +21,13 @@ export class AudioPlayer {
     static bufferPlayer = new BufferPlayerAdapter(this.audioCtx)
     static audioElementSource = this.urlPlayer.outputNode()
     static audioBufferSource = this.bufferPlayer.outputNode()
+    static audioSource = null
     static virtualRoot = this.audioCtx.createGain()
     static em = new EventEmitter()
+    static instance = null
+    static getInstance() {
+        return AudioPlayer.instance || (AudioPlayer.instance = new AudioPlayer())
+    }
 
 
     static on(type, handler) {
@@ -81,9 +86,11 @@ export class AudioPlayer {
         if (bufferMode) {
             this.urlPlayer.stop()
             this.audioBufferSource.connect(this.virtualRoot)
+            this.audioSource = this.audioBufferSource
         } else {
             this.bufferPlayer.stop()
             this.audioElementSource.connect(this.virtualRoot)
+            this.audioSource = this.audioElementSource
         }
 
         this.bufferMode = bufferMode
@@ -133,6 +140,22 @@ export class AudioPlayer {
     loadData(audioData, onload) {
         AudioPlayer.loadData(audioData, onload)
     }
+
+
+    #muted = false
+    isMuted() {
+        return this.#muted
+    }
+    mute(bool) {
+        if (bool) {
+            AudioPlayer.audioSource.disconnect()
+            this.#muted = true
+        } else {
+            AudioPlayer.audioSource.connect(AudioPlayer.virtualRoot)
+            this.#muted = false
+        }
+    }
+
 
     static volume(number) {
         if (typeof number === 'undefined') return this.virtualRoot.gain.value
@@ -188,7 +211,7 @@ LifeCycle.when('runtimeReady').then(() => {
     //     rem.emit('setControlsContent', AudioPlayer.audioData)
     // }
 
-    const globalPlayer = new AudioPlayer()
+    const globalPlayer = AudioPlayer.getInstance()
 
     const lastProcessNode = initProcessor(AudioPlayer.audioCtx, srcNode, destNode)
     initAncProcessor(AudioPlayer.audioCtx, destNode)

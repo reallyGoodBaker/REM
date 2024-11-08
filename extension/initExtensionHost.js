@@ -33,7 +33,7 @@ function initExtRuntime() {
     }
 
     cp(
-        path.resolve(__dirname, './runtime'),
+        path.resolve(__dirname, '../extension/runtime'),
         ExtensionRuntime
     )
 }

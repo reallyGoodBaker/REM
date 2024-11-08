@@ -1,8 +1,8 @@
 {
     "name": "rem",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "description": "Carambola",
-    "main": "./main.js",
+    "main": "./wins/main/main.js",
     "scripts": {
         "build-icons": "electron-icon-builder -i=./icon.png -f",
         "build-app": "npm run build && electron-builder",
@@ -14,7 +14,6 @@
     "author": "RGB",
     "license": "GPLv2",
     "dependencies": {
-        "@rollup/plugin-typescript": "^11.1.6",
         "compressing": "^1.10.1",
         "music-metadata": "^7.12.6",
         "NeteaseCloudMusicApi": "^4.24.0",
@@ -22,7 +21,9 @@
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^22.0.0",
+        "@rollup/plugin-json": "^6.1.0",
         "@rollup/plugin-node-resolve": "^13.3.0",
+        "@rollup/plugin-typescript": "^11.1.6",
         "@rollup/plugin-wasm": "^6.2.2",
         "assemblyscript": "^0.27.27",
         "electron": "^33.0.0-beta.7",
@@ -45,7 +46,18 @@
             "!build.*",
             "!*.md",
             "!rollup.config.js",
-            "!icon.png"
+            "!icon.png",
+            "!preload",
+            "!node_modules/**/{*.d.ts,*.map}",
+            "!LICENSE",
+            "!node_modules/electron",
+            "!node_modules/electron-builder",
+            "!node_modules/electron-icon-builder",
+            "!node_modules/rollup",
+            "!node_modules/rollup*",
+            "!node_modules/@rollup",
+            "!node_modules/svelte",
+            "!node_modules/typescript"
         ],
         "linux": {
             "maintainer": "rgb39",
@@ -58,5 +70,6 @@
                 "Icon": "rem"
             }
         }
+        
     }
 }

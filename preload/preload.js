@@ -1,8 +1,8 @@
-require('../../utils/main-invoker/preload')
+require('../utils/main-invoker/preload')
 
 const { ipcRenderer, webFrame } = require('electron')
-const Binder = require('../../utils/jsBinder')
-const { createFuncBinding } = require('../../utils/api/funcBinder')
+const Binder = require('../utils/jsBinder')
+const { createFuncBinding } = require('../utils/api/funcBinder')
 
 ipcRenderer.setMaxListeners(0)
 
@@ -19,21 +19,21 @@ new Binder('hooks')
     zoom: ratio => webFrame.setZoomFactor(ratio),
 })
 
-const { login, loginViaQRCode, validQRLogin, getUserAccount, getCaptcha, verifyCaptcha } = require('../../utils/api/login')
-const { Search, suggest } = require('../../utils/api/search')
-const { checkIn } = require('../../utils/api/dailySignin')
+const { login, loginViaQRCode, validQRLogin, getUserAccount, getCaptcha, verifyCaptcha } = require('../utils/api/login')
+const { Search, suggest } = require('../utils/api/search')
+const { checkIn } = require('../utils/api/dailySignin')
 const {
     getUserPlaylist, getPlaylistDetail, getArtistSublist, getAlbumSublist,
     getAlbumDetail,
-} = require('../../utils/api/playlist')
-const { getSongDetail, getSongUrl, getSongDownload, getSongUrlX } = require('../../utils/api/song')
+} = require('../utils/api/playlist')
+const { getSongDetail, getSongUrl, getSongDownload, getSongUrlX } = require('../utils/api/song')
 const { logout } = require('NeteaseCloudMusicApi')
-const { getArtistDetail, getArtistSongs, getArtistAlbums } = require('../../utils/api/artist')
-const { getLyrics } = require('../../utils/api/lyrics')
-const { fetchJson } = require('../../utils/server/fetch')
+const { getArtistDetail, getArtistSongs, getArtistAlbums } = require('../utils/api/artist')
+const { getLyrics } = require('../utils/api/lyrics')
+const { fetchJson } = require('../utils/server/fetch')
 
 new Binder('server')
-    .use({ ...require('../../utils/server/media-cache'), fetchJson })
+    .use({ ...require('../utils/server/media-cache'), fetchJson })
 
 new Binder('NeteaseApi')
 .bind('login', createFuncBinding(login))

@@ -151,4 +151,7 @@ export default {
     $prev_track: '上一首',
     $toggle_search: '搜索/关闭搜索',
     change_keybind: '修改快捷键',
+    $volume_down: '降低音量',
+    $volume_up: '提高音量',
+    $mute: '静音',
 }

@@ -48,7 +48,7 @@ module.exports = function buildWindow() {
 
         webPreferences: {
             sandbox: false,
-            preload: path.resolve(__dirname, './preload.js'),
+            preload: path.resolve(__dirname, '../../bundle/preload.js'),
         }
     })
 

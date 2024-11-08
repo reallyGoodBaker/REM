@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "target": "ESNext",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "noEmitOnError": true,
+        "strict": true,
+        "esModuleInterop": false,
+        "outDir": "./bundle",
+        "rootDir": "./",
+        "allowJs": true,
+        "noImplicitAny": true
+    },
+    "include": [
+        "./**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "bundle",
+        "docs"
+    ]
+}

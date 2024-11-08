@@ -1,85 +1,109 @@
-import svelte from 'rollup-plugin-svelte';
-import commonjs from '@rollup/plugin-commonjs';
-import resolve from '@rollup/plugin-node-resolve';
-import livereload from 'rollup-plugin-livereload';
-import { terser } from 'rollup-plugin-terser';
-import css from 'rollup-plugin-css-only';
+import svelte from 'rollup-plugin-svelte'
+import commonjs from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
+import livereload from 'rollup-plugin-livereload'
+import { terser } from 'rollup-plugin-terser'
+import css from 'rollup-plugin-css-only'
 import { wasm } from '@rollup/plugin-wasm'
 import typescript from '@rollup/plugin-typescript'
+import json from '@rollup/plugin-json'
 
-const production = !process.env.ROLLUP_WATCH;
+const production = !process.env.ROLLUP_WATCH
 
 function serve() {
-	let server;
+	let server
 
 	function toExit() {
-		if (server) server.kill(0);
+		if (server) server.kill(0)
 	}
 
 	return {
 		writeBundle() {
-			if (server) return;
+			if (server) return
 			server = require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
 				stdio: ['ignore', 'inherit', 'inherit'],
 				shell: true
-			});
+			})
 
-			process.on('SIGTERM', toExit);
-			process.on('exit', toExit);
+			process.on('SIGTERM', toExit)
+			process.on('exit', toExit)
 		}
-	};
+	}
 }
 
-export default {
-	input: 'pages/entry.js',
-	output: {
-		sourcemap: true,
-		format: 'iife',
-		name: 'app',
-		file: 'bundle/bundle.js'
-	},
-	plugins: [
-        typescript(),
-        wasm(),
-		svelte({
-			compilerOptions: {
-                customElement: false,
-				// enable run-time checks when not in production
-				dev: true,
-			}
-		}),
-		// we'll extract any component CSS out into
-		// a separate file - better for performance
-		css({ output: 'bundle.css' }),
-
-		// If you have external dependencies installed from
-		// npm, you'll most likely need these plugins. In
-		// some cases you'll need additional configuration -
-		// consult the documentation for details:
-		// https://github.com/rollup/plugins/tree/master/packages/commonjs
-		resolve({
-			browser: true,
-			dedupe: ['svelte']
-		}),
-		commonjs(),
-
-		// In dev mode, call `npm run start` once
-		// the bundle has been generated
-		!production && serve(),
-
-		// Watch the `public` directory and refresh the
-		// browser on changes when not in production
-		!production && livereload('public'),
-
-		// If we're building for production (npm run build
-		// instead of npm run dev), minify
-		production && terser()
-	],
-	watch: {
-		clearScreen: false
-	},
-	onwarn: (warning, handler) => {
-		if (warning.code.startsWith('a11y-')) return
-		handler(warning)
-	},
-};
+export default [
+    {
+        input: 'pages/entry.js',
+        output: {
+            sourcemap: true,
+            format: 'iife',
+            name: 'app',
+            file: 'bundle/browser.js'
+        },
+        plugins: [
+            typescript({
+                tsconfig: './tsconfig.browser.json'
+            }),
+            json(),
+            wasm(),
+            svelte({
+                compilerOptions: {
+                    customElement: false,
+                    // enable run-time checks when not in production
+                    dev: true,
+                }
+            }),
+            // we'll extract any component CSS out into
+            // a separate file - better for performance
+            css({ output: 'bundle.css' }),
+    
+            // If you have external dependencies installed from
+            // npm, you'll most likely need these plugins. In
+            // some cases you'll need additional configuration -
+            // consult the documentation for details:
+            // https://github.com/rollup/plugins/tree/master/packages/commonjs
+            resolve({
+                browser: true,
+                dedupe: ['svelte'],
+            }),
+            commonjs(),
+    
+            // In dev mode, call `npm run start` once
+            // the bundle has been generated
+            !production && serve(),
+    
+            // Watch the `public` directory and refresh the
+            // browser on changes when not in production
+            !production && livereload('public'),
+    
+            // If we're building for production (npm run build
+            // instead of npm run dev), minify
+            production && terser()
+        ],
+        watch: {
+            clearScreen: false
+        },
+        onwarn: (warning, handler) => {
+            if (warning.code.startsWith('a11y-')) return
+            handler(warning)
+        },
+    },
+    {
+        input: './preload/preload.js',
+        output: {
+            sourcemap: true,
+            format: 'cjs',
+            name: 'preload',
+            file: 'bundle/preload.js',
+            exports: 'auto'
+        },
+        plugins: [
+            typescript({
+                tsconfig: './tsconfig.node.json'
+            }),
+            json(),
+            commonjs(),
+            production && terser()
+        ]
+    },
+]

@@ -103,6 +103,10 @@
         AudioPlayer.on('play', () => playing = true)
         AudioPlayer.on('pause', () => playing = false)
         AudioPlayer.on('ended', () => MainPlaylist.playNext())
+        AudioPlayer.on('volumechange', () => {
+            volume = AudioPlayer.volume() * 100
+            saveVolume()
+        })
 
         await restoreVolume()
 
@@ -428,6 +432,7 @@
             on:mousemove={setVolume}
             on:mouseup={saveVolume}
         />
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div class="btn big btn-nb"
             on:click={() => {
                 rem.emit('tunnerOpen')

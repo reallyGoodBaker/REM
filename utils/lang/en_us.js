@@ -151,5 +151,8 @@ export default {
     $next_track: 'Next track',
     $prev_track: 'Previous track',
     $toggle_search: 'Toggle search',
-    change_keybind: 'Change keybind',    
+    change_keybind: 'Change keybind',
+    $volume_down: 'Volume down',
+    $volume_up: 'Volume up',
+    $mute: 'Mute',
 }
