@@ -2,6 +2,7 @@
     import { store } from '../../utils/stores/base'
     import { NETEASE_IMG_LARGE } from '../../utils/stores/img'
     import Playlist from '../Playlist.svelte'
+    import Image3 from './Image3.svelte'
     import Link from './Link.svelte'
 
     export let als = []
@@ -57,7 +58,6 @@
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
     }
 
     .info {
@@ -95,7 +95,7 @@
             forwards: await store.get('playlist/forwards'),
         })
     }}>
-        <img draggable="false" width={140} height={140} src={al.picUrl + NETEASE_IMG_LARGE} alt="" style="border-radius: 8px;"/>
+        <Image3 width={140} height={140} src={al.picUrl + NETEASE_IMG_LARGE}/>
         <div class="Column info align_start">
             <div class="Column align_start">
                 <div class="album-title">{al.name}</div>

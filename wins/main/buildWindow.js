@@ -7,7 +7,7 @@ const RemStore = require('../../utils/stores/rem-store.js')
 const { watchNetworkChange } = require('../../utils/network/server.js')
 const { initExtRuntime } = require('../../extension/initExtensionHost')
 const initMainInvoker = require('../../utils/main-invoker/node.js')
-const { publish, write, init: initBroker } = require('../../utils/ipc/main.js')
+const { publish, init: initBroker } = require('../../utils/ipc/main.js')
 const { getExtId } = require('../../utils/ipc/extmapping.js')
 const { registerProtocol } = require('./protocol.js')
 const { initDevicesMain } = require('../../utils/devices/node/index.js')
@@ -15,6 +15,7 @@ const { appendFeatures } = require('../../utils/features/main.js')
 
 const remStore = new RemStore()
 
+ipcMain.setMaxListeners(0)
 Menu.setApplicationMenu(null)
 watchNetworkChange()
 

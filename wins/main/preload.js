@@ -4,6 +4,8 @@ const { ipcRenderer, webFrame } = require('electron')
 const Binder = require('../../utils/jsBinder')
 const { createFuncBinding } = require('../../utils/api/funcBinder')
 
+ipcRenderer.setMaxListeners(0)
+
 new Binder('hooks')
 .use({
     invoke: (...args) => ipcRenderer.invoke.apply(ipcRenderer, args),
@@ -17,7 +19,7 @@ new Binder('hooks')
     zoom: ratio => webFrame.setZoomFactor(ratio),
 })
 
-const { login, loginViaQRCode, validQRLogin, getUserAccount } = require('../../utils/api/login')
+const { login, loginViaQRCode, validQRLogin, getUserAccount, getCaptcha, verifyCaptcha } = require('../../utils/api/login')
 const { Search, suggest } = require('../../utils/api/search')
 const { checkIn } = require('../../utils/api/dailySignin')
 const {
@@ -55,6 +57,8 @@ new Binder('NeteaseApi')
 .bind('getArtistSongs', createFuncBinding(getArtistSongs))
 .bind('getArtistAlbums', createFuncBinding(getArtistAlbums))
 .bind('getLyrics', createFuncBinding(getLyrics))
+.bind('getCaptcha', createFuncBinding(getCaptcha))
+.bind('verifyCaptcha', createFuncBinding(verifyCaptcha))
 
 
 Binder.bindAll();

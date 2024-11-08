@@ -190,7 +190,7 @@
     .desc {
         line-break: loose;
         width: 100%;
-        height: 200px;
+        height: 0;
         flex-grow: 1;
         overflow-y: auto;
         overflow-x: hidden;

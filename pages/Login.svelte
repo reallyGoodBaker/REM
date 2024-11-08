@@ -13,14 +13,18 @@
         rem.emit('__updateLoginAvatar')
     })
 
-    let phone, passwd, error = false;
+    let phone, passwd, error = false
+
+    function getCaptcha() {
+        NeteaseApi.getCaptcha(phone)
+    }
 
     async function doLogin() {
-        const res = await NeteaseApi.login(phone, passwd);
+        const res = await NeteaseApi.login(phone, passwd)
         if(res.body.code !== 200) {
-            passwd = '';
-            error = true;
-            return ;
+            passwd = ''
+            error = true
+            return 
         }
         await Promise.all([
             store.set('profile', JSON.stringify(res.body.profile)),
@@ -30,54 +34,58 @@
         saveAccount()
     }
 
-    let loginTypeEnum = ['phone_number', 'qr_code'];
-    let loginType = 1;
-    let img;
+    let loginTypeEnum = ['phone_number', 'qr_code']
+    let loginType = 1
+    let img
 
 
-    let qrimg = '', message = 'wait_scanning';
+    let qrimg = '', message = 'wait_scanning'
     async function getQRLoginInfo() {
-        const qrData = await NeteaseApi.loginViaQRCode();
-        const key = qrData[0];
-        qrimg = qrData[1].body.data.qrimg;
+        const qrData = await NeteaseApi.loginViaQRCode()
+        const key = qrData[0]
+        qrimg = qrData[1].body.data.qrimg
 
         let doValide = async () => {
-            const res = await NeteaseApi.validQRLogin(key);
+            const res = await NeteaseApi.validQRLogin(key)
 
-            if (loginType !== 1) return;
+            if (loginType !== 1) return
 
             let loop = () => setTimeout(async () => {
-                await doValide();
-            }, 500);
+                await doValide()
+            }, 500)
 
-            message = res.body.message;
+            message = res.body.message
 
             switch(res.body.code) {
-                case 801: loop(); break;
+                case 801: loop()
+                    break
 
-                case 800: getQRLoginInfo(); break;
+                case 800: getQRLoginInfo()
+                    break
 
-                case 802: img.style.opacity = 0.32; loop(); break;
+                case 802: img.style.opacity = 0.32
+                    loop()
+                    break
 
                 case 803: {
-                    store.set('cookie', res.body.cookie);
-                    saveAccount(); 
-                    break;
+                    store.set('cookie', res.body.cookie)
+                    saveAccount() 
+                    break
                 }
             }
 
         }
 
-        doValide();
+        doValide()
 
     }
 
     async function saveAccount() {
-        const res = await NeteaseApi.getUserAccount(await store.get('cookie'));
+        const res = await NeteaseApi.getUserAccount(await store.get('cookie'))
         const p = res.body.data.profile
         store.set('profile', p)
         rem.emit('logined', p)
-        performClick();
+        performClick()
     }
 
     getQRLoginInfo()
@@ -102,7 +110,7 @@
         border: solid 2px transparent;
         border-radius: 8px;
         margin: 0px 4px;
-        background-color: #eee;
+        background-color: var(--controlBackground2);
         margin-bottom: 8px;
         padding: 0px 12px;
     }
@@ -143,18 +151,19 @@
         }}>{s('switch_to')}{s(loginTypeEnum[loginType? 0: 1])}</span>
     </h3>
     {#if !loginType}
-        <input type="text" class="{error ? 'error' : ''}" bind:value={phone} placeholder={s('phone_number')}>
-        <input type="password" class="{error ? 'error' : ''}" bind:value={passwd} placeholder={s('password')}>
-        <div style="padding: 24px 0px 12px 0px;">
+        <input type="tel" class="{error ? 'error' : ''}" bind:value={phone} placeholder={s('phone_number')}>
+        <input type="number" class="{error ? 'error' : ''}" bind:value={passwd} placeholder={s('captcha')}>
+        <div class="btn outlined" on:click={getCaptcha}>{s('get_captcha')}</div>
+        <div style="padding: 24px 0px 12px 0px">
             <RippleLayer
                 rippleColor={'#000'}
-                cssStyle={'border-radius: 8px;'}
+                cssStyle={'border-radius: 8px'}
             >
                 <div on:click={doLogin} class="column submit">{s('login')}</div>
             </RippleLayer>
         </div>
     {:else if qrimg}
-        <img bind:this={img} src={qrimg} width={228} height={228} draggable="false" alt=" " style="border-radius: 24px;">
+        <img bind:this={img} src={qrimg} width={228} height={228} draggable="false" alt=" " style="border-radius: 24px">
         <h5>{s(message)}</h5>
     {/if}
 </div>

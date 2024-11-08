@@ -1,5 +1,5 @@
 const { createFuncBinding } = require('../../utils/api/funcBinder.js')
-const { login, loginViaQRCode, validQRLogin, getUserAccount, logout } = require('../../utils/api/login.js')
+const { login, loginViaQRCode, validQRLogin, getUserAccount, logout, getCaptcha, verifyCaptcha } = require('../../utils/api/login.js')
 const { Search, suggest } = require('../../utils/api/search.js')
 const { checkIn } = require('../../utils/api/dailySignin.js')
 const {
@@ -35,6 +35,8 @@ createFuncBinding(getArtistDetail)
 createFuncBinding(getArtistSongs)
 createFuncBinding(getArtistAlbums)
 createFuncBinding(getLyrics)
+createFuncBinding(getCaptcha)
+createFuncBinding(verifyCaptcha)
 
 
 }

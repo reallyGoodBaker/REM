@@ -96,6 +96,8 @@ export default {
     login_type: 'Login via $1',
     switch_to: ' switch to ',
     password: 'Password',
+    captcha: 'Captcha',
+    get_captcha: 'Get captcha',
 
     edit_avatar_username: 'Edit Your Avatar And Username',
     edit_desc: 'Edit Your Description',
@@ -149,5 +151,5 @@ export default {
     $next_track: 'Next track',
     $prev_track: 'Previous track',
     $toggle_search: 'Toggle search',
-    change_keybind: 'Change keybind',
+    change_keybind: 'Change keybind',    
 }

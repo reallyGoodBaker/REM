@@ -95,6 +95,8 @@ export default {
     login_type: '$1登录',
     switch_to: '使用',
     password: '密码',
+    captcha: '验证码',
+    get_captcha: '获取验证码',
 
     edit_avatar_username: '修改你的头像与昵称',
     edit_desc: '修改你的介绍',

@@ -1,4 +1,4 @@
-import App from './App.svelte';
+import App from './App.svelte'
 
 import { store } from '../utils/stores/base.js'
 import { initNetworkWatcher } from '../utils/network/browser.js'
