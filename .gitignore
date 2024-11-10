@@ -13,3 +13,4 @@ Cargo.lock
 
 native/**/target
 native/**/pkg
+*_dist

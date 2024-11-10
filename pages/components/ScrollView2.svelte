@@ -58,22 +58,40 @@ function update() {
     } catch { }
 }
 
-let isHoverScrollTrack = false
-onMount(async() => {
-    scrollTrackContainer.addEventListener('mouseenter', () => {
-        isHoverScrollTrack = true
-    })
+let hoverTimer = null
+function enterHover() {
+    clearTimeout(hoverTimer)
+    hoverTimer = null
+    isHoverScrollTrack = true
+}
 
-    scrollTrackContainer.addEventListener('mouseleave', () => {
+function leaveHover() {
+    hoverTimer = setTimeout(() => {
         if (!_draggingMode) {
             isHoverScrollTrack = false
         }
-    })
+    }, 3000)
+}
 
+function unbindHover() {
+    clearTimeout(hoverTimer)
+    scrollTrackContainer.removeEventListener('mouseenter', enterHover)
+    scrollTrackContainer.removeEventListener('mouseleave', leaveHover)
+}
+
+function bindHover() {
+    scrollTrackContainer.addEventListener('mouseenter', enterHover)
+    scrollTrackContainer.addEventListener('mouseleave', leaveHover)
+}
+
+let isHoverScrollTrack = false
+onMount(async() => {
+    bindHover()
     rem.on('pageContentChange', update)
 })
 
 onDestroy(() => {
+    unbindHover()
     rem.off('pageContentChange', update)
 })
 
@@ -118,7 +136,7 @@ function onClickScrollTrack(ev) {
 
 function pressScrollThumb(ev) {
     ev.stopPropagation()
-    isHoverScrollTrack = true
+    enterHover()
     _mouseThumbOffset = ev.offsetY
     _draggingMode = true
 }
@@ -127,7 +145,7 @@ function releaseScrollThumb(ev) {
     _mouseThumbOffset = 0
     _draggingMode = false
     if (!ev?.path?.includes(scrollTrackContainer)) {
-        isHoverScrollTrack = false
+        leaveHover()
     }
 }
 

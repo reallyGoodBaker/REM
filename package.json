@@ -5,9 +5,10 @@
     "main": "./wins/main/main.js",
     "scripts": {
         "build-icons": "electron-icon-builder -i=./icon.png -f",
-        "build-app": "npm run build && electron-builder",
-        "build": "rollup -c && npm run build-icons",
-        "start": "rollup -c && electron .",
+        "build-app": "npm run build && npm run build-icons && electron-builder",
+        "build-protocol": "tsc -p ./protocol",
+        "build": "npm run build-protocol && rollup -c",
+        "start": "npm run build && electron .",
         "preview": "electron .",
         "postinstall": "electron-builder install-app-deps"
     },
@@ -57,7 +58,8 @@
             "!node_modules/rollup*",
             "!node_modules/@rollup",
             "!node_modules/svelte",
-            "!node_modules/typescript"
+            "!node_modules/typescript",
+            "!protocol"
         ],
         "linux": {
             "maintainer": "rgb39",

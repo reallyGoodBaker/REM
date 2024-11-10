@@ -318,7 +318,7 @@
         width: fit-content;
         height: fit-content;
     }
-    .avatar-container::after {
+    /* .avatar-container::after {
         content: '\e60a';
         font-family: iconfont;
         display: flex;
@@ -343,7 +343,7 @@
     }
     .avatar-container:active::after {
         filter: brightness(60%);
-    }
+    } */
 
 </style>
 

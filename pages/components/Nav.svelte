@@ -235,16 +235,16 @@
                 {#if i === selected}
                  <!-- svelte-ignore a11y-click-events-have-key-events -->
                     {#if tab.startsWith('#')}
-                        <div id="nav_selected" class="tab selected tab-text" on:click={() => onClick(i)}>{s(tab)}</div>
+                        <div id="nav_selected" class="tab selected tab-text" on:mousedown={() => onClick(i)}>{s(tab)}</div>
                     {:else}
-                        <div id="nav_selected" class="tab selected column" style="padding-right: 2px;" on:click={() => onClick(i)}>
+                        <div id="nav_selected" class="tab selected column" style="padding-right: 2px;" on:mousedown={() => onClick(i)}>
                             <span class="tab-text">{s(tab)}</span>
                             <div class="column cross" on:click={() => delTab()}>{'\ue5cd'}</div>
                         </div>
                     {/if}
                 {:else}
                     <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <div class="tab tab-text Row" on:click={() => onClick(i)}>
+                    <div class="tab tab-text Row" on:mousedown={() => onClick(i)}>
                         <span>{s(tab)}</span>
                         {#if !tab.startsWith('#')}
                             <div class="Row cross closeable" on:click={() => delTab(i)}>{'\ue5cd'}</div>

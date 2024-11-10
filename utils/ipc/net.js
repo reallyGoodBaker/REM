@@ -106,5 +106,5 @@ function registerPcmStreamReceiver(resolver=Function.prototype, manifest={}) {
 }
 
 module.exports = {
-    server, connect, subscribe, unlink, registerPcmStreamReceiver,
+    server, connect, subscribe, unlink, registerPcmStreamReceiver, pipeName,
 }

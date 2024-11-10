@@ -1,35 +1,35 @@
 <script>
-    import { createEventDispatcher, onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte"
 
-    export let value;
-    export let cssStyle = '';
+    export let value
+    export let cssStyle = ''
     export let width = 100
-    export let thumbWidth = 10
+    export let thumbWidth = 12
 
-    let emit = createEventDispatcher();
+    let emit = createEventDispatcher()
 
-    let startMove = false;
-    let input;
+    let startMove = false
+    let input
 
     function mouseDown(ev) {
-        startMove = true;
-        let _value = ev.offsetX/input.offsetWidth*100;
-        input.value = _value;
+        startMove = true
+        let _value = ev.offsetX/input.offsetWidth*100
+        input.value = _value
         value = _value
-        emit('mousedown', _value);
+        emit('mousedown', _value)
     }
 
     function mouseMove() {
-        if(!startMove) return;
-        emit('mousemove', input.value);
+        if(!startMove) return
+        emit('mousemove', input.value)
     }
 
     document.addEventListener('mouseup', () => {
         if (startMove) {
-            startMove = false;
-            emit('mouseup', input.value);
+            startMove = false
+            emit('mouseup', input.value)
         }
-    });
+    })
 
 </script>
 
@@ -42,7 +42,7 @@
         --display-progress: 50%;
         background-color: transparent;
         width: var(--rail-width);
-        height: 12px;
+        height: 14px;
         display: block;
         appearance: none;
         transform: scale(1);
@@ -52,17 +52,14 @@
     input[type=range]::-webkit-slider-runnable-track:active {
         background-color: var(--acrylicBackgroundColor);
     }
-
-    input[type=range]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-    }
     
     input[type=range]::-webkit-slider-runnable-track {
-        padding: calc(1px + 1px / var(--scale)) 2px;
-        border-radius: 4px;
-        height: 8px;
-        background-color: var(--acrylicTransparent);
+        padding: 0 2px;
+        border-radius: 5px;
+        height: calc(7px + calc(4px / var(--scale)));
+        background-color: rgba(0, 0, 0, 0.3);
         transition: all 0.2s ease-in-out;
+        opacity: 0.8;
     }
     
     input[type=range]:focus {
@@ -71,16 +68,18 @@
     
     input[type=range]::-webkit-slider-thumb {
         -webkit-appearance: none;
-        border-radius: 3px;
+        margin: calc(2px / var(--scale)) 0;
+        border-radius: 4px;
         box-sizing: border-box;
-        height: calc(6px - 2px / var(--scale));
+        height: 7px;
         width: var(--thumb-width);
-        background-color: var(--acrylicBackgroundColor);
+        background-color: var(--controlGray);
+        opacity: 0.8;
         transition: all 0.1s;
     }
 
     input[type=range]:hover::-webkit-slider-thumb {
-        background-color: var(--controlWhite);
+        background-color: #fff;
     }
 
 </style>

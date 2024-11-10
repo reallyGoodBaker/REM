@@ -87,6 +87,7 @@ module.exports = function buildWindow() {
     const extLoader = initExtensions(browserWindow)
     initComponents(browserWindow, extLoader)
     initMarket()
+    setupRegistry()
 
     browserWindow.show()
 
@@ -297,6 +298,7 @@ const { Extensions } = require('../../utils/appPath/main')
 const { getLogger } = require('../../utils/easy-log/node.js')
 const { server } = require('../../utils/ipc/net.js')
 const { initMarket } = require('../../utils/ext-market/node.js')
+const { setupRegistry } = require('../../protocol_dist/main/registry.js')
 
 /**
  * @param {BrowserWindow} bw 
