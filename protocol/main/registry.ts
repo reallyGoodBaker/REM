@@ -4,6 +4,15 @@ import { pipeName } from '../common/pipeName'
 
 const registry: Set<ProviderDescritpor> = new Set()
 
+function findFromRegistry(name: string) {
+    for (const record of registry) {
+        if (record.name === name) {
+            return record
+        }
+    }
+    return null
+}
+
 export function lookup(conf: LookupConfig): ProviderDescritpor[] {
     const providers: ProviderDescritpor[] = []
     for (const record of registry) {
@@ -66,8 +75,11 @@ export function setupRegistry() {
                 register(payload)
                 sock.write('{}')
             } else if (type === 'unregister') {
-                const { pipeName } = payload
-                registry.delete(pipeName)
+                const { name } = payload
+                const record = findFromRegistry(name)
+                if (record) {
+                    registry.delete(record)
+                }
                 sock.write('{}')
             }
 

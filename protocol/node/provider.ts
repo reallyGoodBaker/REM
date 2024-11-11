@@ -19,7 +19,7 @@ export async function lookup(conf: LookupConfig) {
     return promise
 }
 
-async function registerOnNet(conf: ProviderDescritpor) {
+async function registerOnNet(desc: ProviderDescritpor) {
     const { promise, resolve, reject } = promiseResolvers()
     const sock = net.connect(pipeName() + 'provider.registry')
         .on('data', buf => {
@@ -28,7 +28,7 @@ async function registerOnNet(conf: ProviderDescritpor) {
         })
         .on('error', reject)
 
-    sock.write(pack('register', conf))
+    sock.write(pack('register', desc))
 
     return promise
 }
@@ -51,21 +51,25 @@ async function handleConsume(buffer: Buffer, sock: net.Socket, provider: Provide
     }
 }
 
-export async function registerProvider(conf: ProviderDescritpor, provider: Provider) {
-    await registerOnNet(conf)
+export async function registerProvider(desc: ProviderDescritpor, provider: Provider) {
+    await registerOnNet(desc)
     net.createServer(sock => {
         sock.on('data', buf => handleConsume(buf, sock, provider))
-    }).listen(pipeName() + conf.pipeName)
+    }).listen(pipeName() + desc.pipeName)
 }
 
-export function unregisterProvider(pipename: string) {
+export function unregisterProvider(desc: ProviderDescritpor) {
+    const { promise, resolve, reject } = promiseResolvers()
     const sock = net.connect(pipeName() + 'provider.registry')
         .on('data', () => {
             sock.end()
-            if (fs.existsSync(pipeName() + pipename)) {
-                fs.unlinkSync(pipeName() + pipename)
+            if (fs.existsSync(pipeName() + desc.pipeName)) {
+                fs.unlinkSync(pipeName() + desc.pipeName)
             }
+            resolve()
         })
+        .on('error', reject)
 
-    sock.write(pack('unregister', { pipeName: pipeName() + pipename }))
+    sock.write(pack('unregister', { name: desc.name }))
+    return promise
 }
