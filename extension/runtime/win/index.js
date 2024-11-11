@@ -10,5 +10,5 @@ async function closeWindow(id) {
 
 module.exports = {
     openWindow,
-    closeWindow
+    closeWindow,
 }

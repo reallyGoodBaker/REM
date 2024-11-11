@@ -1,7 +1,6 @@
 export interface Provider {
-    create(uri: string, value: Buffer): Promise<void>
     read(uri: string): Promise<Buffer>
-    update(uri: string, value: Buffer): Promise<void>
+    write(uri: string, value: Buffer): Promise<void>
     delete(uri: string): Promise<void>
 }
 
@@ -24,4 +23,12 @@ export function promiseResolvers<T>(): {
         resolve,
         reject,
     }
+}
+
+export type LookupConfig = Partial<ProviderDescritpor>
+
+export interface ProviderDescritpor {
+    readonly name: string
+    readonly pipeName: string
+    readonly category: string
 }

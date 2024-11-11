@@ -1,14 +1,6 @@
-import { Provider } from '../common/provider'
+import { LookupConfig, Provider, ProviderDescritpor } from '../common/provider'
 import * as net from 'net'
 import { pipeName } from '../common/pipeName'
-
-export type LookupConfig = Partial<ProviderDescritpor>
-
-export interface ProviderDescritpor {
-    readonly name: string
-    readonly pipeName: string
-    readonly category: string
-}
 
 const registry: Set<ProviderDescritpor> = new Set()
 
@@ -63,10 +55,8 @@ export function register(desc: ProviderDescritpor) {
 
 export function setupRegistry() {
     net.createServer(sock => {
-        let buffer = Buffer.alloc(0)
-        sock.on('data', buf => Buffer.concat([ buffer as any, buf as any ]))
-        sock.on('end', () => {
-            const request = JSON.parse(buffer.toString()) as any
+        sock.on('data', buf => {
+            const request = JSON.parse(buf.toString()) as any
             const { type, payload } = request
             if (type === 'lookup') {
                 const lookupConf = payload as LookupConfig
@@ -74,9 +64,14 @@ export function setupRegistry() {
                 sock.write(JSON.stringify(providers))
             } else if (type === 'register') {
                 register(payload)
-                sock.write('')
+                sock.write('{}')
+            } else if (type === 'unregister') {
+                const { pipeName } = payload
+                registry.delete(pipeName)
+                sock.write('{}')
             }
-            
+
+            sock.end()
         })
     }).listen(pipeName() + 'provider.registry')
 }

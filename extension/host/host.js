@@ -7,6 +7,7 @@ const { X509Certificate } = require('crypto')
 const { Blob } = require('buffer')
 const serviceMap = require('./serviceMap')
 const { openWindow, destroyWindow, closeWindow } = require('./win')
+const { createThread, killThread } = require('./thread')
 
 class ExtensionHost {
     events = new EventEmitter()
@@ -84,22 +85,26 @@ class ExtensionHost {
      * @param {BrowserWindow} bw 
      */
     initExtension(bw) {
-        if (this.manifest.entry) {
+        const manifest = this.manifest
+        const { entry, components } = manifest
+        if (entry) {
             this._registerExtensionWorker()
             this._connectComponents(bw)
             this._registerComponents()
         }
         this._registerActivationChange(bw)
 
-        if (this.manifest.components.includes('new_window')) {
-            this._listenWindowEvents()
-        }
+        if (components.includes('new_window'))
+            this._listenWindowEvents(manifest)
+
+        if (components.includes('threads'))
+            this._listenThreadEvents(manifest)
 
         this.events.on('@@@ready', ({ id }) => {
             this.extension.postMessage({ id, val: globalThis.playerReady, err: null })
         })
 
-        ipcMain.emit('extension:activated', this.manifest)
+        ipcMain.emit('extension:activated', manifest)
         ipcMain.once('win:show-main', () => this.request('ready'))
     }
 
@@ -249,11 +254,11 @@ class ExtensionHost {
         return transList
     }
 
-    _listenWindowEvents = () => {
+    _listenWindowEvents = manifest => {
         const ev = this.events
 
         ev.on('@win:open', ({ id, args: [ file, options ] }) => {
-            const uuid = openWindow(file, options, this.manifest)
+            const uuid = openWindow(file, options, manifest)
             this.extension.postMessage({ id, val: uuid })
         })
 
@@ -264,6 +269,22 @@ class ExtensionHost {
 
         ev.on('@win:close', ({ id, args: [ uuid ] }) => {
             closeWindow(uuid)
+            this.extension.postMessage({ id })
+        })
+    }
+
+    _listenThreadEvents = manifest => {
+        const ev = this.events
+        ev.on('@threads:create', ({ id, args: [ name ] }) => {
+            const port = createThread(name, manifest)
+            if (!port) {
+                return
+            }
+            this.extension.postMessage({ id, val: port }, [port])
+        })
+
+        ev.on('@threads:kill', ({ id, args: [ name ] }) => {
+            killThread(name)
             this.extension.postMessage({ id })
         })
     }

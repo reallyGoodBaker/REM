@@ -72,7 +72,6 @@ interface Win {
     openWindow(file: string, options: Electron.BrowserWindowConstructorOptions): Promise<string>
     closeWindow(id: string): Promise<void>
 }
-
 export const win: Win
 
 interface Socket {
@@ -87,7 +86,6 @@ interface Ipc {
     unlink(name: string): void
     registerPcmStreamReceiver: (receiver?: (buf: Buffer) => void) => Socket
 }
-
 export const ipc: Ipc
 
 interface AudioOutputDevice {
@@ -99,7 +97,6 @@ interface Output {
     device(): Promise<AudioOutputDevice>
     pluginOutput(): Promise<boolean>
 }
-
 export const output: Output
 
 interface Store {
@@ -108,7 +105,6 @@ interface Store {
     getRaw(key: string): Promise<any>
     rm(key: string): Promise<void>
 }
-
 export const store: Store
 
 interface Settings {
@@ -117,5 +113,10 @@ interface Settings {
     getRaw(): Promise<any>
     rm(): Promise<void>
 }
-
 export const settings: Settings
+
+interface Threads {
+    createThread(threadId: string): Promise<MessagePort>
+    killThread(threadId: string): void
+}
+export const threads: Threads

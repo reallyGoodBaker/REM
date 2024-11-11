@@ -4,6 +4,7 @@ const player = require('./player/main')
 const notification = require('./notification/main')
 const playlist = require('./player/playlist')
 const win = require('./win')
+const threads = require('./win/thread')
 const ipc = require('./net/ipc')
 const output = require('./player/output')
 const { settings, store } = require('./store/index')
@@ -11,5 +12,5 @@ const { settings, store } = require('./store/index')
 module.exports = {
     ready, invoke, call, provide, timeout, interval, player,
     notification, playlist, whenReady, win, ipc, output, store,
-    settings,
+    settings, threads,
 }

@@ -10,6 +10,8 @@
         "outDir": "../protocol_dist",
         "rootDir": "./",
         "allowJs": true,
-        "noImplicitAny": true
-    }
+        "noImplicitAny": true,
+        "declaration": true,
+    },
+    "include": ["./**/*"]
 }
