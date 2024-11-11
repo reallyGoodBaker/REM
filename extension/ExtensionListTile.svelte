@@ -53,6 +53,7 @@
 <style>
     .outer {
         width: 400px;
+        height: 230px;
         box-sizing: border-box;
         border: solid 1px var(--controlGray);
         border-radius: 10px;
@@ -91,18 +92,25 @@
     }
 
     .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         color: var(--controlBlack36);
         width: calc(100% - 22px);
+        height: 100px;
         margin: 8px;
         margin-left: 14px;
     }
 
     .right-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         padding-top: 18px;
         padding-bottom: 4px;
         margin-left: 68px;
         width: calc(100% - 68px);
-        height: fit-content;
+        height: calc(100% - 24px);
         align-items: flex-start;
         justify-content: space-between;
     }
@@ -137,7 +145,6 @@
     }
 
     .id {
-        margin-top: 40px;
         font-size: small;
     }
 </style>
@@ -166,10 +173,12 @@
 
 
     <div class="Row right-content">
-        <div class="name">{name}<span class="ver">{ver}</span></div>
-        {#if author}
-            <div class="author">{author}</div>
-        {/if}
+        <div>
+            <div class="name">{name}<span class="ver">{ver}</span></div>
+            {#if author}
+                <div class="author">{author}</div>
+            {/if}
+        </div>
         <div class="content">
             {desc}
             <div class="id">ID: {id}</div>
