@@ -160,6 +160,7 @@
     import { MainPlaylist } from '../utils/player/playlist.js'
     import { onDestroy, onMount, tick } from "svelte"
     import Artist from "./Artist.svelte"
+    import RippleLayer from "./components/RippleLayer.svelte";
 
     async function dbClick({ detail }) {
         const { listData, i } = detail
@@ -273,6 +274,7 @@
         display: block;
         font-weight: bold;
         margin-bottom: 12px;
+        user-select: text;
     }
 
     .subtitle {
@@ -319,41 +321,6 @@
         transform: scaleX(1.2) rotate(180deg);
     }
 
-    .btn {
-        color: var(--controlWhite);
-        padding: 10px;
-        border: none;
-        border-radius: 12px;
-        margin-right: 4px;
-        font-size: medium;
-        text-align: center;
-    }
-
-    .btn.big {
-        font-size: small;
-        height: 16px;
-        min-width: 16px;
-        font-weight: bold;
-        line-height: 16px;
-    }
-
-    .accent {
-        background-color: var(--controlColor);
-    }
-
-    .bright {
-        background-color: var(--controlBright);
-        color: var(--controlNight)
-    }
-
-    .btn:hover {
-        filter: brightness(90%);
-    }
-
-    .btn:active {
-        transform: scale(0.92);
-    }
-
     .bread-crumb {
         position: absolute;
         top: 250px;
@@ -377,6 +344,50 @@
 
     .desc {
         margin-top: 40px;
+        user-select: text;
+    }
+
+    .button {
+        font-family: 'Material Symbols Round';
+        font-size: small;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2px;
+        transition: all 0.2s ease;
+        overflow: hidden;
+    }
+
+    .i {
+        font-size: 20px;
+    }
+
+    .a {
+        box-sizing: border-box;
+        padding: 0 18px;
+        width: fit-content;
+        height: 40px;
+        border-radius: 20px;
+        font-weight: normal;
+        color: var(--controlWhite);
+        background-color: var(--controlColor);
+    }
+
+    .a:active {
+        border-radius: 8px;
+    }
+
+    .b {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        font-weight: normal;
+        background-color: var(--controlBright);
+        color: var(--controlNight)
+    }
+
+    .b:active {
+        border-radius: 8px;
     }
 </style>
 
@@ -408,8 +419,15 @@
 
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div class="Row" style="gap: 4px;">
-            <div class="btn big accent" on:click={playAll}> {'\ue615'} 播放 </div>
-            <div class="btn big bright" on:click={playRandom}>{'\ue619'}</div>
+            <RippleLayer cssStyle="border-radius: 8px;" rippleColor="var(--controlDarker)">
+                <div class="button a" on:click={playAll}>
+                    <div class="i">{'\ue037'}</div>
+                    <div>播放</div>
+                </div>
+            </RippleLayer>
+            <RippleLayer cssStyle="border-radius: 8px;">
+                <div class="button b i" on:click={playRandom}>{'\ue043'}</div>
+            </RippleLayer>
         </div>
     </div>
 </div>
