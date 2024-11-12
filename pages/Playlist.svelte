@@ -364,7 +364,8 @@
 
     .a {
         box-sizing: border-box;
-        padding: 0 18px;
+        padding-left: 14px;
+        padding-right: 18px;
         width: fit-content;
         height: 40px;
         border-radius: 20px;
