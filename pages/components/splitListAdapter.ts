@@ -55,6 +55,8 @@ export class SplitListAdapter implements RecyclerViewAdapter {
             }
 
             svelteComponent.$set(this.getProps(position))
+            free.onclick = () => this.onClick(position)
+            free.ondblclick = () => this.dbClick(position)
 
             return free
         }
