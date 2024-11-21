@@ -41,3 +41,14 @@ async function initApp() {
 }
 
 initApp()
+
+import { consumer } from '../protocol/renderer/index.js'
+import { songEncodeDecoder } from '../protocol/common/struct/song.js'
+LifeCycle.when('controlsReady')
+    .then(async () => {
+        const [ lookup, create ] = consumer()
+        const [ defaultProviderDescriptor ] = await lookup({ category: 'provider.song' })
+        const defaultProvider = create(defaultProviderDescriptor, songEncodeDecoder)
+
+        console.log(await defaultProvider.read('1'))
+    })

@@ -9,29 +9,27 @@
     const removeEventHandlers = []
 
     function setupEvent(dom) {
-        try {
-            const remove = events({
-                recyclerView: component,
-                itemView: dom
-            }, {
-                emit,
-                /**@type {(ev: Event)=>number}*/
-                index: ev => {
-                    if (!ev.composedPath().indexOf(dom)) {
-                        return -1
-                    }
-
-                    const i = Array.from(children).indexOf(dom)
-                    if (i === -1) {
-                        return i
-                    }
-
-                    return i + start
+        const remove = events({
+            recyclerView: component,
+            itemView: dom
+        }, {
+            emit,
+            /**@type {(ev: Event)=>number}*/
+            index: ev => {
+                if (!ev.composedPath().indexOf(dom)) {
+                    return -1
                 }
-            })
 
-            removeEventHandlers.push(remove)
-        } catch {}
+                const i = Array.from(children).indexOf(dom)
+                if (i === -1) {
+                    return i
+                }
+
+                return i + start
+            }
+        })
+
+        removeEventHandlers.push(remove)
     }
 
     export let templateHeight =  100
@@ -54,9 +52,11 @@
 
     let templateCount = 0
 
-    function getItems() {
+    async function getItems() {
+        await tick()
         const items = []
-        for (let i = start; i < end; i++) {
+        const _e = end
+        for (let i = start; i < _e; i++) {
             const item = getItem(i)
             item && items.push(item)
         }
@@ -67,6 +67,7 @@
     let children
     let childComponents = new Map()
     let lastY = 0
+    let needRecycle = true
 
     function getYOffset() {
         if (!v) {
@@ -80,30 +81,47 @@
         templateCount = Math.ceil(v.getViewport().getBoundingClientRect().height / templateHeight)
         end = Math.min(count, start + templateCount + 1)
 
-        firstRender()
+        if (templateCount >= count) {
+            needRecycle = false
+        }
+
+        let renderCurrentTick = true
+
+        await firstRender()
         await tick()
 
-        looper = vsync(() => {
+        looper = vsync(async () => {
+            if (!needRecycle) {
+                return
+            }
+
             const yOffset = getYOffset()
             const dy = yOffset - lastY
-            const newStart = calcStart(yOffset, dy)
-            try {
-                refreshData(newStart, start)
-            } finally {
-                lastY = yOffset
+            // 可视区域内第一个元素的下标
+            const newStart = calcStart((lastY = yOffset), dy)
+
+            if (renderCurrentTick) {
+                renderCurrentTick = false
+                await refreshData(newStart, start, dy < 0)
+                renderCurrentTick = true
             }
         })
     }
 
     function calcStart(yOffset, dy) {
-        const insightStart = Math.floor(yOffset / templateHeight)
-        const start = dy > 0 ? insightStart - 1 : insightStart
-        return Math.min(Math.max(0, start), count - templateCount - 1)
+        if (!dy) {
+            return start
+        }
+
+        return Math.min(
+            Math.max(0, Math.floor(yOffset / templateHeight)),
+            count - templateCount - 1
+        )
     }
 
     async function firstRender() {
         let components = []
-        for (const item of getItems()) {
+        for (const item of await getItems()) {
             const component = new template({
                 target: box,
                 props: getProps(item),
@@ -151,16 +169,24 @@
         }
     }
 
-    async function refreshData(newStart, oldStart) {
+    async function refreshData(newStart, oldStart, unshift) {
         const startOffset = newStart - oldStart
         if (!startOffset) {
+            const offset = unshift ? -1 : 1
+            
+            if (unshift) {
+                recycleScrollUp(-1, itemList)
+            } else {
+                recycleScrollDown(1, itemList)
+            }
+
             return
         }
 
         start = newStart
         end = start + templateCount + 1
 
-        const itemList = getItems()
+        const itemList = await getItems()
         if (Math.abs(startOffset) > templateCount) {
             forceUpdate(itemList)
             return

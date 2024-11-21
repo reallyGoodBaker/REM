@@ -5,8 +5,8 @@
         "module": "ESNext",
         "noEmitOnError": true,
         "lib": [
-            "es2017",
-            "DOM"
+            "esnext",
+            "DOM",
         ],
         "strict": true,
         "esModuleInterop": false,

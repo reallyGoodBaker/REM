@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import { pipeName } from '../common/pipeName';
 import { LookupConfig, ProviderDescritpor } from '../common/provider'
 import { promiseResolvers, Provider } from '../common/provider'
-import { messageDecode, messageEncode } from '../common/encodeDecoder'
+import { messageDecode, messageEncode, MessageType } from '../common/encodeDecoder'
 
 const pack = (type: string, payload: any) => JSON.stringify({ type, payload })
 
@@ -38,7 +38,11 @@ async function handleConsume(buffer: Buffer, sock: net.Socket, provider: Provide
 
     switch (type) {
         case 0:
-            sock.write(messageEncode(5, uri, await provider.read(uri)) as any)
+            sock.write(messageEncode({
+                type: MessageType.RETURN,
+                payload: await provider.read(uri),
+                uri,
+            }) as any)
             break
 
         case 1:
@@ -55,7 +59,7 @@ export async function registerProvider(desc: ProviderDescritpor, provider: Provi
     await registerOnNet(desc)
     net.createServer(sock => {
         sock.on('data', buf => handleConsume(buf, sock, provider))
-    }).listen(pipeName() + desc.pipeName)
+    }).listen(pipeName() + desc.name)
 }
 
 export function unregisterProvider(desc: ProviderDescritpor) {
@@ -63,8 +67,8 @@ export function unregisterProvider(desc: ProviderDescritpor) {
     const sock = net.connect(pipeName() + 'provider.registry')
         .on('data', () => {
             sock.end()
-            if (fs.existsSync(pipeName() + desc.pipeName)) {
-                fs.unlinkSync(pipeName() + desc.pipeName)
+            if (fs.existsSync(pipeName() + desc.name)) {
+                fs.unlinkSync(pipeName() + desc.name)
             }
             resolve()
         })

@@ -1,6 +1,7 @@
 <script>
     import {createEventDispatcher} from 'svelte'
     import SplitTileText from './SplitTileText.svelte'
+    import { writable } from 'svelte/store'
 
     let emit = createEventDispatcher()
 
@@ -40,6 +41,7 @@
         cursor: default;
         font-size: small;
         user-select: none;
+        color: var(--controlBlack);
     }
 
     .t {

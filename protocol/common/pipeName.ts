@@ -10,3 +10,7 @@ export const getPipeName = (platform: keyof typeof PIP_NAMES) => {
 export const pipeName = () => {
     return getPipeName(process.platform as keyof typeof PIP_NAMES) || PIP_NAMES.linux
 }
+
+export const ppath = (name: string) => {
+    return `${pipeName()}${name}`
+}

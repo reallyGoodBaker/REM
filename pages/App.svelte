@@ -104,6 +104,7 @@ window.Pager = (() => {
         __pager.display(
             selections[index],
             props,
+            index < selected
         )
 
         selected = index

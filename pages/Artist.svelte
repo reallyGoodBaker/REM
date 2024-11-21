@@ -7,8 +7,9 @@
     import { AudioPlayer } from '../utils/player/player'
     import { NETEASE_IMG_MEDIUM } from "../utils/stores/img"
     import { onMount } from "svelte"
-    import RecyclerScrollView from "./components/RecyclerScrollView.svelte"
-    import ArtistCard from "./components/ArtistCard.svelte";
+    import RecyclerScrollView from "./components/RecyclerView/RecyclerView2.svelte"
+    import ArtistCard from "./components/ArtistCard.svelte"
+    import { ArtistAdapter } from './artistAdapter'
 
     export let id = 0
 
@@ -140,15 +141,11 @@
                     <LoadingCircle></LoadingCircle>
                     {:then { hotAlbums }}
                     <RecyclerScrollView
-                        templateHeight={160}
-                        count={Math.ceil(hotAlbums.length / 2)}
-                        getItem={i => [hotAlbums[2 * i], hotAlbums[2 * i + 1]]}
-                        template={ArtistCard}
-                        getProps={item => {
-                            return {
-                                als: item
-                            }
-                        }}
+                        height='100%'
+                        adapter={new ArtistAdapter(
+                            hotAlbums,
+                            ArtistCard,
+                        )}
                     />
                     {/await}
                 {/if}

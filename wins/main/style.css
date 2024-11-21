@@ -412,3 +412,81 @@ dialog {
     appearance: none;
     pointer-events: none;
 }
+
+
+
+@keyframes slide-left-out {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(-28px);
+    }
+}
+
+@keyframes slide-right-in {
+    0% {
+        opacity: 0;
+        transform: translateX(-28px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slide-right-out {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(28px);
+    }
+}
+
+@keyframes slide-left-in {
+    0% {
+        opacity: 0;
+        transform: translateX(28px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+::view-transition-new(pager-left) {
+    height: auto;
+    animation: 0.3s ease both slide-left-in;
+}
+
+::view-transition-old(pager-left) {
+    height: auto;
+    animation: 0.3s ease both slide-left-out;
+}
+
+::view-transition-new(pager-right) {
+    height: auto;
+    animation: 0.3s ease both slide-right-in;
+}
+
+::view-transition-old(pager-right) {
+    height: auto;
+    animation: 0.3s ease both slide-right-out;
+}
+
+.pager-left {
+    view-transition-name: pager-left;
+}
+
+.pager-right {
+    view-transition-name: pager-right;
+}

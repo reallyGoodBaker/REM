@@ -14,11 +14,11 @@ interface SearchHandler {
 type ConstructorOf<T> = new (...args: any[]) => T
 
 interface Pager {
-    add(name: string, component: SvelteComponent, props = {}, force = false): boolean
-    select(key: string | number, forceUpdate = false): void
+    add(name: string, component: SvelteComponent, props?: any, force?: boolean): boolean
+    select(key: string | number, forceUpdate?: boolean): void
     remove(key: string | number): void
     has(key: string | number): boolean
-    openNew(name: string, component: ConstructorOf<SvelteComponent>, props = {}, force = false): void
+    openNew(name: string, component: ConstructorOf<SvelteComponent>, props?: any, force?: boolean): void
     getContext(): PagerContext
     beforeSwitch(handler: () => void): void
     size(): number
@@ -37,4 +37,12 @@ interface Pager {
 
 declare global {
     const Pager: Pager
+
+    interface PromiseConstructor {
+        withResolvers<T>(): {
+            promise: Promise<T>
+            resolve: (value: T) => void
+            reject: (reason: any) => void
+        }
+    }
 }

@@ -1,6 +1,8 @@
 import { LookupConfig, Provider, ProviderDescritpor } from '../common/provider'
 import * as net from 'net'
 import { pipeName } from '../common/pipeName'
+import { Consumer, getExcistingConsumer, LocalConsumer } from './consumer'
+import { IConsumer } from '../common/consumer'
 
 const registry: Set<ProviderDescritpor> = new Set()
 
@@ -16,11 +18,7 @@ function findFromRegistry(name: string) {
 export function lookup(conf: LookupConfig): ProviderDescritpor[] {
     const providers: ProviderDescritpor[] = []
     for (const record of registry) {
-        const { category, pipeName, name } = record
-
-        if (pipeName === conf.pipeName) {
-            return [ record ]
-        }
+        const { category, name } = record
 
         if (conf.name && name.includes(conf.name)) {
             providers.push(record)
@@ -35,27 +33,17 @@ export function lookup(conf: LookupConfig): ProviderDescritpor[] {
     return providers
 }
 
-const defaultConfig: LookupConfig = {
-    name: 'default',
-    category: 'default',
-}
-
 interface ProviderRecord extends ProviderDescritpor {
     readonly provider: Provider
 }
 
 export function registerInMain(
-    pipeName: string,
+    desc: ProviderDescritpor,
     provider: Provider,
-    conf: LookupConfig=defaultConfig
 ): void {
-    const record: ProviderRecord = {
-        pipeName, provider,
-        ...conf,
-        ...defaultConfig
-    } as unknown as ProviderRecord
-
-    registry.add(record)
+    //@ts-ignore
+    desc.provider = provider
+    registry.add(desc)
 }
 
 export function register(desc: ProviderDescritpor) {
@@ -86,4 +74,29 @@ export function setupRegistry() {
             sock.end()
         })
     }).listen(pipeName() + 'provider.registry')
+}
+
+export interface MessageReceiver {
+    promise: Promise<Buffer>
+    uri: string
+    resolve: (v: Buffer) => void
+}
+
+export function getOrCreateConsumer(name: string): IConsumer | null {
+    const desc = findFromRegistry(name)
+    if (!desc) {
+        return null
+    }
+
+    const { provider, name: n } = desc as ProviderRecord
+    const excistingConsumer = getExcistingConsumer(n)
+    if (excistingConsumer) {
+        return excistingConsumer
+    }
+
+    if (provider) {
+        return new LocalConsumer(n, provider)
+    }
+
+    return new Consumer(n)
 }

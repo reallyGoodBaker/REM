@@ -48,6 +48,7 @@ export default [
             wasm(),
             svelte({
                 compilerOptions: {
+                    accessors: true,
                     customElement: false,
                     // enable run-time checks when not in production
                     dev: true,

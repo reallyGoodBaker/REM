@@ -12,6 +12,10 @@
         "allowJs": true,
         "noImplicitAny": true,
         "declaration": true,
+        "lib": [
+            "ESNext.WeakRef",
+            "DOM"
+        ]
     },
     "include": ["./**/*"]
 }

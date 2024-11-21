@@ -5,7 +5,9 @@
     import SplitTileArtist from './SplitTileArtist.svelte'
     import SplitTileAlbum from "./SplitTileAlbum.svelte"
     import SplitTileTitle from "./SplitTileTitle.svelte"
-    import RecyclerScrollView from "./RecyclerScrollView.svelte"
+    import { SplitListAdapter } from './splitListAdapter'
+    import RecyclerView2 from "./RecyclerView/RecyclerView2.svelte"
+    import { useStore } from '../../utils/store'
 
     let emit = createEventDispatcher()
 
@@ -14,6 +16,15 @@
     export let selections = new Set()
     export let focus = -1
     export let components = [, SplitTileTitle, SplitTileArtist, SplitTileAlbum]
+
+    let focusWritable = useStore(focus)
+    function updateFocus(f) {
+        focusWritable[1](f)
+    }
+
+    $: updateFocus(focus)
+
+    let _recyclerView
 
     async function onClick(i) {
         emit('click', {listData: await listData, i})
@@ -32,7 +43,6 @@
             emit('update')
         }
     })
-
 </script>
 
 {#await listData}
@@ -47,7 +57,9 @@
         transformDuration={300}/>
 </div>
 {:then list} 
-<RecyclerScrollView
+<!-- <RecyclerScrollView
+    bind:this={_recyclerView}
+    adapter={adapter}
     templateHeight={56}
     count={list.length}
     getItem={i => Object.assign(list[i], { i })}
@@ -78,6 +90,21 @@
             itemView.removeEventListener('dblclick', dbclick)
         }
     }}
+/> -->
+<RecyclerView2
+    bind:this={_recyclerView}
+    height='100%'
+    adapter={new SplitListAdapter(
+        list,
+        _recyclerView,
+        SplitTile,
+        location,
+        selections,
+        focusWritable,
+        components,
+        onClick,
+        dbClick,
+    )}
 />
 {/await}
 

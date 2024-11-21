@@ -1,7 +1,7 @@
 {
     "name": "rem",
-    "version": "0.2.4",
-    "description": "Carambola",
+    "version": "0.2.5-beta2",
+    "description": "Doro",
     "main": "./wins/main/main.js",
     "scripts": {
         "build-icons": "electron-icon-builder -i=./icon.png -f",
@@ -17,6 +17,7 @@
     "dependencies": {
         "compressing": "^1.10.1",
         "music-metadata": "^7.12.6",
+        "nedb": "^1.8.0",
         "NeteaseCloudMusicApi": "^4.24.0",
         "node-fetch": "^2.6.7"
     },
@@ -26,6 +27,7 @@
         "@rollup/plugin-node-resolve": "^13.3.0",
         "@rollup/plugin-typescript": "^11.1.6",
         "@rollup/plugin-wasm": "^6.2.2",
+        "@types/nedb": "^1.8.16",
         "assemblyscript": "^0.27.27",
         "electron": "^33.0.0-beta.7",
         "electron-icon-builder": "^2.0.1",
@@ -72,6 +74,5 @@
                 "Icon": "rem"
             }
         }
-        
     }
 }

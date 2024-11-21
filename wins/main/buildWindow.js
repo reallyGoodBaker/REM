@@ -80,14 +80,16 @@ module.exports = function buildWindow() {
     })
 
     initExtRuntime()
+    const extLoader = initExtensions(browserWindow)
+    setupRegistry()
+    setupConsumerHost()
     initBroker()
     initDevicesMain()
     initMainWin(browserWindow)
     activeAppBarBtns(browserWindow)
-    const extLoader = initExtensions(browserWindow)
     initComponents(browserWindow, extLoader)
     initMarket()
-    setupRegistry()
+    initLocalFileProviders()
 
     browserWindow.show()
 
@@ -299,6 +301,8 @@ const { getLogger } = require('../../utils/easy-log/node.js')
 const { server } = require('../../utils/ipc/net.js')
 const { initMarket } = require('../../utils/ext-market/node.js')
 const { setupRegistry } = require('../../protocol_dist/main/registry.js')
+const { setupConsumerHost } = require('../../protocol_dist/main/consumerHost.js')
+const { initLocalFileProviders } = require('../../protocol_dist/main/localFile/index.js')
 
 /**
  * @param {BrowserWindow} bw 

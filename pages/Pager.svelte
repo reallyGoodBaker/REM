@@ -1,53 +1,43 @@
 <script>
     import Blank from "./Blank.svelte"
-    import { anim } from '../utils/anims.js'
-    import { onMount } from "svelte"
+    import { writable } from "svelte/store"
     import { rem } from '../utils/rem.js'
+    import { onMount, tick } from "svelte"
 
+    let _page = writable(Blank)
+    let _props = writable({})
+    let show = true
 
-    let _page = Blank
-    let _props = {}
-
-    function _display(page, props) {
-        if (_page === page) {
-            _page = Blank
-            _props = props
-            setTimeout(() => {
-                _page = page
-            })
-            return
-        }
-
-        _props = props
-        _page = page
+    async function _display(page, props) {
+        show = false
+        _page.set(page)
+        _props.set(props)
+        await tick()
+        show = true
     }
 
     let innerWindow
 
+    export function idle() {
+        const { promise, resolve } = Promise.withResolvers()
+        requestIdleCallback(resolve)
+
+        return promise
+    }
+
+    let slideDir = 'left'
+
     export async function display(page, props, isBack=false) {
-        await anim(innerWindow, [
-            {opacity: 1, transform: 'scale(1)'},
-            {opacity: 0, transform: `scale(${isBack? 0.96: 1.06})`}
-        ], {
-            duration: 60,
-            ease: 'cubic-bezier(0.95, 0.05, 0.795, 0.035)',
-            fill: 'forwards'
+        slideDir = isBack? 'right': 'left'
+        const transition = document.startViewTransition(async () => {
+            _display(page, props)
         })
 
-        _display(page, props)
+        await tick()
+        await idle()
+        await transition.finished
 
-        requestIdleCallback(async () => {
-            await anim(innerWindow, [
-                {opacity: 0, transform: `scale(${isBack? 1.06: 0.96})`},
-                {opacity: 1, transform: 'scale(1)'}
-            ], {
-                duration: 80,
-                ease: 'cubic-bezier(0.19, 1, 0.22, 1)',
-                fill: 'forwards'
-            })
-
-            rem.emit('pageSwipeAnimFinish')
-        })
+        rem.emit('pageSwipeAnimFinish')
     }
 
     onMount(() => {
@@ -76,13 +66,14 @@
         content-visibility: auto; */
         position: relative;
     }
-
 </style>
 
 <div class="container row">
-    <div class="innerWindow row" bind:this={innerWindow}>
-        <svelte:component this={_page} {..._props}/>
+    {#if show}
+    <div class="innerWindow row pager-{slideDir}" bind:this={innerWindow}>
+        <svelte:component this={$_page} {...$_props}/>
     </div>
+    {/if}
     <!-- {#each pages as {component, computedProps}}
     <div class="innerWindow row" bind:this={innerWindow}>
         <svelte:component this={component} {...computedProps}/>
