@@ -1,6 +1,5 @@
 const { ipcMain } = require('electron')
 const { registerHandler } = require('../../wins/main/protocol')
-const fetch = require('node-fetch')
 const { tar } = require('compressing')
 const fs = require('fs')
 const { Extensions } = require('../../utils/appPath/main')
