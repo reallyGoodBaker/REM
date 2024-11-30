@@ -24,8 +24,6 @@
 
     $: updateFocus(focus)
 
-    let _recyclerView
-
     async function onClick(i) {
         emit('click', {listData: await listData, i})
     }
@@ -57,46 +55,10 @@
         transformDuration={300}/>
 </div>
 {:then list} 
-<!-- <RecyclerScrollView
-    bind:this={_recyclerView}
-    adapter={adapter}
-    templateHeight={56}
-    count={list.length}
-    getItem={i => Object.assign(list[i], { i })}
-    template={SplitTile}
-    getProps={item => {
-        const value = {
-            data: [
-                item.i + 1,
-                { title: item.name, picUrl: item.al.picUrl },
-                item.ar,
-                item.al,
-            ],
-            index: item.i,
-            location,
-            components,
-            selected: selections.has(item.i),
-            focus: ~focus && focus
-        }
-        return value
-    }}
-    events={({ itemView }, { index }) => {
-        const click = ev => onClick(index(ev))
-        const dbclick = ev => dbClick(index(ev))
-        itemView.addEventListener('click', click)
-        itemView.addEventListener('dblclick', dbclick)
-        return () => {
-            itemView.removeEventListener('click', click)
-            itemView.removeEventListener('dblclick', dbclick)
-        }
-    }}
-/> -->
 <RecyclerView2
-    bind:this={_recyclerView}
     height='100%'
     adapter={new SplitListAdapter(
         list,
-        _recyclerView,
         SplitTile,
         location,
         selections,

@@ -10,7 +10,6 @@ export class SplitListAdapter implements RecyclerViewAdapter {
 
     constructor(
         private _data: any[],
-        public  recyclerView: SvelteComponent,
         private SplitTile: ConstructorOf<SvelteComponent>,
         private location: any[],
         private selections: Set<any>,
