@@ -9,7 +9,7 @@ export let width = 64
 export let height = 64
 export let src = ''
 export let radius = '8px'
-export let skeletonColor = 'var(--controlGray)'
+export let skeletonColor = 'var(--controlGrayAcrylic)'
 
 /**
  * @type {Animation}

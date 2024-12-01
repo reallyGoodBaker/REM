@@ -6,11 +6,10 @@ let storeLoaded = false
 LifeCycle.when('uninit').then(() => storeLoaded = true)
 
 export async function saveImg(url) {
-    let index = await store.get('ThumbNails/index') || []
-
     const buf = await (await fetch(url)).arrayBuffer()
-    store.setRaw(`ThumbNails/${index.length}`, buf.slice(0))
+    const index = await store.get('ThumbNails/index') || []
 
+    store.setRaw(`ThumbNails/${index.length}`, buf.slice(0))
     index.push(url)
     store.set('ThumbNails/index', index)
 
@@ -18,8 +17,7 @@ export async function saveImg(url) {
 }
 
 export async function getImg(url) {
-    let index = await store.get('ThumbNails/index') || []
-
+    const index = await store.get('ThumbNails/index') || []
     const uri = index.indexOf(url)
 
     if (!~uri) {
