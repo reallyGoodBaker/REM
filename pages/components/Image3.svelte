@@ -15,21 +15,29 @@ export let skeletonColor = 'var(--controlGray)'
  * @type {Animation}
  */
 let anim
-let transfered = false
+let painted = false
+let loading = false
+let override = 0
 
 export async function render(source=src, force=false) {
-    if (!force && transfered) {
+    if (!force && painted) {
         return
     }
 
+    if (loading) {
+        override++
+    }
+
+    loading = true
     const imageBitmap = await getImageBitmap(source, fit ? {
         resizeQuality: 'high',
         resizeWidth: width,
         resizeHeight: height,
     } : undefined)
+    loading = false
 
     ctx.transferFromImageBitmap(imageBitmap)
-    transfered = true
+    painted = true
     imageBitmap.close()
 }
 
@@ -37,10 +45,24 @@ export async function render(source=src, force=false) {
  * @type {HTMLCanvasElement}
  */
 let canvas
+/**
+ * @type {BitmapRenderingContext}
+ */
 let ctx
 let _unobserve = Function.prototype
 
 async function show() {
+    if (!painted) {
+        return
+    }
+
+    if (override) {
+        override--
+        return
+    }
+
+    canvas.style.visibility = 'visible'
+
     const { promise, resolve } = promiseResolvers()
     anim = canvas.animate([
         { opacity: 0 },
@@ -62,18 +84,20 @@ onMount(() => {
     ctx = canvas.getContext('bitmaprenderer')
     const { visible, invisible, unobserve } = useIntersectionObserver(canvas)
 
-    visible(source => {
-        render(source)
-        canvas.style.visibility = 'visible'
-        show()
+    visible(async source => {
+        await render(source)
+        await show()
     })
+
     invisible(() => {
-        canvas.style.visibility = 'hidden'
+        painted = false
         if (anim) {
             anim.cancel()
             anim = null
         }
+        canvas.style.visibility = 'hidden'
     })
+
     _unobserve = unobserve
 })
 

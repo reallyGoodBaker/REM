@@ -1,16 +1,13 @@
 export function useIntersectionObserver(node) {
     let OnVisible, OnInvisible = OnVisible = Function.prototype
-    const observer = new IntersectionObserver((entries, observer) => {
+
+    const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
-            requestIdleCallback(() => {
-                try {
-                    if (entry.isIntersecting) {
-                        OnVisible.call(node)
-                    } else {
-                        OnInvisible.call(node)
-                    }
-                } catch {
-                    observer.unobserve(node)
+            requestIdleCallback(async () => {
+                if (entry.isIntersecting) {
+                    OnVisible.call(node)
+                } else {
+                    OnInvisible.call(node)
                 }
             })
         })

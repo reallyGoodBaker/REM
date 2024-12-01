@@ -1,11 +1,3 @@
-import { SvelteComponent } from "svelte"
-import { DispatchOptions } from "svelte/internal"
-
-export interface RecyclerEventTarget {
-    recyclerView: SvelteComponent
-    itemView: HTMLElement
-}
-
 export interface ViewRect {
     y: number
     x: number
@@ -18,11 +10,6 @@ const zeroRect = { y: 0, x: 0, width: 0, height: 0 }
 export const ViewRect = {
     zero: () => zeroRect,
     from: (x = 0, y = 0, width = 0, height = 0) => ({ x, y, width, height }),
-}
-
-export interface RecyclerContext {
-    emit<EventKey extends string>(type: EventKey, detail?: any, options?: DispatchOptions): boolean
-    index(ev: Event): number
 }
 
 export interface RecyclerViewAdapter {

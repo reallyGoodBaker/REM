@@ -77,7 +77,7 @@
     }
 
     .clk:hover {
-        background-color: rgba(0, 0, 0, 0.2);
+        background-color: var(--controlGrayAcrylic);
     }
     .clk:active {
         background-color: rgba(0, 0, 0, 0.4);
