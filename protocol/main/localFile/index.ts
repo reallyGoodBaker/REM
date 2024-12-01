@@ -1,6 +1,7 @@
-import { registerSongsProvider } from './songs'
-
+import { registerFileFindService } from './fileFindService'
+import { registerSongProvider } from './songs'
 
 export function initLocalFileProviders() {
-    registerSongsProvider()
+    registerSongProvider()
+    registerFileFindService()
 }

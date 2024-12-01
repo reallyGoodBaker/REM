@@ -1,6 +1,6 @@
 import { ProviderDescritpor } from '../../common/provider'
 
-export const songs: ProviderDescritpor = {
+export const song: ProviderDescritpor = {
     category: 'provider.song',
     name: 'localFile.song',
 }

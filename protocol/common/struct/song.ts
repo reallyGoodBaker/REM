@@ -13,8 +13,8 @@ export class Song {
     ) {}
 
     static struct: StructDescriptor = {
-        layout() {
-            return [
+        layout: () =>
+            [
                 'Uint32', // id
                 'Float32', // duration
                 'Uint8',  // isFavorite
@@ -23,7 +23,6 @@ export class Song {
                 'string', // album
                 'string', // uri
             ]
-        }
     }
 
     static encode({

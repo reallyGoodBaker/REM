@@ -1,41 +1,34 @@
-import { promiseResolvers, Provider } from '../../common/provider'
+import { Provider } from '../../common/provider'
 import { Song, songEncodeDecoder } from '../../common/struct/song'
 import { registerInMain } from '../registry'
-import { db } from './db'
-import { songs } from './descriptors'
+import { db } from '../../node/db'
+import { song } from './descriptors'
 
-class SongsProvider implements Provider {
-    readonly db = db('songs')
+class SongProvider implements Provider {
+    static readonly db = db('songs')
 
     async read(uri: string): Promise<Buffer> {
-        const { promise, resolve, reject } = promiseResolvers<Song>()
-        this.db.findOne<{song: Song}>({ uri }, (_, doc) => {
-            if (_) {
-                reject(_)
-            }
-
-            resolve(doc.song)
-        })
+        const raw = await SongProvider.db.findOneAsync<{song: Song}>({ uri })
 
         return Buffer.from(
-            songEncodeDecoder.encode(await promise)
+            songEncodeDecoder.encode(raw.song)
         )
     }
 
     write(uri: string, value: Buffer) {
         const song = songEncodeDecoder.decode(new Uint8Array(value.buffer))
         const doc = { uri, song }
-        this.db.insert(doc)
+        SongProvider.db.insert(doc)
     }
 
     delete(uri: string) {
-        this.db.remove({ uri })
+        SongProvider.db.remove({ uri })
     }
 }
 
-export function registerSongsProvider() {
+export function registerSongProvider() {
     registerInMain(
-        songs,
-        new SongsProvider(),
+        song,
+        new SongProvider(),
     )
 }

@@ -42,7 +42,7 @@ async function initApp() {
 
 initApp()
 
-import { consumer } from '../protocol/renderer/index.js'
+import { consumer, fileFindService } from '../protocol/renderer/index.js'
 import { songEncodeDecoder } from '../protocol/common/struct/song.js'
 LifeCycle.when('controlsReady')
     .then(async () => {
@@ -51,4 +51,7 @@ LifeCycle.when('controlsReady')
         const defaultProvider = create(defaultProviderDescriptor, songEncodeDecoder)
 
         console.log(await defaultProvider.read('1'))
+        console.log(
+            await fileFindService.find(await fileFindService.getDirs())
+        )
     })
