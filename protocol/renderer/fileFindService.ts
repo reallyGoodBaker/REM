@@ -9,15 +9,15 @@ class FileFindServiceRenderer {
     }
 
     sync() {
-        ipcRenderer.invoke('fileFindService.sync')
+        return ipcRenderer.invoke('fileFindService.sync') as Promise<void>
     }
 
     addDir(dir: string) {
-        ipcRenderer.invoke('fileFindService.addDir', dir)
+        return ipcRenderer.invoke('fileFindService.addDir', dir) as Promise<void>
     }
 
     removeDir(dir: string) {
-        ipcRenderer.invoke('fileFindService.removeDir', dir)
+        return ipcRenderer.invoke('fileFindService.removeDir', dir) as Promise<void>
     }
 
     getDirs() {

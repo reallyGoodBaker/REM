@@ -37,7 +37,7 @@ async function handleConsume(buffer: Buffer, sock: net.Socket, provider: Provide
     const { type, uri, payload } = messageDecode(buffer)
 
     switch (type) {
-        case 0:
+        case MessageType.READ:
             sock.write(messageEncode({
                 type: MessageType.RETURN,
                 payload: await provider.read(uri),
@@ -45,11 +45,11 @@ async function handleConsume(buffer: Buffer, sock: net.Socket, provider: Provide
             }) as any)
             break
 
-        case 1:
+        case MessageType.WRITE:
             await provider.write(uri, payload)
             break
 
-        case 2:
+        case MessageType.DELETE:
             await provider.delete(uri)
             break
     }

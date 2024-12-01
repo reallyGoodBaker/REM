@@ -43,12 +43,24 @@ async function initApp() {
 initApp()
 
 import { consumer, fileFindService } from '../protocol/renderer/index.js'
-import { songEncodeDecoder } from '../protocol/common/struct/song.js'
+import { AudioTrack, songEncodeDecoder } from '../protocol/common/struct/audioTrack.js'
 LifeCycle.when('controlsReady')
     .then(async () => {
         const [ lookup, create ] = consumer()
         const [ defaultProviderDescriptor ] = await lookup({ category: 'provider.song' })
         const defaultProvider = create(defaultProviderDescriptor, songEncodeDecoder)
+
+        // await defaultProvider.write('1', new AudioTrack(
+        //     [ 'Yellow' ],
+        //     [ 'livetune' ],
+        //     'こっち向いて Baby/Yellow',
+        //     114514,
+        //     'https://music.163.com/#/song?id=26115910',
+        //     0,
+        //     0
+        // ))
+
+        // await fileFindService.addDir('C:/Users/rgb/Music/albums/EVANGELION FINALLY')
 
         console.log(await defaultProvider.read('1'))
         console.log(

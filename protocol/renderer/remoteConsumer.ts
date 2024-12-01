@@ -6,7 +6,7 @@ import { EncodeDecoder, noneEncodeDecoder } from '../common/encodeDecoder'
 const ipcRenderer: IpcRenderer = hooks
 
 
-class RemoteConsumer<T=Uint8Array> {
+class RemoteConsumer<T=any> {
     constructor(
         private readonly desc: ProviderDescritpor,
         private readonly encodeDecoder: EncodeDecoder<T> = noneEncodeDecoder
@@ -18,17 +18,17 @@ class RemoteConsumer<T=Uint8Array> {
         )
     }
 
-    write(uri: string, data: any) {
+    write(uri: string, data: T) {
         return ipcRenderer.invoke(
             'consumer.write',
             this.desc.name,
             uri,
             this.encodeDecoder.encode(data)
-        )
+        ) as Promise<void>
     }
 
     delete(uri: string) {
-        return ipcRenderer.invoke('consumer.delete', this.desc.name, uri)
+        return ipcRenderer.invoke('consumer.delete', this.desc.name, uri) as Promise<void>
     }
 }
 
