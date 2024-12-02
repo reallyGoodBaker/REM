@@ -123,7 +123,7 @@ class Memory implements Mem {
     }
 
     setUint8Array(u8arr: Uint8Array) {
-        this.buffer = u8arr.buffer.slice(u8arr.byteOffset, u8arr.byteOffset + u8arr.byteLength)
+        this.buffer = u8arr.buffer.slice(u8arr.byteOffset, u8arr.byteOffset + u8arr.byteLength) as ArrayBuffer
     }
 
     setArray(obj: any[]) {

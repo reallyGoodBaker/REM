@@ -14,7 +14,8 @@ class RemoteConsumer<T=any> {
 
     async read(uri: string) {
         return this.encodeDecoder.decode(
-            await ipcRenderer.invoke('consumer.read', this.desc.name, uri)
+            (await ipcRenderer.invoke('consumer.read', this.desc.name, uri)) ??
+            new Uint8Array(0)
         )
     }
 

@@ -46,8 +46,12 @@ import { consumer, fileFindService } from '../protocol/renderer/index.js'
 import { AudioTrack, songEncodeDecoder } from '../protocol/common/struct/audioTrack.js'
 LifeCycle.when('controlsReady')
     .then(async () => {
+        // 获得provider发现服务和remote provider构造器
         const [ lookup, create ] = consumer()
+        // 获得满足分类的第一个provider descriptor
         const [ defaultProviderDescriptor ] = await lookup({ category: 'provider.song' })
+        // 构造provider实例 (注意: 这里的create方法是remote provider构造器, 不是provider实例)
+        // provider 运行在 node 环境下, 所以这里的remote provider实例是通过IPC通信实现功能的
         const defaultProvider = create(defaultProviderDescriptor, songEncodeDecoder)
 
         // await defaultProvider.write('1', new AudioTrack(

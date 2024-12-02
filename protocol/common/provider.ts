@@ -27,7 +27,7 @@ export function promiseResolvers<T>(): {
 
 export type LookupConfig = Partial<ProviderDescritpor>
 
-type ProviderCategories = 'song' | 'album' | 'artist' | 'playlist' | 'genre' | 'tag' | 'user' | 'playlist'
+export type ProviderCategories = 'song' | 'album' | 'artist' | 'playlist' | 'genre' | 'tag' | 'user' | 'playlist'
 export type ProviderCategory = `provider.${ProviderCategories}` | 'default'
 
 export interface ProviderDescritpor {
