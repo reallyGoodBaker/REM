@@ -1,6 +1,6 @@
 <script>
     import { writable } from "svelte/store"
-    import { keyset2str, ShortcutKey } from "./core"
+    import { keyset2str } from "./core"
 
     export let key = ''
     export let flag = 0

@@ -12,15 +12,15 @@ export function registerDefaultShortcuts() {
         Pager.prev()
     })
     
-    registerShortcut('$close_tab', 'Ctrl+w', () => {
+    registerShortcut('$close_tab', 'Ctrl+KeyW', () => {
         Pager.removeCurrent()
     })
     
-    registerShortcut('$toggle_search', 'Ctrl+f', () => {
+    registerShortcut('$toggle_search', 'Ctrl+KeyF', () => {
         rem.emitNone('toggleSearch')
     })
     
-    registerShortcut('$toggle_playing', ' ', () => {
+    registerShortcut('$toggle_playing', 'Space', () => {
         rem.emitNone('togglePlay')
     })
     
@@ -40,17 +40,17 @@ export function registerDefaultShortcuts() {
         AudioPlayer.seek(Math.min(AudioPlayer.seek() + 5, AudioPlayer.duration()))
     })
 
-    registerShortcut('$volume_up', 'Ctrl+=', () => {
+    registerShortcut('$volume_up', 'Ctrl+Equal', () => {
         AudioPlayer.volume(Math.min(AudioPlayer.volume() + 0.1, 1))
         AudioPlayer.em.emit('volumechange')
     })
 
-    registerShortcut('$volume_down', 'Ctrl+-', () => {
+    registerShortcut('$volume_down', 'Ctrl+Minus', () => {
         AudioPlayer.volume(Math.max(AudioPlayer.volume() - 0.1, 0))
         AudioPlayer.em.emit('volumechange')
     })
 
-    registerShortcut('$mute', 'Ctrl+m', () => {
+    registerShortcut('$mute', 'Ctrl+KeyM', () => {
         const player = AudioPlayer.getInstance()
         player.mute(!player.isMuted())
     })

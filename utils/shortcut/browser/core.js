@@ -5,7 +5,7 @@ export const ShortcutKey = {
     Ctrl: 1,
     Alt: 2,
     Shift: 4,
-    Meta: 8
+    Meta: 8,
 }
 
 /**
@@ -65,15 +65,19 @@ export function useRecordMode() {
 }
 
 const ignores = [
-    'Control',
-    'Alt',
-    'Shift',
-    'Meta',
+    'ControlLeft',
+    'ControlRight',
+    'AltLeft',
+    'AltRight',
+    'ShiftLeft',
+    'ShiftRight',
+    'MetaLeft',
+    'MetaRight',
 ]
 
 window.addEventListener('keydown', ev => {
     if (recordMode) {
-        if (ignores.includes(ev.key)) {
+        if (ignores.includes(ev.code)) {
             return ev.preventDefault()
         }
 
@@ -88,14 +92,15 @@ window.addEventListener('keydown', ev => {
             flag |= ShortcutKey.Meta
 
         recordedKeyset = {
-            key: ev.key,
+            key: ev.code,
             flag,
         }
+
         return ev.preventDefault()
     }
 
     for (const { key, flag, handler } of shortcuts) {
-        if (ev.key !== key) {
+        if (ev.code !== key) {
             continue
         }
 
@@ -171,14 +176,6 @@ export function keyset2str(key, flag, saveMode=false) {
         keys.push('Meta')
     }
 
-    if (!saveMode) {
-        keys.push(
-            key === ' ' ? 'Space' : key
-        )
-    
-        return keys.join(' + ')
-    }
-
     keys.push(key)
-    return keys.join('+')
+    return keys.join(saveMode ? '+' : ' + ')
 }

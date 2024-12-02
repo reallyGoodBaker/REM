@@ -12,16 +12,16 @@ export async function initAppShortcut() {
     __init_setting('AppSettings/shortcuts', {
         $next_tab: 'Ctrl+Tab',
         $prev_tab: 'Ctrl+Shift+Tab',
-        $close_tab: 'Ctrl+w',
-        $toggle_search: 'Ctrl+f',
-        $toggle_playing: ' ',
+        $close_tab: 'Ctrl+KeyW',
+        $toggle_search: 'Ctrl+KeyF',
+        $toggle_playing: 'Space',
         $prev_track: 'Ctrl+ArrowLeft',
         $next_track: 'Ctrl+ArrowRight',
         $fast_backward: 'Alt+ArrowLeft',
         $fast_forward: 'Alt+ArrowRight',
-        $volume_up: 'Ctrl+=',
-        $volume_down: 'Ctrl+-',
-        $mute: 'Ctrl+m',
+        $volume_up: 'Ctrl+Equal',
+        $volume_down: 'Ctrl+Minus',
+        $mute: 'Ctrl+KeyM',
     }, initVal => {
         for (const [ id, value ] of Object.entries(initVal)) {
             const shortcut = getShortcut(id)
