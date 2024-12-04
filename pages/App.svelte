@@ -10,6 +10,7 @@ import SurfaceLayer from './components/SurfaceLayer.svelte'
 import Search from './components/Search.svelte'
 import { store } from '../utils/stores/base.js'
 import { LifeCycle, rem } from '../utils/rem.js'
+import DocumentProvider from './components/DocumentProvider.svelte';
 
 let MinePage = Mine
 if(store.getSync('profile')) {
@@ -33,13 +34,14 @@ let searchPlaceholder = ''
 let __pager
 window.Pager = (() => {
 
-    let Props = [{}, {}],
-        saves = new Map()
-            .set(tabs[0], {})
-            .set(tabs[1], {}),
-        beforeSwitchHandlers = [],
-        onSearchInput = Function.prototype,
-        onSearch = Function.prototype
+    let Props = [{}, {}]
+    let saves = new Map([
+            [tabs[0], {}],
+            [tabs[1], {}]
+        ])
+    let beforeSwitchHandlers = []
+    let onSearchInput = Function.prototype
+    let onSearch = Function.prototype
 
     function setOnSearchInput(handler) {
         onSearchInput = handler
@@ -54,15 +56,11 @@ window.Pager = (() => {
     }
 
     function performSearchInput(str) {
-        if (onSearchInput.call) {
-            onSearchInput.call(null, str)
-        }
+        onSearchInput?.call?.(null, str)
     }
 
     function performSearch(str) {
-        if (onSearch.call) {
-            onSearch.call(null, str)
-        }
+        onSearch?.call?.(null, str)
     }
 
     function clearSearchListeners() {
@@ -97,8 +95,9 @@ window.Pager = (() => {
 
         if(selected === index && !forceUpdate) return
 
-        beforeSwitchHandlers.forEach(f => f.call(null))
-        beforeSwitchHandlers = []
+        beforeSwitchHandlers
+            .splice(0, beforeSwitchHandlers.length)
+            .forEach(f => f.call(null))
         clearSearchListeners()
 
         __pager.display(
@@ -120,23 +119,19 @@ window.Pager = (() => {
         if (index < 0 || index >= tabs.length) index = 0
 
         saves.delete(tabs[index])
-        beforeSwitchHandlers = []
+        beforeSwitchHandlers.length = 0
 
+        selections.splice(index, 1)
+        tabs.splice(index, 1)
         selections = selections
-            .slice(0, index)
-            .concat(selections.slice(index + 1))
-
         tabs = tabs
-            .slice(0, index)
-            .concat(tabs.slice(index + 1))
 
         let onTabDestroy = typeof Props[index] === 'function'
             ? Props[index]().onTabDestroy
             : Props[index].onTabDestroy
         
+        Props.splice(index, 1)
         Props = Props
-            .slice(0, index)
-            .concat(Props.slice(index + 1))
 
         if(typeof onTabDestroy === 'function') onTabDestroy(index)
 
@@ -202,13 +197,25 @@ window.Pager = (() => {
         selectByIndex(i - 1)
     }
 
+    function openDocument(name, conf) {
+        if (add(name, DocumentProvider, { conf })) {
+            return select(name)
+        }
+
+        select(name, true)
+    }
+
+    function getSave(name) {
+        return saves.get(name)
+    }
+
     return {
         add, select, remove, has, openNew,
         getContext, beforeSwitch, size, index,
         removeByIndex, removeCurrent,
         setOnSearch, setOnSearchInput, setSearchPlaceholder,
         performSearch, performSearchInput, clearSearchListeners,
-        next, prev,
+        next, prev, openDocument, getSave,
     }
 
 })()

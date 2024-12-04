@@ -9,8 +9,11 @@ cache
 Path
 bundle
 .vscode
-Cargo.lock
 
-native/**/target
-native/**/pkg
 *_dist
+
+Cargo.lock
+**/pkg
+**/target
+
+.env

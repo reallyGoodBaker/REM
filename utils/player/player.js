@@ -9,9 +9,12 @@ import { UrlPlayerAdapter } from './url-player-adapter.js'
 import { BufferPlayerAdapter } from './buffer-player-adapter.js'
 import { initPcmForward } from './pcm-forward.js'
 import { store } from '../stores/base.js'
+import { useAudioPrivilege } from '../audio-observer/audioPrivilege.js'
 
 initAudioDevicesFind()
+const [ grant, revoke ] = useAudioPrivilege()
 
+grant()
 export class AudioPlayer {
 
     static sampleRate = store.getSync('AppSettings/output')?.sampleRate
@@ -195,7 +198,7 @@ export class AudioPlayer {
     }
 
 }
-
+revoke()
 
 LifeCycle.when('runtimeReady').then(() => {
     const srcNode = AudioPlayer.virtualRoot

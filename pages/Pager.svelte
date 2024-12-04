@@ -51,6 +51,7 @@
 
 <style>
     .container {
+        contain: paint;
         width: 100vw;
         height: calc(100vh - 160px);
         overflow: visible;
@@ -74,9 +75,4 @@
         <svelte:component this={$_page} {...$_props}/>
     </div>
     {/if}
-    <!-- {#each pages as {component, computedProps}}
-    <div class="innerWindow row" bind:this={innerWindow}>
-        <svelte:component this={component} {...computedProps}/>
-    </div>
-    {/each} -->
 </div>

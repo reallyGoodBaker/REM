@@ -59,7 +59,8 @@
             "!node_modules/@rollup",
             "!node_modules/svelte",
             "!node_modules/typescript",
-            "!protocol"
+            "!protocol",
+            "!rust"
         ],
         "linux": {
             "maintainer": "rgb39",

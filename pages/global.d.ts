@@ -1,3 +1,4 @@
+import { IpcRenderer } from "electron"
 import { SvelteComponent } from "svelte"
 
 interface PagerContext {
@@ -33,10 +34,18 @@ interface Pager {
     clearSearchListeners(): void
     next(): void
     prev(): void
+    openDocument(name: string, conf?: DocumentConf): void
+    getSave(): any
+}
+
+interface DocumentConf {
+    onMount?(container: HTMLDivElement): void
+    onDestroy?(): void
 }
 
 declare global {
     const Pager: Pager
+    const hooks: IpcRenderer
 
     interface PromiseConstructor {
         withResolvers<T>(): {

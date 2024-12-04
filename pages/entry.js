@@ -11,6 +11,7 @@ import { initSettings } from './settings/initSettings.js'
 import { initHighLevelApi } from '../utils/high-level/browser'
 import { loadExtensionUI } from '../extension/host/ui-loader'
 import { initAppShortcut } from '../utils/shortcut/browser/app'
+import '../utils/audio-observer/audioPrivilege.js'
 
 initHighLevelApi()
 
