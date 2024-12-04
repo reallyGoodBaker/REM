@@ -51,11 +51,11 @@ LifeCycle.when('controlsReady')
         const [ lookup, create ] = consumer()
         // 获得满足分类的第一个provider descriptor
         const [ defaultProviderDescriptor ] = await lookup({ category: 'provider.song' })
-        // 构造provider实例 (注意: 这里的create方法是remote provider构造器, 不是provider实例)
-        // provider 运行在 node 环境下, 所以这里的remote provider实例是通过IPC通信实现功能的
-        const defaultProvider = create(defaultProviderDescriptor, songEncodeDecoder)
+        // 构造consumer实例 (注意: 这里的create方法是remote consumer构造器, 不是provider实例)
+        // provider 运行在 node 环境下, 这里的remote consumer实例是通过IPC通信实现功能的
+        const defaultConsumer = create(defaultProviderDescriptor, songEncodeDecoder)
 
-        // await defaultProvider.write('1', new AudioTrack(
+        // await defaultConsumer.write('1', new AudioTrack(
         //     [ 'Yellow' ],
         //     [ 'livetune' ],
         //     'こっち向いて Baby/Yellow',
@@ -67,7 +67,7 @@ LifeCycle.when('controlsReady')
 
         // await fileFindService.addDir('C:/Users/rgb/Music/albums/EVANGELION FINALLY')
 
-        console.log(await defaultProvider.read('1'))
+        console.log(await defaultConsumer.read('1'))
         console.log(
             await fileFindService.find(await fileFindService.getDirs())
         )
