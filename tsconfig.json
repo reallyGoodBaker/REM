@@ -2,6 +2,10 @@
     "compilerOptions": {
         "typeRoots": [
             "./pages/entry.d.ts"
+        ],
+        "lib": [
+            "ESNext",
+            "DOM"
         ]
     }
 }

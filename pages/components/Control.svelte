@@ -13,6 +13,7 @@
     import { onMount } from "svelte";
     import { interval } from "../../utils/core/interval"
     import { theme } from '../settings/initSettings'
+    import Progress3 from '../components/Progress3.svelte'
 
     let l = langMapping.getMapping()
     rem.on('langChange', lang => {
@@ -82,7 +83,7 @@
             seekValue = 0
             checker.cancel()
         }
-        checker = interval(_progressUpdate, 200)
+        checker = interval(_progressUpdate, 1000)
     });
 
     let volume;
@@ -412,8 +413,17 @@
 
         <div class="column" style="width: 100%;">
             <span class="time" bind:this={currentTimeEle}>0:00</span>
-            <ProgressInset
+            <!-- <ProgressInset
                 width={200}
+                bind:value={seekValue}
+                on:mousedown={startSeeking}
+                on:mousemove={seekMove}
+                on:mouseup={endSeek}
+            /> -->
+            <Progress3
+                width={200}
+                height={10}
+                thumbHeight={14}
                 bind:value={seekValue}
                 on:mousedown={startSeeking}
                 on:mousemove={seekMove}
@@ -425,7 +435,14 @@
 
 
     <div class="column edge" style="flex-direction: row-reverse;">
-        <ProgressInset
+        <!-- <ProgressInset
+            cssStyle='margin-right: 8px;'
+            bind:value={volume}
+            on:mousedown={setVolume}
+            on:mousemove={setVolume}
+            on:mouseup={saveVolume}
+        /> -->
+        <Progress3
             cssStyle='margin-right: 8px;'
             bind:value={volume}
             on:mousedown={setVolume}

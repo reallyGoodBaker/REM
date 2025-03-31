@@ -47,7 +47,7 @@ import { consumer, fileFindService } from '../protocol/renderer/index.js'
 import { AudioTrack, songEncodeDecoder } from '../protocol/common/struct/audioTrack.js'
 LifeCycle.when('controlsReady')
     .then(async () => {
-        // 获得provider发现服务和remote provider构造器
+        // 获得provider发现服务和remote consumer构造器
         const [ lookup, create ] = consumer()
         // 获得满足分类的第一个provider descriptor
         const [ defaultProviderDescriptor ] = await lookup({ category: 'provider.song' })
