@@ -13,7 +13,8 @@
         "outDir": "./bundle",
         "rootDir": "./",
         "allowJs": true,
-        "noImplicitAny": true
+        "noImplicitAny": true,
+        "experimentalDecorators": true
     },
     "include": [
         "./**/*.ts"

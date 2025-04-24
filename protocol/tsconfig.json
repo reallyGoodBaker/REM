@@ -3,6 +3,7 @@
         "target": "ESNext",
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
+        "experimentalDecorators": true,
         "skipLibCheck": true,
         "noEmitOnError": true,
         "strict": true,

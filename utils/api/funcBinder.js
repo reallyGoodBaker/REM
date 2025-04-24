@@ -1,4 +1,4 @@
-const {ipcMain, ipcRenderer} = require('electron')
+const { ipcMain, ipcRenderer, app } = require('electron')
 
 class FuncBinder {
     static id = 0;
@@ -27,7 +27,11 @@ class FuncBinder {
         ipcMain.on(this.funcName, async (ev, ...args) => {
             let res = this.func(...args);
             if(res instanceof Promise) {
-                return ev.sender.send('recev-' + this.funcName, await res);
+                const val = await res
+                // if (!app.isPackaged) {
+                //     console.log('%s called with args %s, return %o', this.funcName, args, val);
+                // }
+                return ev.sender.send('recev-' + this.funcName, val);
             }
             ev.sender.send('recev-' + this.funcName, res);
         });

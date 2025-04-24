@@ -1,7 +1,7 @@
 import { LookupConfig, Provider, ProviderDescritpor } from '../common/provider'
 import * as net from 'net'
 import { pipeName } from '../common/pipeName'
-import { Consumer, getExcistingConsumer, LocalConsumer } from './consumer'
+import { Consumer, getExistingConsumer, LocalConsumer } from './consumer'
 import { IConsumer } from '../common/consumer'
 
 const registry: Set<ProviderDescritpor> = new Set()
@@ -89,7 +89,7 @@ export function getOrCreateConsumer(name: string): IConsumer | null {
     }
 
     const { provider, name: n } = desc as ProviderRecord
-    const excistingConsumer = getExcistingConsumer(n)
+    const excistingConsumer = getExistingConsumer(n)
     if (excistingConsumer) {
         return excistingConsumer
     }

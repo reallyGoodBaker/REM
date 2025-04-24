@@ -1,18 +1,18 @@
 <script>
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher } from "svelte"
 
 
-    export let checked = false;
+    export let checked = false
 
-    const emit = createEventDispatcher();
+    const emit = createEventDispatcher()
 
     function onToggle() {
-        checked = !checked;
-        emit('toggle', checked);
+        checked = !checked
+        emit('toggle', checked)
     }
 
     export function toggle() {
-        onToggle();
+        onToggle()
     }
 
 </script>
@@ -22,7 +22,8 @@
         position: relative;
         width: 40px;
         height: 20px;
-        border-radius: 10px;
+        border-radius: 12px;
+        border: solid 2px var(--controlAcrylicDark);
         background-color: var(--controlBackgroundAcrylic);
         cursor: pointer;
         transition: background-color 0.2s;
@@ -45,12 +46,16 @@
     }
 
     .thumb-active {
-        left: calc(100% - 10px);
+        width: 16px;
+        height: 16px;
+        top: 2px;
+        left: calc(100% - 11px);
         background-color: var(--controlColor);
     }
 
     .active {
         background-color: var(--controlBright);
+        border-color: transparent;
         /* border: solid 2px var(--controlColor); */
     }
 </style>

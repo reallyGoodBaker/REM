@@ -44,15 +44,18 @@ class FileFindService {
     async sync() {
         const rootDirs = await this.conf.findAsync({ key: ProtocolConfKeys.LOCALFILE_ROOTDIR })
         const rootDirsArr = rootDirs.map(r => r.value)
+        const insertCommands: Promise<any>[] = []
 
         for (const [ _, value ] of Object.entries(await this.find(rootDirsArr))) {
             for (const res of value) {
                 const hasAny = await this.metadatas.findOneAsync<IAudioFindResult>({ filePath: res.filePath })
                 if (!hasAny) {
-                    await this.metadatas.insertAsync(res)
+                    insertCommands.push(this.metadatas.insertAsync(res))
                 }
             }
         }
+
+        await Promise.all(insertCommands)
     }
 
     async addDir(dir: string) {

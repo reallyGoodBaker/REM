@@ -152,7 +152,7 @@
     </h3>
     {#if !loginType}
         <input type="tel" class="{error ? 'error' : ''}" bind:value={phone} placeholder={s('phone_number')}>
-        <input type="number" class="{error ? 'error' : ''}" bind:value={passwd} placeholder={s('captcha')}>
+        <input type="text" class="{error ? 'error' : ''}" bind:value={passwd} placeholder={s('captcha')}>
         <div class="btn outlined" on:click={getCaptcha}>{s('get_captcha')}</div>
         <div style="padding: 24px 0px 12px 0px">
             <RippleLayer

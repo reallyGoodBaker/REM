@@ -10,9 +10,9 @@ class SongProvider implements Provider {
     async read(uri: string): Promise<Buffer> {
         const raw = await this.db.findOneAsync<{song: AudioTrack}>({ uri })
 
-        return Buffer.from(
+        return raw ? Buffer.from(
             songEncodeDecoder.encode(raw.song)
-        )
+        ) : Buffer.alloc(0)
     }
 
     async write(uri: string, value: Buffer) {

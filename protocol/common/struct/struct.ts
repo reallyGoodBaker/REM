@@ -1,11 +1,11 @@
+import { ConstructorOf, getStruct } from "../decorator"
+
 type RemoveNotGetter<T> = { [K in keyof T as K extends `get${string}` ? K : never]: T[K] }
 type RemoveGetPrefix<T> = keyof T extends `get${infer U}` ? U : never
 export type DataViewTypes = RemoveGetPrefix<RemoveNotGetter<DataView>>
 export type StructDataTypes = DataViewTypes | `byte${number}` | 'string'
 
-export interface StructDescriptor {
-    layout(): StructDataTypes[]
-}
+export type StructDescriptor = StructDataTypes[]
 
 export interface Mem {
     get(): any[]
@@ -16,9 +16,8 @@ export interface Mem {
 }
 
 export function sizeof(struct: StructDescriptor) {
-    const layout = struct.layout()
     let size = 0
-    for (const type of layout) {
+    for (const type of struct) {
         size += calcPartSize(type)
     }
     return size
@@ -68,7 +67,7 @@ class Memory implements Mem {
     constructor(
         public readonly struct: StructDescriptor,
     ) {
-        struct.layout().forEach(type => {
+        struct.forEach(type => {
             this.partSize.push(calcPartSize(type))
             if (type === 'string') {
                 this._dynamicSize = true
@@ -92,7 +91,7 @@ class Memory implements Mem {
 
     get() {
         const acc = new Acc()
-        const layout = this.struct.layout()
+        const layout = this.struct
         const textDecoder = new TextDecoder()
         const result: any[] = []
 
@@ -128,7 +127,7 @@ class Memory implements Mem {
 
     setArray(obj: any[]) {
         const acc = new Acc()
-        const layout = this.struct.layout()
+        const layout = this.struct
         const textEncoder = new TextEncoder()
 
         for (let i = 0; i < layout.length; i++) {
@@ -200,6 +199,10 @@ class Memory implements Mem {
     }
 }
 
-export function malloc(struct: StructDescriptor): Mem {
-    return new Memory(struct)
+export function malloc(struct: StructDescriptor | ConstructorOf<any>): Mem {
+    if (Array.isArray(struct)) {
+        return new Memory(struct)
+    }
+
+    return new Memory(getStruct(struct))
 }

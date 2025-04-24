@@ -38,6 +38,7 @@ export function initSettings() {
     __init_setting('AppSettings/beta_features', {
         showDevTools: false,
         useBufferOutput: false,
+        showNetworkErrors: false,
     }, ({ showDevTools }) => {
         hooks.send(`devtools:${
             showDevTools ? 'open': 'close'

@@ -6,6 +6,16 @@
         "lib": [
             "ESNext",
             "DOM"
-        ]
-    }
+        ],
+        "experimentalDecorators": true
+    },
+    "include": [
+        "./pages/**/*",
+        "./preload/**/*",
+        "./protocol/**/*",
+        "./protocol_dist/**/*",
+        "./extension/**/*",
+        "./utils/**/*",
+        "./wins/**/*"
+    ]
 }

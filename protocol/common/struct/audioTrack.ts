@@ -1,6 +1,16 @@
-import { encodeDecoder } from "../encodeDecoder"
-import { malloc, StructDescriptor } from "./struct"
+import { Struct } from "../decorator"
+import { EncodeDecoder } from "../encodeDecoder"
+import { malloc } from "./struct"
 
+@Struct(
+    'Float32', // duration
+    'Uint32',  // no
+    'Uint32',  // start
+    'string',  // titles
+    'string',  // artist
+    'string',  // album
+    'string',  // uri
+)
 export class AudioTrack {
     constructor(
         public titles: string[],
@@ -11,26 +21,16 @@ export class AudioTrack {
         public no: number,
         public start = 0
     ) {}
+}
 
-    static readonly struct: StructDescriptor = {
-        layout: () =>
-            [
-                'Float32', // duration
-                'Uint32',  // no
-                'Uint32',  // start
-                'string',  // titles
-                'string',  // artist
-                'string',  // album
-                'string',  // uri
-            ]
-    }
+export class AudioTrackEncoderDecoder implements EncodeDecoder<AudioTrack> {
 
-    static encode({
+    encode({
         titles, artists, album, duration, uri, no, start
     }: AudioTrack): Uint8Array {
         const titlesStr = titles.join('\0')
         const artistStr = artists.join('\0')
-        const mem = malloc(AudioTrack.struct)
+        const mem = malloc(AudioTrack)
 
         mem.setArray([
             duration, no, start,
@@ -40,8 +40,8 @@ export class AudioTrack {
         return new Uint8Array(mem.getBytes())
     }
 
-    static decode(encoded: Uint8Array): AudioTrack {
-        const mem = malloc(AudioTrack.struct)
+    decode(encoded: Uint8Array): AudioTrack {
+        const mem = malloc(AudioTrack)
         mem.setUint8Array(encoded)
 
         const [
@@ -49,9 +49,16 @@ export class AudioTrack {
             titles, artists, album, uri,
         ] = mem.get()
 
-        return new AudioTrack(titles.split('\0'), artists.split('\0'), album, duration, uri, no, start)
+        return new AudioTrack(
+            titles.split('\0'),
+            artists.split('\0'),
+            album,
+            duration,
+            uri,
+            no,
+            start
+        )
     }
-
 }
 
-export const songEncodeDecoder = encodeDecoder<AudioTrack>(AudioTrack.encode, AudioTrack.decode)
+export const songEncodeDecoder = new AudioTrackEncoderDecoder()

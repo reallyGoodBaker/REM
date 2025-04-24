@@ -8,7 +8,7 @@ import { IConsumer } from '../common/consumer'
 const socks: Map<string, net.Socket> = new Map()
 const consumers: Map<string, IConsumer> = new Map()
 
-export function getExcistingConsumer(name: string) {
+export function getExistingConsumer(name: string) {
     return consumers.get(name)
 }
 

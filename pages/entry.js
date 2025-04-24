@@ -67,7 +67,7 @@ LifeCycle.when('controlsReady')
 
         // await fileFindService.addDir('C:/Users/rgb/Music/albums/EVANGELION FINALLY')
 
-        console.log(await defaultConsumer.read('1'))
+        console.log(await defaultConsumer.read('2'))
         console.log(
             await fileFindService.find(await fileFindService.getDirs())
         )

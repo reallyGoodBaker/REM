@@ -1,17 +1,17 @@
 <script>
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher } from "svelte"
 
-    import ListTile from "./ListTile.svelte";
-    import Toggle from "./Toggle.svelte";
+    import ListTile from "./ListTile.svelte"
+    import Toggle from "./Toggle.svelte"
 
-    let emit = createEventDispatcher();
-    let t;
-    export let checked = false;
+    let emit = createEventDispatcher()
+    let t
+    export let checked = false
     export let bold = true
 
     function onToggle(ev) {
-        let checked = ev.detail;
-        emit('toggle', checked);
+        let checked = ev.detail
+        emit('toggle', checked)
     }
 
     export let customClickListener = false
