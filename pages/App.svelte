@@ -14,7 +14,7 @@ import DocumentProvider from './components/DocumentProvider.svelte';
 
 let MinePage = Mine
 if(store.getSync('profile')) {
-    store.get('cookie').then(data => NeteaseApi.checkIn(data))
+    store.get('cookie').then(data => NeteaseApi.checkIn(data)).catch(() => {})
 } else {
     MinePage = Login
 }

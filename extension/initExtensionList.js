@@ -21,13 +21,23 @@ export function initExtensionList() {
             return
         }
 
-        extensionManifests.set(manifest.id, m)
-
-        if (m.uiEntry) {
-            rem.emit('extension:need-relaunch', m)
-        }
+        Object.assign(manifest, m, {
+            activated: m.activated ?? true,
+        })
+        extensionManifests.set(manifest.id, manifest)
+        rem.emit('extension:status-changed', manifest)
     }
 
     hooks.on('extension:activated', onActivationChange)
-    hooks.on('extension:deactivated', onActivationChange)
+    hooks.on('extension:deactivated', (_, m) => {
+        const manifest = extensionManifests.get(m.id)
+
+        if (!manifest) {
+            return
+        }
+
+        Object.assign(manifest, m, { activated: false })
+        extensionManifests.set(manifest.id, manifest)
+        rem.emit('extension:status-changed', manifest)
+    })
 }

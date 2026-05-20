@@ -25,6 +25,75 @@ const activeWindows = new Map()
 /**
  * @param {BrowserWindowConstructorOptions} options 
  */
+function hasWindow(winName) {
+    const win = activeWindows.get(winName)
+    return win && !win.isDestroyed()
+}
+
+function openExtensionWindows(manifest) {
+    if (!manifest.windows || !manifest.folderName) {
+        return
+    }
+
+    for (const [ winName, extra ] of Object.entries(manifest.windows)) {
+        if (extra.replaceMain) {
+            continue
+        }
+
+        const options = {
+            show: true,
+            backgroundColor: '#99000000',
+            ...extra.openOptions ?? {},
+        }
+
+        if (!hasWindow(winName)) {
+            try {
+                const winId = openWindow(winName, options, manifest)
+                console.log(`[extension:${manifest.name}] open "${winName}" -> window id ${winId}`)
+            } catch (err) {
+                console.error(`[extension:${manifest.name}] failed to open "${winName}":`, err)
+            }
+        }
+    }
+}
+
+function closeExtensionWindows(manifest) {
+    if (!manifest.windows) {
+        return
+    }
+
+    for (const winName of Object.keys(manifest.windows)) {
+        const win = activeWindows.get(winName)
+        if (win && !win.isDestroyed()) {
+            win.close()
+        }
+    }
+}
+
+function openFallbackWindows(manifest) {
+    if (!manifest.windows) {
+        return
+    }
+
+    for (const [ winName, extra ] of Object.entries(manifest.windows)) {
+        if (extra.replaceMain) {
+            continue
+        }
+
+        const options = {
+            show: true,
+            backgroundColor: '#99000000',
+            ...extra.openOptions ?? {},
+        }
+
+        setTimeout(() => {
+            if (!hasWindow(winName)) {
+                openWindow(winName, options, manifest)
+            }
+        }, 600)
+    }
+}
+
 function openWindow(winName, options, manifest) {
     if (!manifest.windows) {
         return -1
@@ -66,6 +135,7 @@ function openWindow(winName, options, manifest) {
     }
 
     win.loadFile(path.join(pluginRoot, extra.renderer))
+    win.show()
     win.on('close', async () => {
         if (extra.main) {
             const m = require(winMain)
@@ -84,9 +154,23 @@ function openWindow(winName, options, manifest) {
     return win.id
 }
 
+function resolveWindowId(id) {
+    if (id == null || id === '') {
+        return -1
+    }
+
+    const n = Number(id)
+    return Number.isFinite(n) && n >= 0 ? n : -1
+}
+
 function destroyWindow(id) {
+    const winId = resolveWindowId(id)
+    if (winId < 0) {
+        return
+    }
+
     /**@type {BrowserWindow}*/
-    const win = BrowserWindow.fromId(id)
+    const win = BrowserWindow.fromId(winId)
 
     if (win) {
         win.destroy()
@@ -94,8 +178,13 @@ function destroyWindow(id) {
 }
 
 function closeWindow(id) {
+    const winId = resolveWindowId(id)
+    if (winId < 0) {
+        return
+    }
+
      /**@type {BrowserWindow}*/
-     const win = BrowserWindow.fromId(id)
+     const win = BrowserWindow.fromId(winId)
 
      if (win) {
         win.close()
@@ -103,5 +192,6 @@ function closeWindow(id) {
 }
 
 module.exports = {
-    openWindow, destroyWindow, closeWindow,
+    openWindow, destroyWindow, closeWindow, hasWindow,
+    openExtensionWindows, closeExtensionWindows, openFallbackWindows,
 }

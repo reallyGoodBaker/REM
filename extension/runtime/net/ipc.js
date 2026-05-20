@@ -41,13 +41,26 @@ class Socket {
      */
     async invoke(data) {
         const { promise, reject, resolve } = promiseResolvers()
-        this.#socket
-            .once('data', val => {
-                resolve(jsonObj(val))
-            })
-            .once('error', reject)
-            .write(data)
-    
+
+        const onData = val => {
+            cleanup()
+            resolve(jsonObj(val))
+        }
+
+        const onError = err => {
+            cleanup()
+            reject(err)
+        }
+
+        const cleanup = () => {
+            this.#socket.off('data', onData)
+            this.#socket.off('error', onError)
+        }
+
+        this.#socket.once('data', onData)
+        this.#socket.once('error', onError)
+        this.#socket.write(data)
+
         return promise
     }
 }

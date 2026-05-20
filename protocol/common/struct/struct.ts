@@ -26,6 +26,7 @@ export function sizeof(struct: StructDescriptor) {
 const TypeSize: { [key in DataViewTypes]: number } = {
     Float32: 4,
     Float64: 8,
+    Float16: 2,
     Int8: 1,
     Int16: 2,
     Int32: 4,

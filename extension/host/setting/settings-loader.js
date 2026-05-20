@@ -56,6 +56,7 @@ export async function loadExtensionSettings(m) {
 
         value = value ?? {}
         await call(settingEntry.onSetSetting, settingStore(m.id), name, value)
+        hooks.send('ext:settings-changed', id)
     }
 
     // invoker.handle('ext.settings:get', (_, id) => settings.get(id)?.setting)

@@ -130,7 +130,9 @@
         let data = pageStore.__artistSublist
         if (!data) {
             let favs = await NeteaseApi.getArtistSublist(await store.get('cookie'), 1)
+            if (!favs?.body?.data) return (pageStore.__artistSublist = [])
             favs = await NeteaseApi.getArtistSublist(await store.get('cookie'), favs.body.count)
+            if (!favs?.body?.data) return (pageStore.__artistSublist = [])
             favs.body.data.count = favs.body.count
             return pageStore.__artistSublist = favs.body.data
         }
@@ -153,7 +155,9 @@
         let data = pageStore.__alSublist
         if (!data) {
             let favs = await NeteaseApi.getAlbumSublist(await store.get('cookie'), 1)
+            if (!favs?.body?.data) return (pageStore.__alSublist = [])
             favs = await NeteaseApi.getAlbumSublist(await store.get('cookie'), favs.body.count)
+            if (!favs?.body?.data) return (pageStore.__alSublist = [])
             favs.body.data.count = favs.body.count
             return pageStore.__alSublist = favs.body.data
         }

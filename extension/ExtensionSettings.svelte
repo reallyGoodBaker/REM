@@ -10,6 +10,7 @@
     import ToggleListTile from './host/components/setting/ToggleListTile.svelte';
     import InputWithLabel from './host/components/setting/InputWithLabel.svelte';
     import Slider from './host/components/setting/Slider.svelte';
+    import { onDestroy, onMount } from 'svelte';
 
     export let id = ''
     export let isUrl = false
@@ -27,34 +28,27 @@
     let checked = extension.activated ?? false
     let author = extension.author ?? s('unknown')
 
-    let needRelaunch = false
     const emit = createEventDispatcher()
 
-    function onToggle() {
-        emit('toggle', checked)
-        hooks.send(`extension:${
-            checked? 'active': 'deactive'
-        }`, id)
+    function onToggle(e) {
+        const next = e.detail
+        checked = next
+        emit('toggle', next)
+        hooks.send(`extension:${next ? 'active' : 'deactive'}`, id)
     }
 
     export function toggle() {
-        checked = !checked
-        onToggle()
+        onToggle({ detail: !checked })
     }
 
-    const refreshLaunchIcon = m => {
-        if (m.id === id) {
-            needRelaunch = true
+    const syncStatus = manifest => {
+        if (manifest.id === id) {
+            checked = manifest.activated ?? false
         }
     }
 
-    rem.on('extension:need-relaunch', refreshLaunchIcon)
-
-    Pager.beforeSwitch(() => rem.off('extension:need-relaunch', refreshLaunchIcon))
-
-    function relaunch() {
-        hooks.send('app:relaunch')
-    }
+    onMount(() => rem.on('extension:status-changed', syncStatus))
+    onDestroy(() => rem.off('extension:status-changed', syncStatus))
 
     function setExtensionSettings() {
         rem.emit('ext.settings:set', id, customSettings)
@@ -210,13 +204,8 @@
             </RippleLayer>
         </div>
         <div class="Row selection">
-            <div style="font-size: small;">{s(checked ? 'enabled': 'disabled')} {needRelaunch ? `(${s('need_to_do', s('relaunch'))})` : ''}</div>
+            <div style="font-size: small;">{s(checked ? 'enabled': 'disabled')}</div>
             <div class="Row" style="gap: 8px;">
-                {#if needRelaunch}
-                    <RippleLayer rippleColor='var(--fadeDark)' cssStyle="border-radius: 50%;">
-                        <div class="icon-round i _btn" on:click={relaunch}>{'\ue5d5'}</div>
-                    </RippleLayer>
-                {/if}
                 <Toggle bind:checked on:toggle={onToggle}>
                     <span>{s('enable')}</span>
                 </Toggle>
@@ -260,11 +249,11 @@
             <div class="card_list_tile" icon={icon ?? ''}>
                     {#await getExtSetting(id, name) then value}
                     {#if type === 'boolean'}
-                        <ToggleListTile {label} checked={value || defaultValue} on:toggle={e => setExtSetting(id, name, e.detail)}/>
+                        <ToggleListTile {label} checked={value ?? defaultValue} on:toggle={e => setExtSetting(id, name, e.detail)}/>
                     {:else if type === 'string'}
-                        <InputWithLabel {label} value={value || defaultValue} on:change={e => setExtSetting(id, name, e.detail)}/>
+                        <InputWithLabel {label} value={value ?? defaultValue} on:change={e => setExtSetting(id, name, e.detail)}/>
                     {:else if type === 'number'}
-                        <Slider {label} {min} {max} value={value || defaultValue} on:change={e => setExtSetting(id, name, e.detail)}/>
+                        <Slider {label} {min} {max} value={value ?? defaultValue} on:change={e => setExtSetting(id, name, e.detail)} />
                     {/if}
                     {/await}
             </div>

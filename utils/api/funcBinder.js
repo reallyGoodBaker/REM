@@ -25,15 +25,16 @@ class FuncBinder {
 
     buildHost() {
         ipcMain.on(this.funcName, async (ev, ...args) => {
-            let res = this.func(...args);
-            if(res instanceof Promise) {
-                const val = await res
-                // if (!app.isPackaged) {
-                //     console.log('%s called with args %s, return %o', this.funcName, args, val);
-                // }
-                return ev.sender.send('recev-' + this.funcName, val);
+            try {
+                let res = this.func(...args);
+                if(res instanceof Promise) {
+                    const val = await res
+                    return ev.sender.send('recev-' + this.funcName, val);
+                }
+                ev.sender.send('recev-' + this.funcName, res);
+            } catch (err) {
+                ev.sender.send('recev-' + this.funcName, err);
             }
-            ev.sender.send('recev-' + this.funcName, res);
         });
     }
 

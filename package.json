@@ -10,14 +10,14 @@
         "build": "npm run build-protocol && rollup -c",
         "start": "npm run build && electron .",
         "preview": "electron .",
-        "postinstall": "electron-builder install-app-deps"
+        "postinstall": "npx electron-builder install-app-deps"
     },
     "author": "RGB",
     "license": "GPLv2",
     "dependencies": {
+        "@seald-io/nedb": "^4.0.4",
         "compressing": "^1.10.1",
         "music-metadata": "^7.12.6",
-        "@seald-io/nedb": "^4.0.4",
         "NeteaseCloudMusicApi": "^4.27.0"
     },
     "devDependencies": {
@@ -27,7 +27,7 @@
         "@rollup/plugin-typescript": "^11.1.6",
         "@rollup/plugin-wasm": "^6.2.2",
         "assemblyscript": "^0.27.27",
-        "electron": "^33.0.0-beta.7",
+        "electron": "^33.4.11",
         "electron-icon-builder": "^2.0.1",
         "picomatch": "^2.3.1",
         "rollup": "^2.73.0",
@@ -69,8 +69,7 @@
                 "deb",
                 "tar.xz"
             ],
-            "desktop": {
-            }
+            "desktop": {}
         }
     }
 }

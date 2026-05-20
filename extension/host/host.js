@@ -6,7 +6,8 @@ const { EventEmitter } = require('events')
 const { X509Certificate } = require('crypto')
 const { Blob } = require('buffer')
 const serviceMap = require('./serviceMap')
-const { openWindow, destroyWindow, closeWindow } = require('./win')
+const { openWindow, destroyWindow, closeWindow, openExtensionWindows, closeExtensionWindows, openFallbackWindows } = require('./win')
+const { Data } = require('../../utils/appPath/main')
 const { createThread, killThread } = require('./thread')
 
 class ExtensionHost {
@@ -35,8 +36,28 @@ class ExtensionHost {
     _registerExtensionWorker = () => {
 
         const ext = this.extension = new Worker(
-            path.join(this.root, this.manifest.entry)
+            path.join(this.root, this.manifest.entry),
+            {
+                env: {
+                    ...process.env,
+                    NODE_PATH: [
+                        path.join(Data, 'node_modules'),
+                        process.env.NODE_PATH,
+                    ].filter(Boolean).join(path.delimiter),
+                },
+            },
         )
+
+        ext.on('error', err => {
+            console.error(`[extension:${this.manifest.name}] worker error:`, err)
+            this.events.emit('internal-error', err)
+            ipcMain.emit('extension:deactive', this.manifest.id)
+        })
+
+        ext.on('messageerror', err => {
+            console.error(`[extension:${this.manifest.name}] worker message error:`, err)
+            ipcMain.emit('extension:deactive', this.manifest.id)
+        })
 
         ext.on('message', v => {
             if ('name' in v && 'args' in v) {
@@ -85,57 +106,58 @@ class ExtensionHost {
      * @param {BrowserWindow} bw 
      */
     initExtension(bw) {
+        this.bw = bw
         const manifest = this.manifest
         const { entry, components } = manifest
+
+        if (components.includes('new_window')) {
+            this._listenWindowEvents(manifest)
+            openExtensionWindows(manifest)
+            openFallbackWindows(manifest)
+        }
+
+        if (components.includes('threads')) {
+            this._listenThreadEvents(manifest)
+        }
+
         if (entry) {
-            this._registerExtensionWorker()
             this._connectComponents(bw)
             this._registerComponents()
+            this._registerExtensionWorker()
         }
-        this._registerActivationChange(bw)
-
-        if (components.includes('new_window'))
-            this._listenWindowEvents(manifest)
-
-        if (components.includes('threads'))
-            this._listenThreadEvents(manifest)
 
         this.events.on('@@@ready', ({ id }) => {
             this.extension.postMessage({ id, val: globalThis.playerReady, err: null })
         })
 
-        ipcMain.emit('extension:activated', manifest)
-        ipcMain.once('win:show-main', () => this.request('ready'))
+        const activeManifest = { ...manifest, activated: true }
+        ipcMain.emit('extension:activated', activeManifest)
+        bw.webContents.send('extension:activated', activeManifest)
+
+        const notifyReady = () => {
+            if (!this.extension) {
+                return
+            }
+
+            this.request('ready').catch(() => {})
+        }
+
+        if (globalThis.playerReady) {
+            setImmediate(notifyReady)
+            setTimeout(notifyReady, 250)
+        } else {
+            ipcMain.once('win:show-main', notifyReady)
+        }
     }
 
     sameId(m) {
         return m.id === this.manifest.id
     }
 
-    _registerActivationChange = bw => {
-        const web = bw.webContents
-
-        ipcMain.once('extension:activated', m => {
-            if (!this.sameId(m)) {
-                return
-            }
-
-            m.activated = true
-            web.send('extension:activated', m)
-        })
-
-        ipcMain.once('extension:deactivated', m => {
-            if (!this.sameId(m)) {
-                return
-            }
-
-            this.components.clear()
-            this.events.eventNames()
-                .forEach(name => this.events.removeAllListeners(name))
-
-            m.activated = false
-            web.send('extension:deactivated', m)
-        })
+    _notifyDeactivated() {
+        const inactiveManifest = { ...this.manifest, activated: false }
+        ipcMain.emit('extension:deactivated', inactiveManifest)
+        this.bw?.webContents.send('extension:deactivated', inactiveManifest)
     }
 
     _connectComponents(bw) {
@@ -177,18 +199,33 @@ class ExtensionHost {
     }
 
     async kill(reason) {
-        if (this.extension) {
-            await this.request('beforeDisable')
-            await this.request('clearTimers')
+        closeExtensionWindows(this.manifest)
 
-            const code = await this.extension.terminate()
-            this.events.emit('kill', reason)
-            this.events.emit('exit', code)
-            this.events.emit('-service')
+        if (this.extension) {
+            const worker = this.extension
             this.extension = null
+
+            try {
+                await this.request('beforeDisable')
+            } catch { /* worker may already be dead */ }
+
+            try {
+                await this.request('clearTimers')
+            } catch { /* worker may already be dead */ }
+
+            try {
+                await worker.terminate()
+            } catch { /* worker may already be dead */ }
+
+            this.components.clear()
+            this.events.eventNames()
+                .forEach(name => this.events.removeAllListeners(name))
+            this.events.emit('kill', reason)
+            this.events.emit('exit', 0)
+            this.events.emit('-service')
         }
 
-        ipcMain.emit('extension:deactivated', this.manifest)
+        this._notifyDeactivated()
     }
 
     _registerComponents = () => {

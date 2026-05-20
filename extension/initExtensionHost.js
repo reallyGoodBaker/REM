@@ -30,10 +30,12 @@ async function cp(src, dest) {
 }
 
 function initExtRuntime() {
+    if (!fs.existsSync(DataNodeModules)) {
+        fs.mkdirSync(DataNodeModules, { recursive: true })
+    }
 
     if (!fs.existsSync(ExtensionRuntime)) {
-        fs.mkdirSync(DataNodeModules)
-        fs.mkdirSync(ExtensionRuntime)
+        fs.mkdirSync(ExtensionRuntime, { recursive: true })
     }
 
     cp(

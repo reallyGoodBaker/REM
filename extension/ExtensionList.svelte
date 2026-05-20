@@ -43,9 +43,13 @@
     onMount(() => {
         Pager.setSearchPlaceholder('搜索插件')
         rem.on('reload-extension-list', reload)
+        rem.on('extension:status-changed', reload)
     })
 
-    onDestroy(() => rem.off('reload-extension-list', reload))
+    onDestroy(() => {
+        rem.off('reload-extension-list', reload)
+        rem.off('extension:status-changed', reload)
+    })
 
     function unist(id) {
         notify({
@@ -95,13 +99,11 @@
             <ExtensionListTile
                 on:uninstall={({ detail }) => unist(detail)}
                 isUrl={isUrl(icon)}
-                customClickListener={true}
                 icon={iconUrl}
                 {id}
                 {name}
                 {desc}
                 {ver}
-                {components}
                 {author}
                 checked={activated}
             />

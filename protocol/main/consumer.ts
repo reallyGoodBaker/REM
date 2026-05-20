@@ -29,7 +29,8 @@ export class Consumer implements IConsumer {
             socks.set(name, sock)
         })
         sock.on('data', chunk => {
-            const { type, uri, payload } = messageDecode(chunk)
+            const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)
+            const { type, uri, payload } = messageDecode(buffer)
             if (type !== MessageType.RETURN) {
                 return
             }

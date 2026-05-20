@@ -1,7 +1,12 @@
-module.exports = ({ store }, _, { id }) => {
+const RemStore = require('../../../utils/stores/rem-store.js')
+
+module.exports = function (_bw, _extension, manifest) {
+    const store = new RemStore()
+    const id = manifest?.id ?? ''
+
     const keys = [
         'store.get', 'store.getRaw', 'store.set', 'store.rm',
-        '$store.get', '$store.getRaw', '$store.set', '$store.rm'
+        '$store.get', '$store.getRaw', '$store.set', '$store.rm',
     ]
 
     return new Proxy(store, {
@@ -11,14 +16,16 @@ module.exports = ({ store }, _, { id }) => {
             }
 
             if (p.startsWith('store.')) {
-                return t[p.slice(6)]
+                const method = p.slice(6)
+                return (...args) => t[method](...args)
             }
 
             if (p.startsWith('$store.')) {
+                const method = p.slice(7)
                 return (...args) =>
-                    t[p.slice(7)](`ExtensionSettings/${id}`, ...args)
+                    t[method](`ExtensionSettings/${id}`, ...args)
             }
         },
-        set() { return false }
+        set() { return false },
     })
 }

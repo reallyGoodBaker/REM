@@ -104,16 +104,20 @@ class ExtensionLoader {
                 return
             }
 
-            host.initExtension(this.bw)
-
-            this.config.assign({ [id]: true })
-            this.config.commit()
+            try {
+                host.initExtension(this.bw)
+                this.config.assign({ [id]: true })
+                this.config.commit()
+            } catch (err) {
+                console.error(`[extension] failed to start ${id}:`, err)
+                void this._deactiveExtension(id)
+            }
         }
     }
 
     _listenExtensionsChange() {
         ipcMain.on('extension:active', (_, id) => this.start(id))
-        ipcMain.on('extension:deactive', (_, id) => this._deactiveExtension(id))
+        ipcMain.on('extension:deactive', (_, id) => void this._deactiveExtension(id))
         ipcMain.handle('extension?status', (_, extManifest) => {
             let ext
             if (!(ext = this.extensions.get(extManifest.id))) {
@@ -141,10 +145,10 @@ class ExtensionLoader {
         })
     }
 
-    _deactiveExtension = id => {
+    _deactiveExtension = async id => {
         let host
         if (host = this.extensions.get(id)) {
-            host.kill()
+            await host.kill()
 
             this.config.assign({ [id]: false })
             this.config.commit()

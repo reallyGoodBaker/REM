@@ -58,7 +58,10 @@ async function handleConsume(buffer: Buffer, sock: net.Socket, provider: Provide
 export async function registerProvider(desc: ProviderDescritpor, provider: Provider) {
     await registerOnNet(desc)
     net.createServer(sock => {
-        sock.on('data', buf => handleConsume(buf, sock, provider))
+        sock.on('data', buf => {
+            const buffer = Buffer.isBuffer(buf) ? buf : Buffer.from(buf)
+            handleConsume(buffer, sock, provider)
+        })
     }).listen(pipeName() + desc.name)
 }
 

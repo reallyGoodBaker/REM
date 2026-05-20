@@ -3,38 +3,58 @@ const { ipcMain } = require('electron')
 
 let channels = new Map()
 
+function removeSocketFromChannels(socket) {
+    for (const subscribers of channels.values()) {
+        subscribers.delete(socket)
+    }
+}
+
+function safeWrite(socket, data) {
+    if (!socket || socket.destroyed || socket.writableEnded) {
+        return false
+    }
+
+    try {
+        return socket.write(data)
+    } catch (err) {
+        if (err.code === 'EPIPE' || err.code === 'ECONNRESET') {
+            removeSocketFromChannels(socket)
+            return false
+        }
+
+        throw err
+    }
+}
+
+function broadcast(channelName, data) {
+    const channel = channels.get(channelName)
+    if (!channel) {
+        return
+    }
+
+    for (const socket of channel) {
+        safeWrite(socket, data)
+    }
+}
+
 function delegate(from, to) {
     ipcMain.on(from, (e, ...args) => {
-        const channel = channels.get(to)
-        if (channel) {
-            channel.forEach(s => {
-                s.write(JSON.stringify(args) + '\0')
-            })
-        }
+        broadcast(to, JSON.stringify(args) + '\0')
     })
 }
 
 exports.write = function publish(channelName, buffer) {
-    const channel = channels.get(channelName)
-    if (channel) {
-        channel.forEach(s => {
-            s.write(buffer)
-        })
-    }
+    broadcast(channelName, buffer)
 }
 
 exports.publish = function publish(channelName, ...args) {
-    const channel = channels.get(channelName)
-    if (channel) {
-        channel.forEach(s => {
-            s.write(JSON.stringify(args) + '\0')
-        })
-    }
+    broadcast(channelName, JSON.stringify(args) + '\0')
 }
 
 exports.init = () => {
     delegate('win:playstate', 'playstate')
     delegate('win:player', 'player')
+    delegate('ext:settings-changed', 'ext-settings')
 
     server('subscribe', s => {
         s.on('data', data => {
@@ -48,6 +68,11 @@ exports.init = () => {
 
             channel.add(s)
         })
+
+        const cleanup = () => removeSocketFromChannels(s)
+        s.on('close', cleanup)
+        s.on('end', cleanup)
+        s.on('error', cleanup)
     })
 
     /**
@@ -56,6 +81,16 @@ exports.init = () => {
     let singletonOutput
     server('pcm-stream-broker', s => {
         singletonOutput = s
+        s.on('close', () => {
+            if (singletonOutput === s) {
+                singletonOutput = null
+            }
+        })
+        s.on('error', () => {
+            if (singletonOutput === s) {
+                singletonOutput = null
+            }
+        })
     })
 
     let pluginOutput = false
@@ -77,7 +112,7 @@ exports.init = () => {
         }
 
         if (singletonOutput) {
-            singletonOutput.write(Buffer.from(buf.buffer))
+            safeWrite(singletonOutput, Buffer.from(buf.buffer))
         }
     })
 }

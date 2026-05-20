@@ -88,9 +88,21 @@ async function ready() {
 }
 
 async function whenReady(cb) {
-    await ready()
-        ? cb.call(null)
-        : provide('ready', cb)
+    let called = false
+    const run = () => {
+        if (called) {
+            return
+        }
+
+        called = true
+        cb.call(null)
+    }
+
+    provide('ready', run)
+
+    if (await ready()) {
+        run()
+    }
 }
 
 module.exports = {

@@ -1,13 +1,13 @@
 import { rem } from "../../../utils/rem"
 import { homeOptions } from "../../../utils/home/browser"
-import { __currentModule } from "../ui-loader"
+import { getCurrentModule } from "../extension-context"
 const options = homeOptions
 
 /**
  * @param {{ isUrl?: boolean; avatar: string, title: string, onClick: () => void }} opt 
  */
 function register(opt) {
-    opt.extFolder = __currentModule.folderName
+    opt.extFolder = getCurrentModule().folderName
     options.push(opt)
 
     rem.emit('refreshHomeOptions')
@@ -24,6 +24,7 @@ function unregister(opt) {
     }
 
     options.splice(i, 1)
+    rem.emit('refreshHomeOptions')
 }
 
 export const home = {

@@ -5,34 +5,52 @@
 
     const emit = createEventDispatcher()
     export let label = ''
+    export let value = 0
     export let inputValue = '0'
     export let progressValue = 0
     export let min = 0
     export let max = 1
 
-    const inputChange = ({ detail }) => {
-        detail = +detail
+    function clamp(n) {
         min = +min
         max = +max
-
-        if (detail < min) {
-            detail = min
-        } else if (detail > max) {
-            detail = max
+        if (!Number.isFinite(n)) {
+            return min
         }
+        return Math.min(max, Math.max(min, n))
+    }
 
-        progressValue = (detail - min) / (max - min) * 100
-        inputValue = detail.toFixed(2)
+    function syncFromValue(v) {
+        min = +min
+        max = +max
+        const n = clamp(+v)
+        inputValue = String(Math.round(n))
+        progressValue = max === min ? 0 : ((n - min) / (max - min)) * 100
+    }
 
-        emit('inputChange', +detail)
-        emit('change', +detail)
+    $: syncFromValue(value)
+
+    const inputChange = ({ detail }) => {
+        const n = clamp(+detail)
+        const rounded = Math.round(n)
+        inputValue = String(rounded)
+        progressValue = max === min ? 0 : ((rounded - min) / (max - min)) * 100
+        emit('inputChange', rounded)
+        emit('change', rounded)
     }
 
     const progressChange = ({ detail }) => {
-        detail /= 100
-        inputValue = (min + (max - min) * detail).toFixed(2)
-        emit('progressChange', detail)
-        emit('change', inputValue)
+        if (detail == null || !Number.isFinite(+detail)) {
+            return
+        }
+
+        const ratio = +detail / 100
+        const n = clamp(min + (max - min) * ratio)
+        const rounded = Math.round(n)
+        inputValue = String(rounded)
+        progressValue = max === min ? 0 : ((rounded - min) / (max - min)) * 100
+        emit('progressChange', ratio)
+        emit('change', rounded)
     }
 
     const style = 'height: 20px; width: 56px; padding: 0 4px; background-color: transparent;'

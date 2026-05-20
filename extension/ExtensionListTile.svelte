@@ -3,8 +3,8 @@
     import Image from '../pages/components/Image.svelte'
     import RippleLayer from '../pages/components/RippleLayer.svelte'
     import Toggle from '../pages/components/Toggle.svelte'
-    import { rem } from '../utils/rem'
     import ExtensionSettings from './ExtensionSettings.svelte'
+    import { extensionManifests } from './initExtensionList'
 
     const s = v => langMapping.s('$' + v) || v
     export let ver = '1.0'
@@ -16,33 +16,17 @@
     export let checked
     export let author = ''
 
-    let needRelaunch = false
     const emit = createEventDispatcher()
 
-    function onToggle() {
-        emit('toggle', checked)
-        hooks.send(`extension:${
-            checked? 'active': 'deactive'
-        }`, id)
+    function onToggle(e) {
+        const next = e.detail
+        checked = next
+        emit('toggle', next)
+        hooks.send(`extension:${next ? 'active' : 'deactive'}`, id)
     }
 
     export function toggle() {
-        checked = !checked
-        onToggle()
-    }
-
-    const refreshLaunchIcon = m => {
-        if (m.id === id) {
-            needRelaunch = true
-        }
-    }
-
-    rem.on('extension:need-relaunch', refreshLaunchIcon)
-
-    Pager.beforeSwitch(() => rem.off('extension:need-relaunch', refreshLaunchIcon))
-
-    function relaunch() {
-        hooks.send('app:relaunch')
+        onToggle({ detail: !checked })
     }
 
     function setting() {
@@ -183,16 +167,11 @@
             {desc}
             <div class="id">ID: {id}</div>
         </div>
-        <div class="Row btnGroup">
+            <div class="Row btnGroup">
             <div class="Row">
                 <RippleLayer rippleColor='var(--fadeDark)' cssStyle="border-radius: 50%;">
                     <div class="iconfont i _btn" on:click={setting}>{'\ue6aa'}</div>
                 </RippleLayer>
-                {#if needRelaunch}
-                    <RippleLayer rippleColor='var(--fadeDark)' cssStyle="border-radius: 50%;">
-                        <div class="icon-round i _btn" on:click={relaunch}>{'\ue5d5'}</div>
-                    </RippleLayer>
-                {/if}
             </div>
 
             <Toggle on:toggle={onToggle} bind:checked={checked}/>
