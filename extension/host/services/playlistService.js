@@ -24,9 +24,12 @@ module.exports = function (bw) {
 
     server('playlist', s => {
         s.on('data', async d => {
-            const v = await proxy['playlist' + d.toString('utf-8')]()
-
-            s.write(json(v))
+            try {
+                const v = await proxy['playlist' + d.toString('utf-8')]()
+                s.write(json(v))
+            } catch (err) {
+                s.write(json({ error: String(err) }))
+            }
         })
     })
 

@@ -28,10 +28,13 @@ module.exports = function (bw) {
     server('player-controller', s => {
         const separator = /\|/
         s.on('data', async d => {
-            const [ action, args ] = d.toString('utf-8').split(separator)
-            const v = await proxy['player' + action](args?.split(',').map(v => Number(v.trim())))
-
-            s.write(json(v))
+            try {
+                const [ action, args ] = d.toString('utf-8').split(separator)
+                const v = await proxy['player' + action](args?.split(',').map(v => Number(v.trim())))
+                s.write(json(v))
+            } catch (err) {
+                s.write(json({ error: String(err) }))
+            }
         })
     })
 
