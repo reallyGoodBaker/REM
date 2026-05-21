@@ -3,8 +3,6 @@ const {
     album
 } = require('NeteaseCloudMusicApi')
 
-
-
 async function getUserPlaylist(uid, cookie) {
     const playerPlaylist = await user_playlist({uid, cookie})
     return playerPlaylist;
