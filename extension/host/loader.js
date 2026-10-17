@@ -94,13 +94,16 @@ class ExtensionLoader {
         return Array.from(this.extensions.keys())
     }
 
-    start = id => {
+    start = async id => {
         /**
          * @type {ExtensionHost}
          */
         let host
         if (host = this.extensions.get(id)) {
-            if (host.extension) {
+            if (host.stopping) {
+                await host.stopping
+            }
+            if (host.manifest.activated) {
                 return
             }
 
@@ -174,7 +177,7 @@ function loadExtensions(folder, bw) {
     }
 
     ipcMain.on('extension-ui:config?', e => {
-        e.sender.send('extension-ui:config', config)
+        e.sender.send('extension-ui:config', loader.config.clone())
     })
 
     return loader

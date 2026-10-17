@@ -4,6 +4,8 @@ const initInvoker = require('../../utils/main-invoker/node')
 const { record, deleteRecord } = require('../../utils/ipc/extmapping')
 const { Extensions } = require('../../utils/appPath/main')
 
+let mainWindow = null
+
 const defaultOptions = {
     webPreferences: {
         sandbox: false,
@@ -22,6 +24,17 @@ function tryInvoke(obj, func, ...args) {
 
 /**@type {Map<string, BrowserWindow>}*/
 const activeWindows = new Map()
+
+function setMainWindow(win) {
+    mainWindow = win
+}
+
+function getMainWindow() {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+        return mainWindow
+    }
+    return BrowserWindow.getAllWindows().find(win => win.getTitle?.() === 'rem') ?? null
+}
 /**
  * @param {BrowserWindowConstructorOptions} options 
  */
@@ -87,7 +100,7 @@ function openFallbackWindows(manifest) {
         }
 
         setTimeout(() => {
-            if (!hasWindow(winName)) {
+            if (manifest.activated && !hasWindow(winName)) {
                 openWindow(winName, options, manifest)
             }
         }, 600)
@@ -113,7 +126,7 @@ function openWindow(winName, options, manifest) {
     const pluginRoot = path.join(Extensions, manifest.folderName)
 
     if (manifest.components.includes('replace_main_window') && extra.replaceMain) {
-        BrowserWindow.getAllWindows()[0].hide()
+        getMainWindow()?.hide()
     }
 
     const win = new BrowserWindow(Object.assign({}, options, defaultOptions))
@@ -143,8 +156,9 @@ function openWindow(winName, options, manifest) {
         }
 
         win.webContents.executeJavaScript('win.beforeClose()')
-        if (extra.replaceMain) {
-            BrowserWindow.getAllWindows()[0].show()
+        const replacedWindow = getMainWindow()
+        if (extra.replaceMain && replacedWindow && replacedWindow !== win) {
+            replacedWindow.show()
         }
 
         deleteRecord(win.id)
@@ -193,5 +207,5 @@ function closeWindow(id) {
 
 module.exports = {
     openWindow, destroyWindow, closeWindow, hasWindow,
-    openExtensionWindows, closeExtensionWindows, openFallbackWindows,
+    openExtensionWindows, closeExtensionWindows, openFallbackWindows, setMainWindow, getMainWindow,
 }

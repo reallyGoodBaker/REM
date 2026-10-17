@@ -70,7 +70,7 @@ export function unregisterProvider(desc: ProviderDescritpor) {
     const sock = net.connect(pipeName() + 'provider.registry')
         .on('data', () => {
             sock.end()
-            if (fs.existsSync(pipeName() + desc.name)) {
+            if (process.platform !== 'win32' && fs.existsSync(pipeName() + desc.name)) {
                 fs.unlinkSync(pipeName() + desc.name)
             }
             resolve()

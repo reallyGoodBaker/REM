@@ -2,7 +2,11 @@ const initInvokerService = require('../../../utils/main-invoker/node')
 const { server } = require('../../../utils/ipc/net')
 const { json } = require('../../../utils/ipc/utils')
 
+let playlistService = null
+
 module.exports = function (bw) {
+    if (playlistService) return playlistService
+
     const invoker = initInvokerService(bw)
     const proxy = new Proxy({
         keys() {
@@ -33,5 +37,5 @@ module.exports = function (bw) {
         })
     })
 
-    return proxy
+    return playlistService = proxy
 }

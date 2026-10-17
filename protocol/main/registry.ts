@@ -16,17 +16,18 @@ function findFromRegistry(name: string) {
 }
 
 export function lookup(conf: LookupConfig): ProviderDescritpor[] {
+    // Provider instances stay in the main process; discovery returns serializable descriptors.
     const providers: ProviderDescritpor[] = []
     for (const record of registry) {
         const { category, name } = record
 
         if (conf.name && name.includes(conf.name)) {
-            providers.push(record)
+            providers.push({ name, category })
             continue
         }
 
         if (conf.category && category === conf.category) {
-            providers.push(record)
+            providers.push({ name, category })
         }
     }
 

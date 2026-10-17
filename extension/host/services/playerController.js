@@ -2,7 +2,11 @@ const initInvokerService = require('../../../utils/main-invoker/node')
 const { server } = require('../../../utils/ipc/net')
 const { json } = require('../../../utils/ipc/utils')
 
+let playerController = null
+
 module.exports = function (bw) {
+    if (playerController) return playerController
+
     const invoker = initInvokerService(bw)
     const proxy = new Proxy({
         keys() {
@@ -38,5 +42,5 @@ module.exports = function (bw) {
         })
     })
 
-    return proxy
+    return playerController = proxy
 }

@@ -127,6 +127,7 @@ export class MainPlaylist {
         const ad = this.getAudioData(index)
         await AudioPlayer.loadData(ad)
         rem.emit('loadedContent')
+        AudioPlayer.em.emit('loadedContent')
         rem.emit('setControlsContent', ad)
     }
 

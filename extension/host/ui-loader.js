@@ -99,7 +99,7 @@ async function loadModules(m) {
         `file://${await getPath('Extensions')}/${m.folderName}/${path}`)
     const settings = safeStore(`ExtensionSettings/${m.id}`)
 
-    __currentModule = m
+    setCurrentModule(m)
 
     const loadArgs = {
         home, settings
@@ -108,7 +108,7 @@ async function loadModules(m) {
     mixinAllComponents(loadArgs, m)
     await call(uiExt.onLoad, null, loadArgs)
 
-    __currentModule = null
+    setCurrentModule(null)
 
     loadedUIExts.set(m.id, { uiExt, loadArgs })
 

@@ -49,6 +49,8 @@ export async function loadExtensionSettings(m) {
     if (!settingEntry.onSetting)
         return
 
+    await call(settingEntry.onSetting, settingStore(m.id))
+
     const setValue = async (id, name, value) => {
         if (m.id !== id) {
             return

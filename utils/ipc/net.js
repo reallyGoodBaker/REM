@@ -67,6 +67,12 @@ function server(name, listener = s => s.write('ok')) {
 }
 
 function unlink(name) {
+    // Windows 命名管道由系统管理，不能通过 fs.unlinkSync 删除；旧实现会
+    // 在已有管道时抛出 EINVAL，干扰扩展启动和安装器关闭流程。
+    if (process.platform === 'win32') {
+        return
+    }
+
     const pipe = pipeName + name
     if (fs.existsSync(pipe)) {
         fs.unlinkSync(pipe)

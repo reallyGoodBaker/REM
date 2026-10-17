@@ -1,4 +1,4 @@
-const { ipcMain } = require('electron')
+const { app, ipcMain } = require('electron')
 const path = require('path')
 const requireManifest = require('./manifestParser')
 const { Worker, MessagePort } = require('worker_threads')
@@ -6,7 +6,7 @@ const { EventEmitter } = require('events')
 const { X509Certificate } = require('crypto')
 const { Blob } = require('buffer')
 const serviceMap = require('./serviceMap')
-const { openWindow, destroyWindow, closeWindow, openExtensionWindows, closeExtensionWindows, openFallbackWindows } = require('./win')
+const { openWindow, destroyWindow, closeWindow, openExtensionWindows, closeExtensionWindows, openFallbackWindows, setMainWindow } = require('./win')
 const { Data } = require('../../utils/appPath/main')
 const { createThread, killThread } = require('./thread')
 
@@ -40,7 +40,11 @@ class ExtensionHost {
             {
                 env: {
                     ...process.env,
+                    // 扩展运行目录位于 resources/builtin-extensions，不能用 process.cwd()
+                    // 推断应用自身依赖的位置；显式传递 app.getAppPath() 供扩展创建稳定的 require。
+                    REM_APP_PATH: app.getAppPath(),
                     NODE_PATH: [
+                        path.join(app.getAppPath(), 'node_modules'),
                         path.join(Data, 'node_modules'),
                         process.env.NODE_PATH,
                     ].filter(Boolean).join(path.delimiter),
@@ -67,7 +71,7 @@ class ExtensionHost {
 
             if ('uid' in v && 'val' in v && 'err' in v) {
                 let handler = this.requests.get(v.uid)
-                return handler.call(undefined, v)
+                return handler?.call(undefined, v)
             }
 
             this.events.emit('message', v)
@@ -106,6 +110,7 @@ class ExtensionHost {
      * @param {BrowserWindow} bw 
      */
     initExtension(bw) {
+        setMainWindow(bw)
         this.bw = bw
         const manifest = this.manifest
         const { entry, components } = manifest
@@ -130,7 +135,8 @@ class ExtensionHost {
             this.extension.postMessage({ id, val: globalThis.playerReady, err: null })
         })
 
-        const activeManifest = { ...manifest, activated: true }
+        manifest.activated = true
+        const activeManifest = { ...manifest }
         ipcMain.emit('extension:activated', activeManifest)
         bw.webContents.send('extension:activated', activeManifest)
 
@@ -155,7 +161,8 @@ class ExtensionHost {
     }
 
     _notifyDeactivated() {
-        const inactiveManifest = { ...this.manifest, activated: false }
+        this.manifest.activated = false
+        const inactiveManifest = { ...this.manifest }
         ipcMain.emit('extension:deactivated', inactiveManifest)
         this.bw?.webContents.send('extension:deactivated', inactiveManifest)
     }
@@ -198,32 +205,49 @@ class ExtensionHost {
         }
     }
 
-    async kill(reason) {
+    kill(reason) {
+        if (!this.stopping) {
+            this.stopping = this._kill(reason).finally(() => this.stopping = null)
+        }
+        return this.stopping
+    }
+
+    async _kill(reason) {
+        this.manifest.activated = false
         closeExtensionWindows(this.manifest)
 
         if (this.extension) {
             const worker = this.extension
+            let cleanupTimer
+
+            // Keep the worker connected for cleanup; a crashed worker must not block the switch.
+            await Promise.race([
+                (async () => {
+                    try { await this.request('beforeDisable') } catch {}
+                    try { await this.request('clearTimers') } catch {}
+                })(),
+                new Promise(resolve => cleanupTimer = setTimeout(resolve, 2000)),
+            ])
+            clearTimeout(cleanupTimer)
             this.extension = null
-
-            try {
-                await this.request('beforeDisable')
-            } catch { /* worker may already be dead */ }
-
-            try {
-                await this.request('clearTimers')
-            } catch { /* worker may already be dead */ }
 
             try {
                 await worker.terminate()
             } catch { /* worker may already be dead */ }
 
-            this.components.clear()
-            this.events.eventNames()
-                .forEach(name => this.events.removeAllListeners(name))
-            this.events.emit('kill', reason)
-            this.events.emit('exit', 0)
-            this.events.emit('-service')
         }
+
+        for (const component of this.components.values()) {
+            component.dispose?.()
+        }
+        this.components.clear()
+        this.requests.clear()
+        this.events.emit('kill', reason)
+        this.events.emit('exit', 0)
+        this.events.emit('-service')
+        this.events.eventNames()
+            .filter(name => name !== 'internal-error')
+            .forEach(name => this.events.removeAllListeners(name))
 
         this._notifyDeactivated()
     }

@@ -1,14 +1,17 @@
 import {LifeCycle, rem} from '../../rem.js'
 
 export async function getAudioDevices() {
-    return (await navigator.mediaDevices.enumerateDevices()).filter(v => v.kind === 'audiooutput')
+    // MediaDeviceInfo prototype properties are not copied by Electron's context bridge.
+    return (await navigator.mediaDevices.enumerateDevices())
+        .filter(v => v.kind === 'audiooutput')
+        .map(({ label, deviceId, groupId, kind }) => ({ label, deviceId, groupId, kind }))
 }
 
 export async function initAudioDevicesFind() {
     await LifeCycle.when('runtimeReady')
     
-    navigator.mediaDevices.addEventListener('devicechange', async ev => {
-        rem.emit('audioDeviceChange', (await ev.target.enumerateDevices()).filter(v => v.kind === 'audiooutput'))
+    navigator.mediaDevices.addEventListener('devicechange', async () => {
+        rem.emit('audioDeviceChange', await getAudioDevices())
     })
 }
 

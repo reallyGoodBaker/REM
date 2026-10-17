@@ -32,7 +32,11 @@ function notificationService(bw, ext) {
 
     return {
         [notifSend]: sendNotification,
-        keys: () => [notifSend]
+        keys: () => [notifSend],
+        dispose() {
+            ipcMain.off(notifCallback, handleNotifCallback)
+            callbackMap.clear()
+        },
     }
 }
 

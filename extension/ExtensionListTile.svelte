@@ -1,32 +1,42 @@
 <script>
-    import { createEventDispatcher } from 'svelte'
+    import { createEventDispatcher, onMount, onDestroy } from 'svelte'
+    import { rem } from '../utils/rem'
     import Image from '../pages/components/Image.svelte'
     import RippleLayer from '../pages/components/RippleLayer.svelte'
-    import Toggle from '../pages/components/Toggle.svelte'
     import ExtensionSettings from './ExtensionSettings.svelte'
-    import { extensionManifests } from './initExtensionList'
 
-    const s = v => langMapping.s('$' + v) || v
     export let ver = '1.0'
     export let desc = ''
     export let isUrl = false
     export let icon = '\ue68b'
     export let name = langMapping.s('extensions')
     export let id = ''
-    export let checked
+    export let checked = false
     export let author = ''
 
     const emit = createEventDispatcher()
+    let pending = false
 
-    function onToggle(e) {
-        const next = e.detail
-        checked = next
+    const onStatusChange = manifest => {
+        if (manifest.id === id) {
+            checked = !!manifest.activated
+            pending = false
+        }
+    }
+
+    onMount(() => rem.on('extension:status-changed', onStatusChange))
+    onDestroy(() => rem.off('extension:status-changed', onStatusChange))
+
+    function onToggle() {
+        if (pending) return
+        const next = !checked
+        pending = true
         emit('toggle', next)
         hooks.send(`extension:${next ? 'active' : 'deactive'}`, id)
     }
 
     export function toggle() {
-        onToggle({ detail: !checked })
+        onToggle()
     }
 
     function setting() {
@@ -36,6 +46,7 @@
 
 <style>
     .outer {
+        position: relative;
         width: 400px;
         height: 230px;
         box-sizing: border-box;
@@ -71,6 +82,71 @@
         margin-right: 20px;
     }
 
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        width: calc(100% - 14px);
+        flex: none;
+        gap: 8px;
+    }
+
+    .activation {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        flex: none;
+        color: var(--controlBlack36);
+        font-size: small;
+    }
+
+    .switch {
+        position: relative;
+        box-sizing: content-box;
+        width: 40px;
+        height: 20px;
+        padding: 0;
+        border-radius: 12px;
+        border: solid 2px var(--controlAcrylicDark);
+        background-color: var(--controlBackgroundAcrylic);
+        cursor: pointer;
+    }
+
+    .switch:focus-visible {
+        outline: 2px solid var(--controlColor);
+        outline-offset: 3px;
+    }
+
+    .switch:disabled {
+        cursor: wait;
+        opacity: 0.6;
+    }
+
+    .switch-thumb {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        top: 4px;
+        left: 4px;
+        background-color: var(--controlAcrylicDark);
+        transition: left 0.2s, background-color 0.2s;
+    }
+
+    .switch.active {
+        background-color: var(--controlBright);
+        border-color: transparent;
+    }
+
+    .switch.active .switch-thumb {
+        width: 16px;
+        height: 16px;
+        top: 2px;
+        left: 24px;
+        background-color: var(--controlColor);
+    }
+
     .i._btn {
         cursor: pointer;
     }
@@ -89,6 +165,7 @@
     .right-content {
         display: flex;
         flex-direction: column;
+        flex-wrap: nowrap;
         justify-content: space-between;
         padding-top: 18px;
         padding-bottom: 4px;
@@ -96,7 +173,6 @@
         width: calc(100% - 68px);
         height: calc(100% - 24px);
         align-items: flex-start;
-        justify-content: space-between;
     }
 
     .left-content {
@@ -133,7 +209,7 @@
     }
 </style>
 
-<div class="Row outer">
+<div class="Row outer" data-extension-id={id}>
 
     <div class="Column left-content">
         <div class="iconfont i">
@@ -157,24 +233,40 @@
 
 
     <div class="Row right-content">
-        <div>
-            <div class="name">{name}<span class="ver">{ver}</span></div>
-            {#if author}
-                <div class="author">{author}</div>
-            {/if}
+        <div class="header">
+            <div>
+                <div class="name">{name}<span class="ver">{ver}</span></div>
+                {#if author}
+                    <div class="author">{author}</div>
+                {/if}
+            </div>
+            <div class="activation">
+                <button
+                    type="button"
+                    class="switch"
+                    class:active={checked}
+                    role="switch"
+                    aria-checked={!!checked}
+                    aria-busy={pending}
+                    disabled={pending}
+                    aria-label={`${name}：${langMapping.s(checked ? 'enabled' : 'disabled')}`}
+                    on:click={onToggle}
+                >
+                    <span class="switch-thumb"></span>
+                </button>
+                <span>{langMapping.s(checked ? 'enabled' : 'disabled')}</span>
+            </div>
         </div>
         <div class="content">
             {desc}
             <div class="id">ID: {id}</div>
         </div>
-            <div class="Row btnGroup">
+        <div class="Row btnGroup">
             <div class="Row">
                 <RippleLayer rippleColor='var(--fadeDark)' cssStyle="border-radius: 50%;">
                     <div class="iconfont i _btn" on:click={setting}>{'\ue6aa'}</div>
                 </RippleLayer>
             </div>
-
-            <Toggle on:toggle={onToggle} bind:checked={checked}/>
         </div>
     </div>
     

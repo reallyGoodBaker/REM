@@ -151,8 +151,11 @@ export function initSettings() {
             return promise
         })
         rem.on('setOutputDevice', d => {
+            if (!d || typeof d.label !== 'string' || typeof d.deviceId !== 'string' || !d.deviceId) {
+                return
+            }
             deviceRef.value = d
-            hooks.send('output:setOutputDevice', d)
+            hooks.send('output:setOutputDevice', wrap(d))
         })
         rem.on('setPluginOutput', pluginOutput => {
             hooks.send('output:setPluginOutput', pluginOutput)

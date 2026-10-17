@@ -5,7 +5,8 @@
     "main": "./wins/main/main.js",
     "scripts": {
         "build-icons": "electron-icon-builder -i=./icon.png -f",
-        "build-app": "npm run build && npm run build-icons && electron-builder",
+        "prepare-extensions": "node ./scripts/prepare-extensions.js",
+        "build-app": "npm run prepare-extensions && npm run build && npm run build-icons && electron-builder",
         "build-protocol": "tsc -p ./protocol",
         "build": "npm run build-protocol && rollup -c",
         "start": "npm run build && electron .",
@@ -28,6 +29,7 @@
         "@rollup/plugin-wasm": "^6.2.2",
         "assemblyscript": "^0.27.27",
         "electron": "^33.4.11",
+        "electron-builder": "^24.13.3",
         "electron-icon-builder": "^2.0.1",
         "picomatch": "^2.3.1",
         "rollup": "^2.73.0",
@@ -62,6 +64,16 @@
             "!protocol",
             "!rust"
         ],
+        "extraResources": [
+            {
+                "from": "build/builtin-extensions",
+                "to": "builtin-extensions"
+            }
+        ],
+        "win": {
+            "icon": "./icons/icon.ico",
+            "signAndEditExecutable": true
+        },
         "linux": {
             "maintainer": "rgb39",
             "icon": "./icons",

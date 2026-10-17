@@ -38,7 +38,7 @@ module.exports = function buildWindow() {
     let browserWindow = new BrowserWindow({
         width,
         height,
-        icon: '',
+        icon: path.resolve(__dirname, '../../icons/icon.ico'),
         title: 'rem',
         frame: false,
         backgroundColor: '#d3ece0',
