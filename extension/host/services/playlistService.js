@@ -11,7 +11,7 @@ module.exports = function (bw) {
     const proxy = new Proxy({
         keys() {
             return [
-                ':next', ':previous', ''
+                ':next', ':previous', ':play', ''
             ].map(v => 'playlist' + v)
         }
     }, {
@@ -20,7 +20,7 @@ module.exports = function (bw) {
                 return t[p]
             }
             if (p.startsWith('playlist')) {
-                return () => invoker.invoke(p)
+                return (...args) => invoker.invoke(p, ...args)
             }
         },
         set() { return false }
@@ -29,7 +29,12 @@ module.exports = function (bw) {
     server('playlist', s => {
         s.on('data', async d => {
             try {
-                const v = await proxy['playlist' + d.toString('utf-8')]()
+                const [action, rawArgs = ''] = d.toString('utf-8').split('|')
+                const args = rawArgs
+                    ? rawArgs.split(',').map(value => Number(value.trim()))
+                    : []
+
+                const v = await proxy['playlist' + action](...args)
                 s.write(json(v))
             } catch (err) {
                 s.write(json({ error: String(err) }))

@@ -193,6 +193,13 @@ function initMainWin(browserWindow) {
     ipcMain.handle('app?theme', async () => {
         return await invoker.invoke('app?theme')
     })
+
+    ipcMain.on('app:theme-changed', (event, theme) => {
+        if (event.sender !== browserWindow.webContents) return
+        for (const window of BrowserWindow.getAllWindows()) {
+            if (!window.isDestroyed()) window.webContents.send('app:theme-changed', theme)
+        }
+    })
 }
 
 /**

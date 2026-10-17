@@ -87,10 +87,16 @@ export function initSettings() {
         selected: 4,
         selectedDark: 1
     }, async ({ colors, selected, dark, selectedDark }) => {
-        const setColor = color => document.body.style.setProperty('--controlHue', color)
-        const setDarkMode = darkMode => darkMode
-                ? document.body.classList.add('dark-mode')
-                : document.body.classList.remove('dark-mode')
+        const setColor = color => {
+            theme = { ...theme, colorHue: color }
+            document.body.style.setProperty('--controlHue', color)
+            hooks.send('app:theme-changed', theme)
+        }
+        const setDarkMode = darkMode => {
+            theme = { ...theme, dark: darkMode }
+            document.body.classList.toggle('dark-mode', darkMode)
+            hooks.send('app:theme-changed', theme)
+        }
 
         const sysTheme = await hooks.invoke('win:sys-colors')
         if (!selected || !selectedDark) {

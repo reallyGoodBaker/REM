@@ -150,4 +150,5 @@ LifeCycle.when('runtimeReady').then(() => {
     hooks.on('player:next', () => MainPlaylist.playNext())
     invoker.on('playlist:previous', () => MainPlaylist.playPrev())
     invoker.on('playlist:next', () => MainPlaylist.playNext())
+    invoker.on('playlist:play', index => MainPlaylist.play(Number(index)))
 })
